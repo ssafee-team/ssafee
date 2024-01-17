@@ -29,11 +29,11 @@
 
 브랜치 전략
 
-- 주요 브랜치 (항상 유지)
-  - **main**
+- 메인 브랜치 (항상 유지)
+  - **master**
     - 항상 배포 가능한 브랜치
   - **develop**
-    - 배포 브랜치(main)의 다음 버전을 준비하는 브랜치
+    - 배포 브랜치(master)의 다음 버전을 준비하는 브랜치
     - 개발된 모든 코드의 통합 장소
 - 보조 브랜치 (임시 생성/머지했으면 삭제)
   - **feature**
@@ -42,11 +42,11 @@
     - e.g. `feature/backend-login`, `feature/frontend-login`
   - **release**
     - 배포 브랜치의 다음 버전을 갱신하기 직전에 QA를 수행하는 브랜치
-    - develop 브랜치에서 생성, 테스트 및 버그 수정 후 main 및 develop 브랜치로 병합
+    - develop 브랜치에서 생성, 테스트 및 버그 수정 후 master 및 develop 브랜치로 병합
     - e.g. `release/0.0.1`, `release/1.0-beta`
   - **hotfix**
     - 배포 브랜치의 현재 버전에서 버그가 생겼을 때 긴급 수정을 위한 브랜치
-    - main 브랜치에서 생성, 버그 수정 후 main 및 develop 브랜치로 병합
+    - master 브랜치에서 생성, 버그 수정 후 master 및 develop 브랜치로 병합
     - e.g. `hotfix/20240111`, `hotfix/#5`
 
 ### Commit Message Convention
