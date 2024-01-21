@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
-@SpringBootApplication()
+@SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 @ConfigurationPropertiesScan
 public class SsafeeApplication {
 
