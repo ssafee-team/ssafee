@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.room.entity;
+package coffee.ssafy.ssafee.domain.party.entity;
 
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.Option;

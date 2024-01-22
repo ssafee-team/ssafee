@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.room.entity;
+package coffee.ssafy.ssafee.domain.party.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.chat.entity;
 
-import coffee.ssafy.ssafee.domain.room.entity.Party;
+import coffee.ssafy.ssafee.domain.party.entity.Party;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

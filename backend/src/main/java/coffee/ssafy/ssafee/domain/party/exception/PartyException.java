@@ -1,10 +1,10 @@
-package coffee.ssafy.ssafee.domain.room.exception;
+package coffee.ssafy.ssafee.domain.party.exception;
 
 import org.zalando.problem.AbstractThrowableProblem;
 
-public class RoomException extends AbstractThrowableProblem {
+public class PartyException extends AbstractThrowableProblem {
 
-    public RoomException(RoomErrorCode errorCode) {
+    public PartyException(PartyErrorCode errorCode) {
         super(
                 null,
                 errorCode.getStatus().name(),
