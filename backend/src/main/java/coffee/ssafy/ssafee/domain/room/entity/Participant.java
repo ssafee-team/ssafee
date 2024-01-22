@@ -6,25 +6,25 @@ import jakarta.validation.constraints.Null;
 import lombok.Getter;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "participants")
 @Getter
 @NotNull
-public class Customer {
+public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id", nullable = false)
+    @Column(name = "participant_id", nullable = false)
     private Long id;
 
     @Null
-    @Column(name = "customer_name")
+    @Column(name = "participant_name")
     private String name;
 
-    @Column(name = "customer_is_creator", nullable = false)
+    @Column(name = "participant_is_creator", nullable = false)
     private Boolean isCreator;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", updatable = false, nullable = false)
-    private Room room;
+    @JoinColumn(name = "party_id", updatable = false, nullable = false)
+    private Party party;
 
 }

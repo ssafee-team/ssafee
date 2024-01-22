@@ -23,16 +23,16 @@ public class Order {
     private Long id;
 
     @CreatedDate
-    @Column(name = "order_created_at", insertable = false, updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "order_created_time", insertable = false, updatable = false, nullable = false)
+    private LocalDateTime createdTime;
 
     @LastModifiedDate
-    @Column(name = "order_updated_at", insertable = false, updatable = false, nullable = false)
-    private LocalDateTime updatedAt;
+    @Column(name = "order_updated_time", insertable = false, updatable = false, nullable = false)
+    private LocalDateTime updatedTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id", updatable = false, nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "participant_id", updatable = false, nullable = false)
+    private Participant participant;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)

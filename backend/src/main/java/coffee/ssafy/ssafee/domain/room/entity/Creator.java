@@ -28,7 +28,7 @@ public class Creator {
     private String account;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", updatable = false, nullable = false)
-    private Room room;
+    @JoinColumn(name = "party_id", updatable = false, nullable = false)
+    private Party party;
 
 }

@@ -9,33 +9,33 @@ import org.springframework.data.annotation.CreatedDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "rooms")
+@Table(name = "parties")
 @Getter
 @NotNull
-public class Room {
+public class Party {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "party_id", nullable = false)
     private Long id;
 
-    @Column(name = "room_name", nullable = false)
+    @Column(name = "party_name", nullable = false)
     private String name;
 
-    @Column(name = "room_generation", nullable = false)
+    @Column(name = "party_generation", nullable = false)
     private Integer generation;
 
-    @Column(name = "room_classroom", nullable = false)
+    @Column(name = "party_classroom", nullable = false)
     private Integer classroom;
 
-    @Column(name = "room_deadline_at", nullable = false)
-    private LocalDateTime deadlineAt;
+    @Column(name = "party_last_order_time", nullable = false)
+    private LocalDateTime lastOrderTime;
 
     @CreatedDate
-    @Column(name = "room_created_at", insertable = false, updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "party_created_time", insertable = false, updatable = false, nullable = false)
+    private LocalDateTime createdTime;
 
-    @Column(name = "room_access_code", updatable = false, nullable = false)
+    @Column(name = "party_access_code", updatable = false, nullable = false)
     private String accessCode;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
