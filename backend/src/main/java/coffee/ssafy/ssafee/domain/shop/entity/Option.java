@@ -21,10 +21,6 @@ public class Option {
     @Column(name = "option_price", updatable = false, nullable = false)
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "option_group_id", updatable = false, nullable = false)
-    private OptionGroup optionGroup;
-
     @Column(name = "option_deleted", nullable = false)
     private Boolean deleted;
 

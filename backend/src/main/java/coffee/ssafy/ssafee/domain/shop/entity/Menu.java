@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "menus")
 @Getter
@@ -26,11 +28,19 @@ public class Menu {
     @Column(name = "menu_image")
     private String image;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "shop_id", updatable = false, nullable = false)
-    private Shop shop;
-
     @Column(name = "menu_deleted", nullable = false)
     private Boolean deleted;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "menu_category_id", nullable = false)
+    private MenuCategory menuCategory;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "menus_option_categories",
+            joinColumns = @JoinColumn(name = "menu_id"),
+            inverseJoinColumns = @JoinColumn(name = "option_category_id")
+    )
+    private List<OptionCategory> optionCategories;
 
 }
