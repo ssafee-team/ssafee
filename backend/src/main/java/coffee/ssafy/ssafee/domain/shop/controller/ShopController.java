@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.shop.dto.ShopDetailDto;
 import coffee.ssafy.ssafee.domain.shop.dto.ShopDto;
 import coffee.ssafy.ssafee.domain.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,12 @@ public class ShopController {
 
     @GetMapping
     public ResponseEntity<List<ShopDto>> getShops() {
-        return ResponseEntity.ok().body(shopService.getShops());
+        return ResponseEntity.ok().body(shopService.findAllShop());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShopDto> getShop(@PathVariable Long id) {
-        return ResponseEntity.ok().body(shopService.getShop(id));
+    public ResponseEntity<ShopDetailDto> getShop(@PathVariable Long id) {
+        return ResponseEntity.ok().body(shopService.findShopById(id));
     }
 
 }

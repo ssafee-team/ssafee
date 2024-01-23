@@ -3,15 +3,14 @@ package coffee.ssafy.ssafee.domain.shop.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
+import java.util.List;
+
 @Builder
-public class ShopDto {
+@Getter
+public class OptionCategoryDetailDto {
 
     private Long id;
     private String name;
-    private String address;
-    private String phone;
-    private String image;
-    private Boolean enabledAutoOrder;
+    private List<OptionDetailDto> options;
 
 }

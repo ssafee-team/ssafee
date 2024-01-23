@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "shops")
 @Getter
@@ -32,5 +34,11 @@ public class Shop {
 
     @Column(name = "shop_deleted", nullable = false)
     private Boolean deleted;
+
+    @Column(name = "shop_enabled_auto_order", nullable = false)
+    private Boolean enabledAutoOrder;
+
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    private List<MenuCategory> menuCategories;
 
 }

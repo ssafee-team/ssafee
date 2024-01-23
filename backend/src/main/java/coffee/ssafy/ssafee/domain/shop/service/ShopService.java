@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
+import coffee.ssafy.ssafee.domain.shop.dto.ShopDetailDto;
 import coffee.ssafy.ssafee.domain.shop.dto.ShopDto;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
@@ -17,12 +18,12 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ShopMapper shopMapper;
 
-    public ShopDto getShop(Long id) {
-        return shopMapper.INSTANCE.toDto(shopRepository.findById(id)
+    public ShopDetailDto findShopById(Long id) {
+        return shopMapper.INSTANCE.toDetailDto(shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 
-    public List<ShopDto> getShops() {
+    public List<ShopDto> findAllShop() {
         return shopRepository.findAll().stream()
                 .map(shopMapper.INSTANCE::toDto)
                 .toList();

@@ -5,13 +5,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ShopDto {
+public class MenuDto {
 
     private Long id;
     private String name;
-    private String address;
-    private String phone;
+    private String price;
     private String image;
-    private Boolean enabledAutoOrder;
 
 }
