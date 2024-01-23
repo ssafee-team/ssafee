@@ -21,7 +21,7 @@
       <div class="body-container">
         <div class="left-panel">
           <!-- <div>메뉴가 들어갈 부분</div> -->
-          <MenuList/>
+          <MenuList />
           <!-- 왼쪽 컨텐츠 (6:4 중 6 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
@@ -55,6 +55,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 .timeline {
   display: flex;
@@ -95,7 +96,7 @@ button {
 .left-panel {
   flex: 7; /* 6:4 비율로 나누기 위한 설정 */
   height: 75vh;
-  border: 5px solid #ccc;
+  /* border: 5px solid #ccc; */
 }
 
 .right-panel {
@@ -106,7 +107,7 @@ button {
 </style>
 
 <script setup>
-import MenuList from '@/components/room/MenuList.vue';
+import MenuList from "@/components/room/MenuList.vue";
 const checkOrderStatus = () => {
   // 주문 현황 확인 로직을 추가할 수 있습니다.
   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
