@@ -3,11 +3,13 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
 @Entity
 @Table(name = "option_categories")
+@SQLRestriction("option_category_deleted = false")
 @Getter
 @NotNull
 public class OptionCategory {

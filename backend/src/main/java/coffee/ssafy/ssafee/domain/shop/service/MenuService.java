@@ -17,7 +17,7 @@ public class MenuService {
 
     public MenuDetailDto findMenuById(Long id) {
         return shopMapper.INSTANCE.toDetailDto(menuRepository.findById(id)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU)));
     }
 
 }
