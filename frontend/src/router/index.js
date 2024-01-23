@@ -30,6 +30,11 @@ const router = createRouter({
       name: 'CreateRoomView',
       component: () => import('../views/TheCreateRoomView.vue')
     },
+    {
+      path: '/After',
+      name: 'After',
+      component: () => import('../views/TheAfterView.vue')
+    },
   ],
 });
 

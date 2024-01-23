@@ -9,6 +9,9 @@
   <RouterLink to="CreateRoomView">
     <button > +</button>
   </RouterLink>
+  <RouterLink to="After">
+    <button > After</button>
+  </RouterLink>
 </div>
 </template>
 
