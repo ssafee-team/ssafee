@@ -5,6 +5,8 @@ import { RouterView } from "vue-router";
 <template>
   <!-- router view 설정-->
   <router-view></router-view>
+
+
 </template>
 
 <style scoped></style>
