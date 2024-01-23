@@ -1,8 +1,7 @@
 <template>
 <div id="app">
   <span>현재 개설된 방</span>
-  <RouterLink to="room" >
-    <div class=""></div>
+  <RouterLink to="room">
     <button v-for = "room in rooms" :key="room">
     {{ room }}
   </button>
@@ -25,32 +24,15 @@ const rooms = ref(['공차드실분', '공차안드실분','싸탈하실분','�
 
 
 <style>
-
-header {
-  background-color: #344a53;
-  color: #e9fcff;
-  padding: 10px;
-  height: 77px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 #app > span {
   font-size: 30px;
   background-color: black;
   display: flex; 
   justify-content: center;
   color:white;
-  box-sizing: border-box;
-  width: 100%;
-  } 
-
-  .link-container {
-  display: flex;
-  justify-content: center;
-  width: 100%; /* 전체 너비를 차지하도록 설정 */
+  /* box-sizing: border-box; */
+  width: 105%;
 }
-
 button {
   font-size: 20px; /* 폰트 크기 설정 */
   background-color: 52,74,83; /* 배경색 설정 */
@@ -59,9 +41,9 @@ button {
   border: none; /* 테두리 제거 */
   border-radius: 5px; /* 테두리 둥글게 */
   cursor: pointer; /* 커서 모양을 손가락 모양으로 */
-  width: 60%;
-  display: flex;
-  margin-top: 20px;
+  width: 100%;
+  /* display: block; */
+  margin: 20px;
   justify-content: center;
 }
 
