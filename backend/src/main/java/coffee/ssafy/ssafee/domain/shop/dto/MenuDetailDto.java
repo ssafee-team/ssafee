@@ -11,7 +11,7 @@ public class MenuDetailDto {
 
     private Long id;
     private String name;
-    private String price;
+    private Integer price;
     private String image;
     private List<OptionCategoryDetailDto> optionCategories;
 
