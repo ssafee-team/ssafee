@@ -21,6 +21,9 @@
         <!-- Body 화면 6:4 비율로 분할 -->
         <div class="body-container">
           <div class="left-panel">
+            <div>order details</div>
+            <div></div>
+            <div>총 인원 총 수량 총 금액</div>
             <!-- <div>메뉴가 들어갈 부분</div> -->
             <!-- <MenuList/> -->
             <!-- 여기에 내 담당을 추가한다 -->
