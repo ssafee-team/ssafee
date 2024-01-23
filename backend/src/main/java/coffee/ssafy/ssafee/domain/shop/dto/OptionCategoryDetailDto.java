@@ -11,6 +11,8 @@ public class OptionCategoryDetailDto {
 
     private Long id;
     private String name;
+    private Boolean required;
+    private Integer maxCount;
     private List<OptionDetailDto> options;
 
 }

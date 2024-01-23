@@ -22,6 +22,12 @@ public class OptionCategory {
     @Column(name = "option_categroy_name", updatable = false, nullable = false)
     private String name;
 
+    @Column(name = "option_category_required", nullable = false)
+    private Boolean required;
+
+    @Column(name = "option_category_max_count", nullable = false)
+    private Integer maxCount;
+
     @Column(name = "option_category_deleted", nullable = false)
     private Boolean deleted;
 
