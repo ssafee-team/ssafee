@@ -24,7 +24,7 @@ const rooms = ref(['공차드실분', '공차안드실분','싸탈하실분','�
 
 
 <style>
-span {
+#app > span {
   font-size: 30px;
   background-color: black;
   display: flex; 
