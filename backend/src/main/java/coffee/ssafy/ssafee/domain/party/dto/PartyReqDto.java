@@ -5,19 +5,18 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ParticipantDetailDto {
+public class PartyReqDto {
 
-    private Long id;
     private String name;
-    private Boolean isCreator;
-    private Boolean isCarrier;
-    private Boolean payed;
-    private Boolean payConfirmed;
-    private List<OrderMenuDto> orderMenus;
+    private Integer generation;
+    private Integer classroom;
+    private LocalDateTime lastOrderTime;
+    private Long shopId;
+    private CreatorReqDto creator;
 
 }

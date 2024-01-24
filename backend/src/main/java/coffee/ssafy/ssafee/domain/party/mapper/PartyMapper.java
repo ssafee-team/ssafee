@@ -1,9 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.mapper;
 
-import coffee.ssafy.ssafee.domain.party.dto.OrderMenuDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.ParticipantDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDto;
+import coffee.ssafy.ssafee.domain.party.dto.*;
+import coffee.ssafy.ssafee.domain.party.entity.Creator;
 import coffee.ssafy.ssafee.domain.party.entity.OrderMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
@@ -22,5 +20,7 @@ public interface PartyMapper {
     PartyDetailDto toDetailDto(Party shop);
 
     OrderMenuDetailDto toDetailDto(OrderMenu menu);
+
+    Creator toEntity(CreatorReqDto creatorReqDto);
 
 }

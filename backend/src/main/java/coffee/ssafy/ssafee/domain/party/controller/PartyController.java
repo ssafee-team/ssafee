@@ -1,16 +1,10 @@
 package coffee.ssafy.ssafee.domain.party.controller;
 
-import coffee.ssafy.ssafee.domain.party.dto.OrderMenuDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.ParticipantDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDto;
+import coffee.ssafy.ssafee.domain.party.dto.*;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +14,12 @@ import java.util.List;
 public class PartyController {
 
     private final PartyService partyService;
+
+    @PostMapping
+    public ResponseEntity<Void> createParty(@RequestBody PartyReqDto partyReqDto) {
+        partyService.createParty(partyReqDto);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping
     public ResponseEntity<List<PartyDto>> getPartiesToday() {

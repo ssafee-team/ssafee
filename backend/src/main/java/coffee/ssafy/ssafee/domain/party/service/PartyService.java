@@ -1,24 +1,40 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.OrderMenuDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.ParticipantDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDetailDto;
-import coffee.ssafy.ssafee.domain.party.dto.PartyDto;
+import coffee.ssafy.ssafee.domain.party.dto.*;
+import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
+import coffee.ssafy.ssafee.domain.shop.entity.Shop;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final EntityManager entityManager;
     private final PartyMapper partyMapper;
+
+    public void createParty(PartyReqDto partyReqDto) {
+        Shop shopReference = entityManager.getReference(Shop.class, partyReqDto.getShopId());
+        Party party = Party.builder()
+                .name(partyReqDto.getName())
+                .generation(partyReqDto.getGeneration())
+                .classroom(partyReqDto.getClassroom())
+                .lastOrderTime(partyReqDto.getLastOrderTime())
+                .accessCode(UUID.randomUUID().toString())
+                .shop(shopReference)
+                .creator(partyMapper.INSTANCE.toEntity(partyReqDto.getCreator()))
+                .build();
+        partyRepository.save(party);
+    }
 
     public List<PartyDto> findPartiesToday() {
         return partyRepository.findAll().stream()

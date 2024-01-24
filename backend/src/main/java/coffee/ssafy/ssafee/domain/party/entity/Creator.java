@@ -1,13 +1,16 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Table(name = "creators")
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
-@NotNull
 public class Creator {
 
     @Id
@@ -15,15 +18,19 @@ public class Creator {
     @Column(name = "creator_id", nullable = false)
     private Long id;
 
+    @NotNull
     @Column(name = "creator_name", nullable = false)
     private String name;
 
+    @NotNull
     @Column(name = "creator_email", updatable = false, nullable = false)
     private String email;
 
+    @NotNull
     @Column(name = "creator_bank", nullable = false)
     private String bank;
 
+    @NotNull
     @Column(name = "creator_account", nullable = false)
     private String account;
 
