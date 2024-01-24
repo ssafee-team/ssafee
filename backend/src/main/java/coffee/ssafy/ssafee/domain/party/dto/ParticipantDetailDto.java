@@ -18,6 +18,6 @@ public class ParticipantDetailDto {
     private Boolean isCarrier;
     private Boolean payed;
     private Boolean payConfirmed;
-    private List<OrderMenuDto> orderMenus;
+    private List<OrderMenuDetailDto> orderMenus;
 
 }
