@@ -7,8 +7,8 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
+@Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MenuDetailDto {
 
