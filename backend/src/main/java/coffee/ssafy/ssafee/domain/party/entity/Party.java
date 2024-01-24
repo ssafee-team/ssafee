@@ -21,7 +21,7 @@ public class Party extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_id", nullable = false)
+    @Column(name = "party_id", insertable = false, nullable = false)
     private Long id;
 
     @NotNull

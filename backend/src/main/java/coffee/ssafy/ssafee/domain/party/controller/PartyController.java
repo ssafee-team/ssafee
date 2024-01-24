@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -17,8 +18,9 @@ public class PartyController {
 
     @PostMapping
     public ResponseEntity<Void> createParty(@RequestBody PartyReqDto partyReqDto) {
-        partyService.createParty(partyReqDto);
-        return ResponseEntity.ok().build();
+        String accessCode = partyService.createParty(partyReqDto);
+        URI location = URI.create("/p/" + accessCode);
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping

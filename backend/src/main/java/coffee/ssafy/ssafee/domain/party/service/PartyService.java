@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -22,18 +22,33 @@ public class PartyService {
     private final EntityManager entityManager;
     private final PartyMapper partyMapper;
 
-    public void createParty(PartyReqDto partyReqDto) {
+    private String generateRandomString(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            char randomChar = characters.charAt(index);
+            stringBuilder.append(randomChar);
+        }
+        return stringBuilder.toString();
+    }
+
+    public String createParty(PartyReqDto partyReqDto) {
+        String accessCode = generateRandomString(10);
         Shop shopReference = entityManager.getReference(Shop.class, partyReqDto.getShopId());
         Party party = Party.builder()
                 .name(partyReqDto.getName())
                 .generation(partyReqDto.getGeneration())
                 .classroom(partyReqDto.getClassroom())
                 .lastOrderTime(partyReqDto.getLastOrderTime())
-                .accessCode(UUID.randomUUID().toString())
+                .accessCode(accessCode)
                 .shop(shopReference)
                 .creator(partyMapper.INSTANCE.toEntity(partyReqDto.getCreator()))
                 .build();
+        party.getCreator().setParty(party);
         partyRepository.save(party);
+        return accessCode;
     }
 
     public List<PartyDto> findPartiesToday() {
