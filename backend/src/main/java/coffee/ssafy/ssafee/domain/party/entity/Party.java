@@ -5,7 +5,6 @@ import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;

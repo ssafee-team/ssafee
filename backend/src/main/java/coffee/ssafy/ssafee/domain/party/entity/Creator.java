@@ -1,6 +1,5 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
-import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
