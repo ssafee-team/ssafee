@@ -37,20 +37,4 @@ public class PartyController {
         return ResponseEntity.ok().body(partyService.findPartyByAccessCode(accessCode));
     }
 
-    @GetMapping("/{access_code}/order-menus")
-    public ResponseEntity<List<ParticipantDetailResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
-        return ResponseEntity.ok().body(partyService.findOrderMenusByAccessCode(accessCode));
-    }
-
-    @GetMapping("/{access_code}/order-menus/{id}")
-    public ResponseEntity<OrderMenuDetailResponse> getOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
-        return ResponseEntity.ok().body(partyService.findOrderMenuByAccessCodeAndId(accessCode, id));
-    }
-
-    @DeleteMapping("/{access_code}/order-menus/{id}")
-    public ResponseEntity<Void> deleteOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
-        partyService.deleteOrderMenuByAccessCodeAndId(accessCode, id);
-        return ResponseEntity.ok().build();
-    }
-
 }
