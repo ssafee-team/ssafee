@@ -1,19 +1,22 @@
 <template>
 	<div>
-		<!-- <div class="black-bg" v-if="isopened==true"> -->
-		<div class="black-bg">
+		<div class="black-bg" v-if="isopened==true">
+		<!-- <div class="black-bg"> -->
 			<div class="flexmodal">
-				<div class="modalbody"></div>
+				<div class="modalbody">
+          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
+          배달 인원은 6잔 당 1명씩 추가됩니다.
+        </div>
 				<div class="modaltail"></div>
 			</div>
 		<!-- <div class="black-bg"> -->
 		</div>
-    <div class="dv" v-if="isVisible==true">
+    <!-- <div class="dv">
       <div class="dv">
           <h4>상세페이지</h4>
           <p>상세페이지내용</p>
       </div>
-    </div>
+    </div> -->
     <div id="info">
       <div id="accountinfo">
         <span>입금계좌:</span>
@@ -21,6 +24,7 @@
         <span>전상혁</span>
       </div>
     <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
+    <!-- <div @click="onMoloo" @mouseout="offMoloo" id="moloo">?</div> -->
     </div>
 	</div>
 </template>
@@ -110,13 +114,15 @@
         box-sizing: border-box;
       }
       .black-bg {
-        width: 100%;
+        width: 90%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        /* background: rgba(0,0,0,0.5); */
         position: fixed;
         padding: 20px;
 				text-align: right;
-				margin-right: 0px;
+				/* margin-right: 0px; */
+        /* display: flex;
+        flex-direction: row; */
       }
       .white-bg {
         /* width: 50%; */
@@ -128,18 +134,26 @@
       }
 
 			.flexmodal {
-				width: 350px;
+				/* width: 100%; */
+        height: 100px;
 				/* padding-right: 8rem; */
-				display: flex;
+				display: inline-flex;
 				/* text-align: right; */
-				/* margin-right: 5rem; */
+        /* margin: 0px auto; */
+        /* margin-right: 6rem; */
+        position: absolute;
+        right: -2rem;
+        
 			}
 			.modalbody {
-				width: 300px;
-				height: 100px;
+				width: 450px;
+				height: 50px;
 				background-color: hotpink;
 				border-radius: 10px;
-				transform: translateY(-20px);
+				transform: translateY(-28px);
+        text-align: center;
+        box-sizing: content-box;
+        padding: 10px;
 			}
 
 			.modaltail {
@@ -150,5 +164,6 @@
 				border-bottom: 10px solid transparent;
 				border-left: 20px solid hotpink;
 				border-right: 10px solid transparent;
+        transform: translateY(-4px);
 			}
   </style>
