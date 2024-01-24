@@ -9,6 +9,7 @@ import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.repository.OrderMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
@@ -23,6 +24,7 @@ import java.util.Random;
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final OrderMenuRepository orderMenuRepository;
     private final EntityManager entityManager;
     private final PartyMapper partyMapper;
 
@@ -77,6 +79,12 @@ public class PartyService {
     public OrderMenuDetailResponse findOrderMenuByAccessCodeAndId(String accessCode, Long id) {
         return partyMapper.INSTANCE.toDetailDto(partyRepository.findOrderMenuByAccessCodeAndId(accessCode, id)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY_OR_ORDER_MENU)));
+    }
+
+    public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long id) {
+        partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        orderMenuRepository.deleteById(id);
     }
 
 }

@@ -22,8 +22,8 @@ public class PartyController {
 
     @PostMapping
     public ResponseEntity<Void> createParty(@RequestBody PartyRequest partyRequest) {
-            String accessCode = partyService.createParty(partyRequest);
-            URI location = URI.create("/p/" + accessCode);
+        String accessCode = partyService.createParty(partyRequest);
+        URI location = URI.create("/p/" + accessCode);
         return ResponseEntity.ok().build();
     }
 
@@ -45,6 +45,12 @@ public class PartyController {
     @GetMapping("/{access_code}/order-menus/{id}")
     public ResponseEntity<OrderMenuDetailResponse> getOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
         return ResponseEntity.ok().body(partyService.findOrderMenuByAccessCodeAndId(accessCode, id));
+    }
+
+    @DeleteMapping("/{access_code}/order-menus/{id}")
+    public ResponseEntity<Void> deleteOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
+        partyService.deleteOrderMenuByAccessCodeAndId(accessCode, id);
+        return ResponseEntity.ok().build();
     }
 
 }
