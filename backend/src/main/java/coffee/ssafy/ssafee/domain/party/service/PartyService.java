@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.dto.request.ParticipantRequest;
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
@@ -85,6 +86,13 @@ public class PartyService {
         partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         orderMenuRepository.deleteById(id);
+    }
+
+    public String createOrderMenu(String accessCode, ParticipantRequest participantRequest) {
+        partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+
+        return "";
     }
 
 }
