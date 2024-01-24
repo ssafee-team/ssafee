@@ -18,6 +18,6 @@ public class ParticipantDetailResponse {
     private Boolean isCarrier;
     private Boolean payed;
     private Boolean payConfirmed;
-    private List<OrderMenuResponse> orderMenus;
+    private List<OrderMenuDetailResponse> orderMenus;
 
 }
