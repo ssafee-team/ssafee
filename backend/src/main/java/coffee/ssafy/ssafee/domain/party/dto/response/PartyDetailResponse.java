@@ -1,5 +1,6 @@
-package coffee.ssafy.ssafee.domain.party.dto;
+package coffee.ssafy.ssafee.domain.party.dto.response;
 
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PartyDto {
+public class PartyDetailResponse {
 
     private Long id;
     private String name;
@@ -18,5 +19,7 @@ public class PartyDto {
     private Integer classroom;
     private LocalDateTime lastOrderTime;
     private LocalDateTime createdTime;
+    private ShopDetailResponse shop;
+    private CreatorResponse creator;
 
 }

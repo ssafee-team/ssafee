@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDetailDto;
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDto;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,12 @@ public class ShopController {
     private final ShopService shopService;
 
     @GetMapping
-    public ResponseEntity<List<ShopDto>> getShops() {
+    public ResponseEntity<List<ShopResponse>> getShops() {
         return ResponseEntity.ok().body(shopService.findAllShop());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShopDetailDto> getShop(@PathVariable Long id) {
+    public ResponseEntity<ShopDetailResponse> getShop(@PathVariable Long id) {
         return ResponseEntity.ok().body(shopService.findShopById(id));
     }
 

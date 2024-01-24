@@ -1,6 +1,10 @@
 package coffee.ssafy.ssafee.domain.party.mapper;
 
-import coffee.ssafy.ssafee.domain.party.dto.*;
+import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
+import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Creator;
 import coffee.ssafy.ssafee.domain.party.entity.OrderMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
@@ -13,14 +17,14 @@ public interface PartyMapper {
 
     PartyMapper INSTANCE = Mappers.getMapper(PartyMapper.class);
 
-    PartyDto toDto(Party shop);
+    PartyResponse toDto(Party shop);
 
-    ParticipantDetailDto toDetailDto(Participant menu);
+    ParticipantDetailResponse toDetailDto(Participant menu);
 
-    PartyDetailDto toDetailDto(Party shop);
+    PartyDetailResponse toDetailDto(Party shop);
 
-    OrderMenuDetailDto toDetailDto(OrderMenu menu);
+    OrderMenuDetailResponse toDetailDto(OrderMenu menu);
 
-    Creator toEntity(CreatorReqDto creatorReqDto);
+    Creator toEntity(CreatorRequest creatorRequest);
 
 }

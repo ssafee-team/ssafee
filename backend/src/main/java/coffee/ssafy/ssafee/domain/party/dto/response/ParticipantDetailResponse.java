@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.shop.dto;
+package coffee.ssafy.ssafee.domain.party.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,13 +7,17 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Builder
 @Getter
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class MenuCategoryDetailDto {
+public class ParticipantDetailResponse {
 
     private Long id;
     private String name;
-    private List<MenuDto> menus;
+    private Boolean isCreator;
+    private Boolean isCarrier;
+    private Boolean payed;
+    private Boolean payConfirmed;
+    private List<OrderMenuResponse> orderMenus;
 
 }

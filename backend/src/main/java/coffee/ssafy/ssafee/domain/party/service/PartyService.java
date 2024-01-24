@@ -1,6 +1,10 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.*;
+import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
+import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
@@ -34,35 +38,35 @@ public class PartyService {
         return stringBuilder.toString();
     }
 
-    public String createParty(PartyReqDto partyReqDto) {
+    public String createParty(PartyRequest partyRequest) {
         String accessCode = generateRandomString(10);
-        Shop shopReference = entityManager.getReference(Shop.class, partyReqDto.getShopId());
+        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.getShopId());
         Party party = Party.builder()
-                .name(partyReqDto.getName())
-                .generation(partyReqDto.getGeneration())
-                .classroom(partyReqDto.getClassroom())
-                .lastOrderTime(partyReqDto.getLastOrderTime())
+                .name(partyRequest.getName())
+                .generation(partyRequest.getGeneration())
+                .classroom(partyRequest.getClassroom())
+                .lastOrderTime(partyRequest.getLastOrderTime())
                 .accessCode(accessCode)
                 .shop(shopReference)
-                .creator(partyMapper.INSTANCE.toEntity(partyReqDto.getCreator()))
+                .creator(partyMapper.INSTANCE.toEntity(partyRequest.getCreator()))
                 .build();
         party.getCreator().setParty(party);
         partyRepository.save(party);
         return accessCode;
     }
 
-    public List<PartyDto> findPartiesToday() {
+    public List<PartyResponse> findPartiesToday() {
         return partyRepository.findAll().stream()
                 .map(partyMapper.INSTANCE::toDto)
                 .toList();
     }
 
-    public PartyDetailDto findPartyByAccessCode(String accessCode) {
+    public PartyDetailResponse findPartyByAccessCode(String accessCode) {
         return partyMapper.INSTANCE.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
     }
 
-    public List<ParticipantDetailDto> findOrderMenusByAccessCode(String accessCode) {
+    public List<ParticipantDetailResponse> findOrderMenusByAccessCode(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
                 .getParticipants().stream()
@@ -70,7 +74,7 @@ public class PartyService {
                 .toList();
     }
 
-    public OrderMenuDetailDto findOrderMenuByAccessCodeAndId(String accessCode, Long id) {
+    public OrderMenuDetailResponse findOrderMenuByAccessCodeAndId(String accessCode, Long id) {
         return partyMapper.INSTANCE.toDetailDto(partyRepository.findOrderMenuByAccessCodeAndId(accessCode, id)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY_OR_ORDER_MENU)));
     }

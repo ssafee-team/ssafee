@@ -1,21 +1,19 @@
-package coffee.ssafy.ssafee.domain.shop.dto;
+package coffee.ssafy.ssafee.domain.party.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
-@Builder
 @Getter
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class OptionCategoryDetailDto {
 
-    private Long id;
+public class CreatorRequest {
+
     private String name;
-    private Boolean required;
-    private Integer maxCount;
-    private List<OptionDetailDto> options;
+    private String email;
+    private String bank;
+    private String account;
 
 }

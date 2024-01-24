@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.party.dto;
+package coffee.ssafy.ssafee.domain.party.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PartyReqDto {
+public class PartyRequest {
 
     private String name;
     private Integer generation;
     private Integer classroom;
     private LocalDateTime lastOrderTime;
     private Long shopId;
-    private CreatorReqDto creator;
+    private CreatorRequest creator;
 
 }

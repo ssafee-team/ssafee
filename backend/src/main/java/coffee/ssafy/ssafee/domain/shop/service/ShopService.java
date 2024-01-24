@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDetailDto;
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDto;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.ShopMapper;
@@ -18,12 +18,12 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ShopMapper shopMapper;
 
-    public ShopDetailDto findShopById(Long id) {
+    public ShopDetailResponse findShopById(Long id) {
         return shopMapper.INSTANCE.toDetailDto(shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 
-    public List<ShopDto> findAllShop() {
+    public List<ShopResponse> findAllShop() {
         return shopRepository.findAll().stream()
                 .map(shopMapper.INSTANCE::toDto)
                 .toList();

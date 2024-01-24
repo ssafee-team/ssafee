@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.shop.dto.MenuDetailDto;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuDetailDto> getMenu(Long id) {
+    public ResponseEntity<MenuDetailResponse> getMenu(Long id) {
         return ResponseEntity.ok().body(menuService.findMenuById(id));
     }
 

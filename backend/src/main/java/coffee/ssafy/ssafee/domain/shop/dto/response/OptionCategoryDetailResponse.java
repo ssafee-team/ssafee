@@ -1,7 +1,5 @@
-package coffee.ssafy.ssafee.domain.party.dto;
+package coffee.ssafy.ssafee.domain.shop.dto.response;
 
-import coffee.ssafy.ssafee.domain.shop.dto.MenuDto;
-import coffee.ssafy.ssafee.domain.shop.dto.OptionDetailDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
@@ -9,13 +7,15 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
+@Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class OrderMenuDetailDto {
+public class OptionCategoryDetailResponse {
 
     private Long id;
-    private MenuDto menu;
-    private List<OptionDetailDto> options;
+    private String name;
+    private Boolean required;
+    private Integer maxCount;
+    private List<OptionDetailResponse> options;
 
 }
