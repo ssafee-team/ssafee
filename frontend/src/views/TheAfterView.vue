@@ -21,9 +21,7 @@
         <!-- Body 화면 6:4 비율로 분할 -->
         <div class="body-container">
           <div class="left-panel">
-            <div>order details</div>
-            <div></div>
-            <div>총 인원 총 수량 총 금액</div>
+            <OrderList/>
             <!-- <div>메뉴가 들어갈 부분</div> -->
             <!-- <MenuList/> -->
             <!-- 여기에 내 담당을 추가한다 -->
@@ -116,6 +114,7 @@
 //     // 주문 현황 확인 로직을 추가할 수 있습니다.
 //     console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
 //   };
-    import Info from '@/components/Info.vue';
+    import Info from '@/components/after/Info.vue';
+    import OrderList from '@/components/after/OrderList.vue';
   </script>
   
