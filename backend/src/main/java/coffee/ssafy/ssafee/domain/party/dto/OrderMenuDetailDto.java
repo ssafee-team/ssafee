@@ -1,5 +1,7 @@
-package coffee.ssafy.ssafee.domain.shop.dto;
+package coffee.ssafy.ssafee.domain.party.dto;
 
+import coffee.ssafy.ssafee.domain.shop.dto.MenuDto;
+import coffee.ssafy.ssafee.domain.shop.dto.OptionDetailDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
@@ -7,17 +9,13 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Builder
 @Getter
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ShopDetailDto {
+public class OrderMenuDetailDto {
 
     private Long id;
-    private String name;
-    private String address;
-    private String phone;
-    private String image;
-    private Boolean enabledAutoOrder;
-    private List<MenuCategoryDetailDto> menuCategories;
+    private MenuDto menu;
+    private List<OptionDetailDto> options;
 
 }

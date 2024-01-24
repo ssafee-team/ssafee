@@ -2,7 +2,7 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
@@ -10,8 +10,10 @@ import java.util.List;
 @Entity
 @Table(name = "menu_categories")
 @SQLRestriction("menu_category_deleted = false")
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
-@NotNull
 public class MenuCategory {
 
     @Id
@@ -19,6 +21,7 @@ public class MenuCategory {
     @Column(name = "menu_category_id", nullable = false)
     private Long id;
 
+    @NotNull
     @Column(name = "menu_category_name", nullable = false)
     private String name;
 
