@@ -33,7 +33,6 @@ public class Creator {
     @Column(name = "creator_account", nullable = false)
     private String account;
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "party_id", updatable = false, nullable = false)
     private Party party;

@@ -14,22 +14,26 @@ import coffee.ssafy.ssafee.domain.party.repository.OrderMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PartyService {
 
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final PartyRepository partyRepository;
     private final OrderMenuRepository orderMenuRepository;
-    private final EntityManager entityManager;
     private final PartyMapper partyMapper;
 
-    private String generateRandomString(int length) {
+    private static String generateRandomString(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder(length);
@@ -42,18 +46,11 @@ public class PartyService {
     }
 
     public String createParty(PartyRequest partyRequest) {
+        Party party = partyMapper.INSTANCE.toEntity(partyRequest);
+
         String accessCode = generateRandomString(10);
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.getShopId());
-        Party party = Party.builder()
-                .name(partyRequest.getName())
-                .generation(partyRequest.getGeneration())
-                .classroom(partyRequest.getClassroom())
-                .lastOrderTime(partyRequest.getLastOrderTime())
-                .accessCode(accessCode)
-                .shop(shopReference)
-                .creator(partyMapper.INSTANCE.toEntity(partyRequest.getCreator()))
-                .build();
-        party.getCreator().setParty(party);
+        party.updateCreator(accessCode, shopReference, partyRequest.getCreator());
         partyRepository.save(party);
         return accessCode;
     }

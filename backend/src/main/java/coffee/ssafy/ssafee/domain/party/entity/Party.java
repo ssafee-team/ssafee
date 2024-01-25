@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
+import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -59,5 +60,17 @@ public class Party extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
     private OrderResult orderResult;
+
+    public void updateCreator(String accessCode, Shop shop, CreatorRequest creatorRequest) {
+        this.accessCode = accessCode;
+        this.shop = shop;
+        this.creator = Creator.builder()
+                .name(creatorRequest.getName())
+                .email(creatorRequest.getEmail())
+                .bank(creatorRequest.getBank())
+                .account(creatorRequest.getAccount())
+                .party(this)
+                .build();
+    }
 
 }

@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.mapper;
 
 import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
+import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
@@ -10,6 +11,7 @@ import coffee.ssafy.ssafee.domain.party.entity.OrderMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -25,6 +27,7 @@ public interface PartyMapper {
 
     OrderMenuDetailResponse toDetailDto(OrderMenu menu);
 
-    Creator toEntity(CreatorRequest creatorRequest);
+    @Mapping(target = "creator", ignore = true)
+    Party toEntity(PartyRequest partyRequest);
 
 }
