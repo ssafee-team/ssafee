@@ -23,6 +23,8 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class PartyService {
 
+    private static final int ACCESS_CODE_LENGTH = 10;
+
     @PersistenceContext
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
@@ -31,7 +33,7 @@ public class PartyService {
     private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
-        StringBuilder stringBuilder = new StringBuilder(10);
+        StringBuilder stringBuilder = new StringBuilder(ACCESS_CODE_LENGTH);
         for (int i = 0; i < 10; i++) {
             int index = random.nextInt(characters.length());
             char randomChar = characters.charAt(index);
