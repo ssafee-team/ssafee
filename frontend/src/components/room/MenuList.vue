@@ -15,6 +15,7 @@
               type="checkbox"
               value="휘핑 제공"
               v-model="checkedOptions['whippingProvided']"
+              @change="selectOption('휘핑 제공', 0)"
             />휘핑 제공</label
           >
           <div>+ 0원</div>
@@ -25,14 +26,19 @@
               type="checkbox"
               value="휘핑 미제공"
               v-model="checkedOptions['whippingNotProvided']"
+              @change="selectOption('휘핑 미제공', 0)"
             />휘핑 미제공</label
           >
           <div>+ 0원</div>
         </div>
         <div class="row">
           <label>
-            <input type="checkbox" value="휘핑 적게" v-model="checkedOptions['whippingLess']" />휘핑
-            적게</label
+            <input
+              type="checkbox"
+              value="휘핑 적게"
+              v-model="checkedOptions['whippingLess']"
+              @change="selectOption('휘핑 적게', 0)"
+            />휘핑 적게</label
           >
           <div>+ 0원</div>
         </div>
@@ -45,6 +51,7 @@
               type="checkbox"
               value="설탕시럽 1펌프 추가"
               v-model="checkedOptions['sugarSyrup1Pump']"
+              @change="selectOption('설탕시럽 1펌프 추가', 500)"
             />설탕시럽 1펌프 추가</label
           >
           <div>+ 500원</div>
@@ -55,21 +62,30 @@
               type="checkbox"
               value="설탕시럽 2펌프 추가"
               v-model="checkedOptions['sugarSyrup2Pump']"
+              @change="selectOption('설탕시럽 2펌프 추가', 1000)"
             />설탕시럽 2펌프 추가</label
           >
           <div>+ 1000원</div>
         </div>
         <div class="row">
           <label>
-            <input type="checkbox" value="샷 추가" v-model="checkedOptions['extraShot']" />샷
-            추가</label
+            <input
+              type="checkbox"
+              value="샷 추가"
+              v-model="checkedOptions['extraShot']"
+              @change="selectOption('샷 추가', 500)"
+            />샷 추가</label
           >
           <div>+ 500원</div>
         </div>
         <div class="row">
           <label>
-            <input type="checkbox" value="펄 추가" v-model="checkedOptions['pearl']" />펄
-            추가</label
+            <input
+              type="checkbox"
+              value="펄 추가"
+              v-model="checkedOptions['pearl']"
+              @change="selectOption('펄 추가', 1000)"
+            />펄 추가</label
           >
           <div>+ 1000원</div>
         </div>
@@ -128,7 +144,7 @@ export default {
   data() {
     return {
       openModal: false, //모달 기본적으로 안보이게 설정
-      checkedOptions: [], //선택한 옵션을 담을 배열 추가
+      checkedOptions: {}, //선택한 옵션을 담을 객체 추가
       categories: [
         "인기메뉴",
         "시즌메뉴",
@@ -177,22 +193,22 @@ export default {
   },
   computed: {
     selectedDrinks() {
-      console.log("메뉴선택하러ㄱㄱ");
+      console.log(this.categories[this.selectedCategory], "선택");
       return this.drinks[this.selectedCategory] || [];
     },
     selectedDrink() {
-      console.log("옵션선택하러 ㄱㄱ");
+      console.log(this.selectedDrinks[this.selectedDrinkIndex].name, "음료선택");
       return this.selectedDrinks[this.selectedDrinkIndex] || {};
     },
   },
   methods: {
     selectCategory(index) {
       this.selectedCategory = index;
-      console.log(this.selectedCategory);
+      // console.log(this.selectedCategory);
     },
     setSelectedDrinkIndex(index) {
       this.selectedDrinkIndex = index;
-      console.log(this.selectedDrinkIndex);
+      // console.log(this.selectedDrinkIndex);
     },
 
     close(event) {
@@ -206,15 +222,32 @@ export default {
     closeModal() {
       this.openModal = false;
       //모달 닫힐 시 선택한 옵션 초기화
-      this.checkedOptions = [];
+      this.checkedOptions = {};
+    },
+
+    selectOption(option, price) {
+      console.log(option + "옵션 선택");
+      console.log("가격 추가: " + price + "원");
+
+      // // 옵션을 선택할 때 해당 옵션이 이미 선택되었는지 확인하고, 선택되지 않은 경우에만 가격을 추가
+      // if (!this.checkedOptions[option]) {
+      //   this.$set(this.checkedOptions, option, price); // 옵션과 가격 추가
+      // }
+
+      this.calculateTotalPrice(); //가격 재계산
     },
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
-      this.checkedOptions.forEach((option) => {
-        // 각 선택 옵션에 대한 가격 계산
-        total += parseFloat(option.price.replace("원", "").replace(",", ""));
+      Object.values(this.checkedOptions).forEach((price) => {
+        total += parseFloat(price);
       });
+      console.log(total);
+      console.log("총 가격: " + total.toFixed(0) + "원");
+      // this.checkedOptions.forEach((option) => {
+      //   total += parseFloat(option.price.replace("원", "").replace(",", ""));
+      // });
+      // 각 선택 옵션에 대한 가격 계산
       return total.toFixed(0);
     },
 
@@ -241,7 +274,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .menu-categories {
   display: flex;
   flex-wrap: wrap;
@@ -273,7 +306,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: scroll;
-  height: 500px;
+  height: 650px;
 }
 
 .drink-item {
@@ -301,6 +334,7 @@ export default {
   /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
   /* background: rgba(0, 0, 0, 0.6); */
   position: fixed;
+  z-index: 9999; /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
 }
 .white-bg {
   width: 40%;
@@ -311,8 +345,10 @@ export default {
   margin-top: 20px;
   border: 2px solid black;
   text-align: center;
-  height: 60%;
+  /* height: 60%; */
   color: white;
+  position: relative;
+  z-index: 10000;
 }
 .close {
   width: 120px;
