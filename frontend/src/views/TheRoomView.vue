@@ -37,25 +37,29 @@
 
 <style scoped>
 body {
-  margin: 0;
-  padding: 0;
   font-family: "Arial", sans-serif;
 }
 main {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  /* height: 100vh; */
+  /* width: 100%; */
+  /* height: 100%;
+  padding: 0;
+  margin: 0; */
+  overflow-x: hidden;
+  /* box-sizing: border-box; */
 }
 
 header {
   background-color: #344a53;
   color: #e9fcff;
-  padding: 10px;
-  height: 77px;
+  /* padding: 10px; */
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  /* width: 100%; */
 }
 .timeline {
   display: flex;
@@ -67,7 +71,7 @@ header {
 }
 .center-content {
   text-align: center;
-  font-size: 40px;
+  font-size: 30px;
   flex-grow: 1;
   font-weight: bold;
 }
@@ -90,18 +94,19 @@ button {
 }
 .body-container {
   display: flex;
-  flex: 6;
+
   margin-top: 25px;
 }
 .left-panel {
   flex: 7; /* 6:4 비율로 나누기 위한 설정 */
-  height: 75vh;
+  height: 70vh;
   /* border: 5px solid #ccc; */
 }
 
 .right-panel {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
+  height: 70vh;
   border: 5px solid #ccc;
 }
 </style>

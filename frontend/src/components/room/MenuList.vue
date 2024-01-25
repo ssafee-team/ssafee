@@ -1,16 +1,86 @@
 <template lang="">
+  <!-- 모달 -->
   <div class="black-bg" v-if="openModal == true" @click="close($event)">
     <div class="white-bg">
       <div class="modal-title">
         <div>옵션</div>
-        <div style="color: #00a7d0">5,500원</div>
+        <div style="color: #00a7d0">{{ calculateTotalPrice() }}원</div>
       </div>
       <hr />
       <p>휘핑선택</p>
+      <div class="whipping-choice">
+        <div class="row">
+          <label>
+            <input
+              type="checkbox"
+              value="휘핑 제공"
+              v-model="checkedOptions['whippingProvided']"
+            />휘핑 제공</label
+          >
+          <div>+ 0원</div>
+        </div>
+        <div class="row">
+          <label>
+            <input
+              type="checkbox"
+              value="휘핑 미제공"
+              v-model="checkedOptions['whippingNotProvided']"
+            />휘핑 미제공</label
+          >
+          <div>+ 0원</div>
+        </div>
+        <div class="row">
+          <label>
+            <input type="checkbox" value="휘핑 적게" v-model="checkedOptions['whippingLess']" />휘핑
+            적게</label
+          >
+          <div>+ 0원</div>
+        </div>
+      </div>
       <p>추가선택</p>
-      <button class="close">닫기</button>
+      <div class="whipping-choice">
+        <div class="row">
+          <label>
+            <input
+              type="checkbox"
+              value="설탕시럽 1펌프 추가"
+              v-model="checkedOptions['sugarSyrup1Pump']"
+            />설탕시럽 1펌프 추가</label
+          >
+          <div>+ 500원</div>
+        </div>
+        <div class="row">
+          <label>
+            <input
+              type="checkbox"
+              value="설탕시럽 2펌프 추가"
+              v-model="checkedOptions['sugarSyrup2Pump']"
+            />설탕시럽 2펌프 추가</label
+          >
+          <div>+ 1000원</div>
+        </div>
+        <div class="row">
+          <label>
+            <input type="checkbox" value="샷 추가" v-model="checkedOptions['extraShot']" />샷
+            추가</label
+          >
+          <div>+ 500원</div>
+        </div>
+        <div class="row">
+          <label>
+            <input type="checkbox" value="펄 추가" v-model="checkedOptions['pearl']" />펄
+            추가</label
+          >
+          <div>+ 1000원</div>
+        </div>
+      </div>
+      <div class="btn">
+        <button class="close" @click="close">취소</button>
+        <button class="addOrder" @click="addOrder">주문하기</button>
+      </div>
     </div>
   </div>
+  <!-- 메뉴 카테고리 -->
   <div class="menu-categories">
     <div
       v-for="(category, index) in categories"
@@ -21,6 +91,7 @@
       {{ category }}
     </div>
   </div>
+  <!-- 메뉴판 -->
   <div class="menu-items">
     <div
       v-for="(drink, index) in selectedDrinks"
@@ -29,18 +100,35 @@
       :style="{ width: drinkItemWidth }"
     >
       <!-- 이미지 들어가는거 다시 다뤄야 함-->
-      <img src="../../assets/img/blueberry.jpg" :alt="drink.name" @click="openModal = true" />
+      <img
+        src="../../assets/img/blueberry.jpg"
+        :alt="drink.name"
+        @click="
+          openModal = true;
+          setSelectedDrinkIndex(index);
+        "
+      />
       <div>{{ drink.name }}</div>
       <div class="price">{{ drink.price }}</div>
     </div>
   </div>
+  <order-summary
+    :order-list="orderList"
+    :order-summary-visible="orderSummaryVisible"
+    @toggle-order-summary="toggleOrderSummary"
+  ></order-summary>
 </template>
 <script>
+import OrderSummary from "./OrderSummary.vue";
 export default {
+  components: {
+    OrderSummary,
+  },
+
   data() {
     return {
       openModal: false, //모달 기본적으로 안보이게 설정
-
+      checkedOptions: [], //선택한 옵션을 담을 배열 추가
       categories: [
         "인기메뉴",
         "시즌메뉴",
@@ -83,23 +171,72 @@ export default {
       },
       selectedCategory: 0,
       drinkItemWidth: "20%", //각 음료 항목의 너비
+      selectedDrinkIndex: null, //선택한 음료의 인덱스를 기억하는 데이터 추가
+      orderList: [], //주문 내역을 담을 배열 추가
     };
   },
   computed: {
     selectedDrinks() {
+      console.log("메뉴선택하러ㄱㄱ");
       return this.drinks[this.selectedCategory] || [];
+    },
+    selectedDrink() {
+      console.log("옵션선택하러 ㄱㄱ");
+      return this.selectedDrinks[this.selectedDrinkIndex] || {};
     },
   },
   methods: {
     selectCategory(index) {
       this.selectedCategory = index;
+      console.log(this.selectedCategory);
     },
+    setSelectedDrinkIndex(index) {
+      this.selectedDrinkIndex = index;
+      console.log(this.selectedDrinkIndex);
+    },
+
     close(event) {
       if (event.target.classList.contains("black-bg") || event.target.classList.contains("close")) {
-        this.openModal = false;
+        // this.openModal = false;
+        this.closeModal();
       } else if (event.target.classList.contains("white-bg")) {
         this.openModal = true;
       }
+    },
+    closeModal() {
+      this.openModal = false;
+      //모달 닫힐 시 선택한 옵션 초기화
+      this.checkedOptions = [];
+    },
+
+    calculateTotalPrice() {
+      let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
+      this.checkedOptions.forEach((option) => {
+        // 각 선택 옵션에 대한 가격 계산
+        total += parseFloat(option.price.replace("원", "").replace(",", ""));
+      });
+      return total.toFixed(0);
+    },
+
+    addOrder() {
+      //주문 정보 정리
+      const order = {
+        name: this.selectedDrink.name,
+        price: this.calculateTotalPrice(),
+        options: Object.values(this.checkedOptions), //선택한 옵션 복사해 전달함
+      };
+      //주문 정보를 orderList에 추가
+      this.orderList.push(order);
+      console.log(order.options.value);
+      console.log("주문하기 버튼 클릭!");
+      // console.log(order.options);
+      console.log(order);
+      console.log("전체 주문 목록", this.orderList);
+      //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
+      this.$emit("order-placed", this.orderList);
+
+      //모달 닫기
+      this.closeModal();
     },
   },
 };
@@ -146,7 +283,8 @@ export default {
 }
 
 .drink-item img {
-  border: 3px solid black;
+  border: 1px solid #344a53;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 15px;
   cursor: pointer;
   width: 160px;
@@ -166,26 +304,42 @@ export default {
 }
 .white-bg {
   width: 40%;
-  height: 300px;
   margin: 80px auto;
   background: #344a53;
   border-radius: 5px;
   padding: 10px 0;
+  margin-top: 20px;
   border: 2px solid black;
   text-align: center;
-
+  height: 60%;
   color: white;
 }
 .close {
-  width: 100px;
+  width: 120px;
   cursor: pointer;
   border: none;
-  background: #6a7793;
+  background: #eb4e5a;
   color: white;
   font-weight: bold;
   border-radius: 5px;
-  padding: 5px 15px;
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
 }
+.addOrder {
+  width: 120px;
+  cursor: pointer;
+  border: none;
+  background: #00a7d0;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .close:hover {
   /* color: white; */
   /* font-weight: bold; */
@@ -195,7 +349,7 @@ export default {
 .modal-title {
   /* 상우좌하 */
   margin: 0px 10px 10px 5px;
-  padding: 5px;
+  padding: 10px;
   /* margin-left: 10px; */
   /* margin-bottom: 5px; */
   font-size: 20px;
@@ -204,8 +358,25 @@ export default {
   justify-content: space-between;
   display: flex;
 }
+
 p {
   font-size: 20px;
   font-weight: bold;
+  text-align: left;
+  margin-left: 70px;
+  margin-top: 20px;
+}
+
+.whipping-choice {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin-left: 70px;
+}
+.row {
+  font-size: 18px;
+  display: flex;
+  margin-bottom: 20px;
+  justify-content: space-between;
 }
 </style>
