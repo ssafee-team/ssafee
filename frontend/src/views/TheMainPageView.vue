@@ -30,7 +30,7 @@
   </script>
   
   
-  <style>
+  <style scoped>
   
   header {
     background-color: #344a53;

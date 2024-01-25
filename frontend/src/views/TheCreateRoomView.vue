@@ -1,4 +1,19 @@
 <template>
+
+<div class="modal-wrap" v-show="modalCheck">
+  <div class="modal-container">
+    
+    <p style="font-size: 33px; color: white;">방이 생성되었습니다 </p>
+    
+    <div>
+      <RouterLink to="room" >
+      <button @click="modalOpen" class="button-modal">확인</button>
+      </RouterLink>
+    </div>
+  </div>
+</div>
+
+
   <header>
       <div id="coffeeshop">방 생성</div>
   </header>
@@ -42,6 +57,7 @@
 </div>
 
   <div class="child">
+    <p> <label>카페선택</label> </p>
     <img v-on:click="addPlatform('공차')" 
    src="../assets/img/coffeebrand/공차.jpg" 
    alt="공차" 
@@ -49,6 +65,7 @@
    width="150px" 
    height="150px">
     <br>
+
     <img v-on:click="addPlatform('컴포즈드')"  src="../assets/img/coffeebrand/컴포즈드커피.jpg" alt="" 
          :class="{ 'border1': true, 'grayscale': !isComposedSelected }" 
          width="150px" height="150px">
@@ -58,24 +75,36 @@
   </div>
 
   <div class="child">
-    <img src="../assets/img/delivery/배민.jpg" alt="" class="border1" width="150px" height="150px">
-    <br>
-    <img src="../assets/img/delivery/요기요.jpg" alt="" class="border1" width="150px" height="150px">
-    <br>
-    <img src="../assets/img/delivery/쿠팡이츠.jpg" alt="" class="border1" width="150px" height="150px">
+  <p> <label> 플랫폼 선택</label> </p>
+  <img v-on:click="addDelivery('싸피')" 
+     src="../assets/img/ssaffee_로고.png" 
+     alt="싸" 
+     :class="{ 'border1': true, 'grayscale': !isSsafySelected }" 
+     width="150px" 
+     height="150px">
+<p>사장님께 자동으로 주문내역을 전달합니다</p>
+<!-- 요기요 이미지 -->
+<img v-on:click="addDelivery('배민')" 
+     src="../assets/img/delivery/배달플랫폼.jpg" 
+     alt="배달플랫폼" 
+     :class="{ 'border1': true, 'grayscale': !isBaeminSelected }" 
+     width="150px" 
+     height="150px">
+<p>마감시간이 지난 후 타 배달 플랫폼을 활용하여 직접 주문해주셔야 합니다.</p>
+<!-- 쿠팡이츠 이미지 -->
 
   </div>
 </div>
 
 <div class = "button-container">
-<button @click = "submitForm" class= "button-style">완료</button>
+<button @click = "modalOpen" class= "button-style">완료</button>
 </div>
 
 </template>
 
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const form = ref({
 roomTitle: '',
@@ -88,37 +117,64 @@ accountNumber: '',
 phoneNumber: ''
 })
 
+const PickPlatform = ref('');
+const Pickdelivery = ref('');
+
 
 const isGongchaSelected = computed(() => PickPlatform.value === '공차');
 const isComposedSelected = computed(() => PickPlatform.value === '컴포즈드');
 const isBaekSelected = computed(() => PickPlatform.value === '백다방');
 
 
-const PickPlatform = ref('');
-const Pickdelivery = ref([]);
+
+const isBaeminSelected = ref(false);
+const isSsafySelected = ref(false);
+
+watch(Pickdelivery, (value) => {
+  if (value === '싸피') {
+    isBaeminSelected.value = false;
+    isSsafySelected.value = true;
+  } else if (value === '배민') {
+    isBaeminSelected.value = true;
+    isSsafySelected.value = false;
+  } else {
+    // 조건이 맞지 않을 경우의 로직
+    isBaeminSelected.value = false;
+    isSsafySelected.value = false; 
+  }
+});
 
 // console.log(form)
 // console.log(addPlatform)
-function submitForm() {
-alert('제출이 완료되었습니다')
-console.log(form)
-}
+// function submitForm() {
+// alert('제출이 완료되었습니다')
+// console.log(form)
+// }
 
 function addPlatform(itemName) {
 if (PickPlatform.value === itemName) {
   PickPlatform.value = '';
 } else if (PickPlatform.value === ''){
   PickPlatform.value = itemName
-}
-
-console.log(PickPlatform.value); // 디버깅을 위해 현재 아이템 목록을 콘솔에 출력
-console.log(PickPlatform.value !== '공차')
+} 
 }
 
 function addDelivery(itemName) {
-Pickdelivery.value.push(itemName);
-console.log(Pickdelivery.value); // 디버깅을 위해 현재 아이템 목록을 콘솔에 출력
+  if (Pickdelivery.value === itemName) {
+    Pickdelivery.value = '';
+  } else if (Pickdelivery.value === '') {
+    Pickdelivery.value = itemName;
+  }
 }
+
+
+// 이하는 모달
+const modalCheck = ref(false)
+function modalOpen() {
+    modalCheck.value = !modalCheck.value
+    console.log(modalCheck.value)
+}
+
 
 </script>
 
@@ -175,7 +231,6 @@ input[type="text"] {
 header {
   /* height: 50px; */
   font-size: 2rem;
-  display: flex;
   width: 100%;
   background-color: #344A53;
   justify-content: space-between;
@@ -228,4 +283,42 @@ display: none; /* 마지막 child에는 선을 표시하지 않음 */
 filter: grayscale(100%); /* 흑백 필터 적용 */
 }
 
+/* 이하는 모달 */
+/* dimmed */
+.modal-wrap {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+/* modal or popup */
+.modal-container {
+  position: relative;
+  top: 12%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  background: #344A53;
+  border-radius: 20px;
+  padding: 5px 40px;
+  box-sizing: border-box;
+}
+
+.button-modal {
+  position: relative;
+  left: 92%;
+  padding: 10px 20px; /* 버튼 내부 여백 */
+  border: none; /* 테두리 제거 */
+  background-color: #4c95af; /* 배경색 */
+  color: white; /* 글자색 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  text-decoration: none; /* 텍스트 밑줄 제거 */
+  display: inline-block; /* 인라인 블록 요소로 표시 */
+  font-size: 14px; /* 글꼴 크기 */
+  cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+  border-radius: 15px; /* 둥근 모서리를 만들기 위해 테두리 반경 설정 */
+}
 </style> 
