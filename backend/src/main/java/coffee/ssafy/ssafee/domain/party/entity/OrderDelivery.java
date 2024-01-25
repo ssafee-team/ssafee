@@ -1,37 +1,34 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "creators")
+@Table(name = "order_deliveries")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Creator {
+public class OrderDelivery extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "creator_id", nullable = false)
+    @Column(name = "order_delivery_id", nullable = false, updatable = false)
     private Long id;
 
     @NotNull
     @Column(nullable = false)
-    private String name;
+    private Integer fee;
 
-    @NotNull
-    @Column(nullable = false, updatable = false)
-    private String email;
+    @Column
+    private LocalDateTime expectedTime;
 
-    @NotNull
-    @Column(nullable = false)
-    private String bank;
-
-    @NotNull
-    @Column(nullable = false)
-    private String account;
+    @Column
+    private LocalDateTime arrivedTime;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "party_id", nullable = false, updatable = false)

@@ -16,18 +16,18 @@ public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_id", nullable = false)
+    @Column(name = "option_id", nullable = false, updatable = false)
     private Long id;
 
     @NotNull
-    @Column(name = "option_name", updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private String name;
 
     @NotNull
-    @Column(name = "option_price", updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private Integer price;
 
-    @Column(name = "option_deleted", nullable = false)
+    @Column(nullable = false)
     private Boolean deleted;
 
 }

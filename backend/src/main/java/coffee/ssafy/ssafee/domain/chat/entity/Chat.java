@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.party.entity.Party;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -14,17 +15,19 @@ import java.time.LocalDateTime;
 public class Chat {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "party_id", updatable = false, nullable = false)
-    @MapsId
+    @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
-    @Column(name = "chat_content", updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private String content;
 
-    @Column(name = "chat_created_time", insertable = false, updatable = false, nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdTime;
 
 }

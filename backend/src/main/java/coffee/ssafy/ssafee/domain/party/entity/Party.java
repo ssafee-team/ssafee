@@ -22,31 +22,31 @@ public class Party extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_id", insertable = false, nullable = false)
+    @Column(name = "party_id", nullable = false, updatable = false)
     private Long id;
 
     @NotNull
-    @Column(name = "party_name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
-    @Column(name = "party_generation", nullable = false)
+    @Column(nullable = false)
     private Integer generation;
 
     @NotNull
-    @Column(name = "party_classroom", nullable = false)
+    @Column(nullable = false)
     private Integer classroom;
 
     @NotNull
-    @Column(name = "party_last_order_time", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime lastOrderTime;
 
     @NotNull
-    @Column(name = "party_access_code", updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private String accessCode;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "shop_id", updatable = false, nullable = false)
+    @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
 
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -59,7 +59,7 @@ public class Party extends BaseTimeEntity {
     private List<OrderMenu> orderMenus;
 
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
-    private OrderResult orderResult;
+    private OrderDelivery orderDelivery;
 
     public void updateCreator(String accessCode, Shop shop, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;

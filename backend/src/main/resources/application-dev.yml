@@ -5,7 +5,4 @@ spring:
     username: ssafy
     password: ssafy
   jpa:
-    hibernate:
-      ddl-auto: create
-    generate-ddl: true
     show-sql: true

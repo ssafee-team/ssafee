@@ -9,7 +9,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "order_menus")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,19 +18,19 @@ public class OrderMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_menu_id", nullable = false)
+    @Column(name = "order_menu_id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "participant_id", updatable = false, nullable = false)
+    @JoinColumn(name = "participant_id", nullable = false, updatable = false)
     private Participant participant;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "party_id", updatable = false, nullable = false)
+    @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

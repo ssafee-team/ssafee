@@ -18,22 +18,22 @@ public class OptionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_category_id", nullable = false)
+    @Column(name = "option_category_id", nullable = false, updatable = false)
     private Long id;
 
     @NotNull
-    @Column(name = "option_categroy_name", updatable = false, nullable = false)
+    @Column(nullable = false, updatable = false)
     private String name;
 
     @NotNull
-    @Column(name = "option_category_required", nullable = false)
+    @Column(nullable = false)
     private Boolean required;
 
     @NotNull
-    @Column(name = "option_category_max_count", nullable = false)
+    @Column(nullable = false)
     private Integer maxCount;
 
-    @Column(name = "option_category_deleted", nullable = false)
+    @Column(nullable = false)
     private Boolean deleted;
 
     @ManyToMany
