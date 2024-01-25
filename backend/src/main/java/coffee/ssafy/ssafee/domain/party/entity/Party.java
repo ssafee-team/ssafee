@@ -65,10 +65,10 @@ public class Party extends BaseTimeEntity {
         this.accessCode = accessCode;
         this.shop = shop;
         this.creator = Creator.builder()
-                .name(creatorRequest.getName())
-                .email(creatorRequest.getEmail())
-                .bank(creatorRequest.getBank())
-                .account(creatorRequest.getAccount())
+                .name(creatorRequest.name())
+                .email(creatorRequest.email())
+                .bank(creatorRequest.bank())
+                .account(creatorRequest.account())
                 .party(this)
                 .build();
     }

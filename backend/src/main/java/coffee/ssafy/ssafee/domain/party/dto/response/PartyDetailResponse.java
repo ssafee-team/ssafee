@@ -3,23 +3,18 @@ package coffee.ssafy.ssafee.domain.party.dto.response;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class PartyDetailResponse {
-
-    private Long id;
-    private String name;
-    private Integer generation;
-    private Integer classroom;
-    private LocalDateTime lastOrderTime;
-    private LocalDateTime createdTime;
-    private ShopDetailResponse shop;
-    private CreatorResponse creator;
-
+public record PartyDetailResponse(
+        Long id,
+        String name,
+        Integer generation,
+        Integer classroom,
+        LocalDateTime lastOrderTime,
+        LocalDateTime createdTime,
+        ShopDetailResponse shop,
+        CreatorResponse creator
+) {
 }

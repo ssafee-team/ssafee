@@ -1,12 +1,10 @@
 package coffee.ssafy.ssafee.domain.party.mapper;
 
-import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
-import coffee.ssafy.ssafee.domain.party.entity.Creator;
 import coffee.ssafy.ssafee.domain.party.entity.OrderMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;

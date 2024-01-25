@@ -7,13 +7,10 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Builder
-@Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class MenuCategoryDetailResponse {
-
-    private Long id;
-    private String name;
-    private List<MenuResponse> menus;
-
+public record MenuCategoryDetailResponse(
+        Long id,
+        String name,
+        List<MenuResponse> menus
+) {
 }

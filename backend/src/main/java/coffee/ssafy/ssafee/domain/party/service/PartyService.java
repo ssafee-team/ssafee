@@ -49,8 +49,8 @@ public class PartyService {
         Party party = partyMapper.INSTANCE.toEntity(partyRequest);
 
         String accessCode = generateRandomString(10);
-        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.getShopId());
-        party.updateCreator(accessCode, shopReference, partyRequest.getCreator());
+        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
+        party.updateCreator(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
         return accessCode;
     }

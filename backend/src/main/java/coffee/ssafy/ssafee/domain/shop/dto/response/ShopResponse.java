@@ -5,16 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
-@Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ShopResponse {
-
-    private Long id;
-    private String name;
-    private String address;
-    private String phone;
-    private String image;
-    private Boolean enabledAutoOrder;
-
+public record ShopResponse(
+        Long id,
+        String name,
+        String address,
+        String phone,
+        String image,
+        Boolean enabledAutoOrder
+) {
 }
