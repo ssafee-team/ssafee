@@ -1,16 +1,12 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.request.ParticipantRequest;
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
-import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
-import coffee.ssafy.ssafee.domain.party.repository.OrderMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
@@ -30,14 +26,13 @@ public class PartyService {
     @PersistenceContext
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
-    private final OrderMenuRepository orderMenuRepository;
     private final PartyMapper partyMapper;
 
-    private static String generateRandomString(int length) {
+    private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
-        StringBuilder stringBuilder = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
+        StringBuilder stringBuilder = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
             int index = random.nextInt(characters.length());
             char randomChar = characters.charAt(index);
             stringBuilder.append(randomChar);
@@ -48,7 +43,7 @@ public class PartyService {
     public String createParty(PartyRequest partyRequest) {
         Party party = partyMapper.INSTANCE.toEntity(partyRequest);
 
-        String accessCode = generateRandomString(10);
+        String accessCode = generateAccessCode();
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
         party.updateCreator(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
@@ -64,32 +59,6 @@ public class PartyService {
     public PartyDetailResponse findPartyByAccessCode(String accessCode) {
         return partyMapper.INSTANCE.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
-    }
-
-    public List<ParticipantDetailResponse> findOrderMenusByAccessCode(String accessCode) {
-        return partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
-                .getParticipants().stream()
-                .map(partyMapper.INSTANCE::toDetailDto)
-                .toList();
-    }
-
-    public OrderMenuDetailResponse findOrderMenuByAccessCodeAndId(String accessCode, Long id) {
-        return partyMapper.INSTANCE.toDetailDto(partyRepository.findOrderMenuByAccessCodeAndId(accessCode, id)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY_OR_ORDER_MENU)));
-    }
-
-    public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long id) {
-        partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
-        orderMenuRepository.deleteById(id);
-    }
-
-    public String createOrderMenu(String accessCode, ParticipantRequest participantRequest) {
-        partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
-
-        return "";
     }
 
 }
