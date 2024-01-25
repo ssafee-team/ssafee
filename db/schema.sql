@@ -17,39 +17,40 @@ DROP TABLE IF EXISTS `auto_orders`,
 `shops`;
 
 CREATE TABLE `shops` (
-    `shop_id` BIGINT NOT NULL PRIMARY KEY,
+    `shop_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` varchar(32) NOT NULL,
     `address` varchar(255) NOT NULL,
     `phone` varchar(32) NOT NULL,
     `image` varchar(255) NULL,
-    `deleted` BOOL NOT NULL,
-    `enabled_auto_order` BOOL NOT NULL
+    `enabled_auto_order` BOOL NOT NULL DEFAULT FALSE,
+    `deleted` BOOL NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE `menu_categories` (
-    `menu_category_id` BIGINT NOT NULL PRIMARY KEY,
+    `menu_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
-    `deleted` BOOL NOT NULL,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
 
 CREATE TABLE `menus` (
-    `menu_id` BIGINT NOT NULL PRIMARY KEY,
+    `menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
+    `description` VARCHAR(255) NOT NULL,
     `price` INT NOT NULL,
     `image` VARCHAR(255) NULL,
-    `deleted` BOOL NOT NULL,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
     `menu_category_id` BIGINT NOT NULL,
     FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`)
 );
 
 CREATE TABLE `option_categories` (
-    `option_category_id` BIGINT NOT NULL PRIMARY KEY,
+    `option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
-    `required` BOOL NOT NULL,
+    `required` BOOL NOT NULL DEFAULT FALSE,
     `max_count` INT NOT NULL,
-    `deleted` BOOL NOT NULL
+    `deleted` BOOL NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE `menus_option_categories` (
@@ -61,10 +62,10 @@ CREATE TABLE `menus_option_categories` (
 );
 
 CREATE TABLE `options` (
-    `option_id` BIGINT NOT NULL PRIMARY KEY,
+    `option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
     `price` INT NOT NULL,
-    `deleted` BOOL NOT NULL
+    `deleted` BOOL NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE `option_categories_options` (
@@ -76,7 +77,7 @@ CREATE TABLE `option_categories_options` (
 );
 
 CREATE TABLE `parties` (
-    `party_id` BIGINT NOT NULL PRIMARY KEY,
+    `party_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` varchar(32) NOT NULL,
     `generation` INT NOT NULL,
     `classroom` INT NOT NULL,
@@ -89,7 +90,7 @@ CREATE TABLE `parties` (
 );
 
 CREATE TABLE `creators` (
-    `creator_id` BIGINT NOT NULL PRIMARY KEY,
+    `creator_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(8) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `bank` VARCHAR(32) NOT NULL,
@@ -99,7 +100,7 @@ CREATE TABLE `creators` (
 );
 
 CREATE TABLE `chats` (
-    `chat_id` BIGINT NOT NULL PRIMARY KEY,
+    `chat_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `content` VARCHAR(255) NOT NULL,
     `created_time` DATETIME NOT NULL,
     `party_id` BIGINT NOT NULL,
@@ -107,12 +108,12 @@ CREATE TABLE `chats` (
 );
 
 CREATE TABLE `participants` (
-    `participant_id` BIGINT NOT NULL PRIMARY KEY,
+    `participant_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(8) NULL,
-    `is_creator` BOOL NOT NULL,
-    `is_carrier` BOOL NOT NULL,
-    `payed` BOOL NOT NULL,
-    `pay_confirmed` BOOL NOT NULL,
+    `is_creator` BOOL NOT NULL DEFAULT FALSE,
+    `is_carrier` BOOL NOT NULL DEFAULT FALSE,
+    `payed` BOOL NOT NULL DEFAULT FALSE,
+    `pay_confirmed` BOOL NOT NULL DEFAULT FALSE,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `party_id` BIGINT NOT NULL,
@@ -120,7 +121,7 @@ CREATE TABLE `participants` (
 );
 
 CREATE TABLE `order_menus` (
-    `order_menu_id` BIGINT NOT NULL PRIMARY KEY,
+    `order_menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `menu_id` BIGINT NOT NULL,
@@ -140,7 +141,7 @@ CREATE TABLE `order_menus_options` (
 );
 
 CREATE TABLE `order_deliveries` (
-    `order_delivery_id` BIGINT NOT NULL PRIMARY KEY,
+    `order_delivery_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `fee` INT NOT NULL,
     `wanted_time` DATETIME NULL,
     `expected_time` DATETIME NULL,
@@ -152,7 +153,7 @@ CREATE TABLE `order_deliveries` (
 );
 
 CREATE TABLE `auto_orders` (
-    `auto_order_id` BIGINT NOT NULL PRIMARY KEY,
+    `auto_order_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `access_code` CHAR(10) NULL UNIQUE,
     `accepted_time` DATETIME NOT NULL,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -162,7 +163,7 @@ CREATE TABLE `auto_orders` (
 );
 
 CREATE TABLE `auto_payers` (
-    `auto_payer_id` BIGINT NOT NULL PRIMARY KEY,
+    `auto_payer_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `phone` VARCHAR(32) NOT NULL,
     `creator_id` BIGINT NOT NULL,
     `auto_order_id` BIGINT NOT NULL,
@@ -171,7 +172,7 @@ CREATE TABLE `auto_payers` (
 );
 
 CREATE TABLE `managers` (
-    `manager_id` BIGINT NOT NULL PRIMARY KEY,
+    `manager_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
