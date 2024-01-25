@@ -21,7 +21,7 @@ CREATE TABLE `shops` (
     `name` varchar(32) NOT NULL,
     `address` varchar(255) NOT NULL,
     `phone` varchar(32) NOT NULL,
-    `image` varchar(255) NULL,
+    `image` varchar(512) NULL,
     `enabled_auto_order` BOOL NOT NULL DEFAULT FALSE,
     `deleted` BOOL NOT NULL DEFAULT FALSE
 );
@@ -39,7 +39,7 @@ CREATE TABLE `menus` (
     `name` VARCHAR(32) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
     `price` INT NOT NULL,
-    `image` VARCHAR(255) NULL,
+    `image` VARCHAR(512) NULL,
     `deleted` BOOL NOT NULL DEFAULT FALSE,
     `menu_category_id` BIGINT NOT NULL,
     FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`)
@@ -48,8 +48,8 @@ CREATE TABLE `menus` (
 CREATE TABLE `option_categories` (
     `option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
-    `required` BOOL NOT NULL DEFAULT FALSE,
-    `max_count` INT NOT NULL,
+    `required` BOOL NOT NULL,
+    `max_count` INT NULL,
     `deleted` BOOL NOT NULL DEFAULT FALSE
 );
 
