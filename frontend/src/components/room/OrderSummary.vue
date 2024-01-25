@@ -47,13 +47,16 @@ export default {
   },
 };
 </script>
-<style scope>
+<style scoped>
 .order {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
+  width: 65%;
   height: 160px;
   margin: 10px 0px 0px 30px;
+  position: fixed;
+  bottom: 0;
 }
 .title {
   display: flex;

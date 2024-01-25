@@ -14,7 +14,7 @@
       </div>
     </header>
     <body>
-      <div class="center-content" style="margin-top: 25px">
+      <div class="center-content">
         <button @click="checkOrderStatus">현재 주문현황 확인하기</button>
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
@@ -26,7 +26,8 @@
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
         <div class="right-panel">
-          <div>채팅창</div>
+          <!-- <div>채팅창</div> -->
+          <Chat />
           <!-- 오른쪽 컨텐츠 (6:4 중 4 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
@@ -65,6 +66,7 @@ header {
   display: flex;
   font-size: 30px;
   margin: 20px;
+  font-weight: bold;
 }
 .time {
   margin-right: 10px;
@@ -99,20 +101,23 @@ button {
 }
 .left-panel {
   flex: 7; /* 6:4 비율로 나누기 위한 설정 */
-  height: 70vh;
+  height: 80vh;
   /* border: 5px solid #ccc; */
 }
 
 .right-panel {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
-  height: 70vh;
-  border: 5px solid #ccc;
+  height: 85vh;
+  /* border-radius: 10px;
+  background-color: #97afba; */
 }
 </style>
 
 <script setup>
 import MenuList from "@/components/room/MenuList.vue";
+import Chat from "@/components/room/chat/Chat.vue";
+
 const checkOrderStatus = () => {
   // 주문 현황 확인 로직을 추가할 수 있습니다.
   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
