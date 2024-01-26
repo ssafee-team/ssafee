@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="black-bg" v-if="isopened==true">
+		<div class="black-bg" v-if="isOpened==true">
 		<!-- <div class="black-bg"> -->
 			<div class="flexmodal">
 				<div class="modalbody">
@@ -11,12 +11,6 @@
 			</div>
 		<!-- <div class="black-bg"> -->
 		</div>
-    <!-- <div class="dv">
-      <div class="dv">
-          <h4>상세페이지</h4>
-          <p>상세페이지내용</p>
-      </div>
-    </div> -->
     <div id="info">
       <div id="accountinfo">
         <span>입금계좌:</span>
@@ -48,7 +42,8 @@
     // }
     data () {
 			return {
-				isopened: false,
+				isOpened: false,
+        isSelected: false,
 			}
     },
     computed: {
@@ -58,16 +53,20 @@
 			onMoloo(event) {
 				// console.log(event)
 				// console.log("물음표에 들어왔어요")
-				this.isopened = true
-				// console.log(this.isopened)
+				this.isOpened = true
+        event.target.innerText = "!";
+        // <img class="image-thumbnail">
+        
+				// console.log(this.isOpened)
 				// console.log(event.currentTarget)
 			},
 			offMoloo(event) {
 				// console.log(event)
 				// console.log("물음표를 나가요")
-				this.isopened = false
-				// console.log(this.isopened)
-				// this.isopened = false
+				this.isOpened = false
+        event.target.innerText = "?";
+				// console.log(this.isOpened)
+				// this.isOpened = false
 				// console.log(event.currentTarget)
 			}
     },
@@ -124,6 +123,8 @@
         /* display: flex;
         flex-direction: row; */
       }
+      
+
       .white-bg {
         /* width: 50%; */
         background: white;
