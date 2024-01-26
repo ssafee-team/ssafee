@@ -1,8 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.controller;
 
-import coffee.ssafy.ssafee.domain.party.dto.request.ParticipantRequest;
-import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuDetailResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.request.OrderMenuRequest;
+import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
 import coffee.ssafy.ssafee.domain.party.service.OrderMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +20,16 @@ public class OrderMenuController {
 
     @PostMapping
     @Operation(summary = "주문 넣기")
-    public ResponseEntity<Void> createOrder(@PathVariable("access_code") String accessCode, @RequestBody ParticipantRequest participantRequest) {
-        String id = orderMenuService.createOrderMenu(accessCode, participantRequest);
+    public ResponseEntity<Void> createOrder(@PathVariable("access_code") String accessCode, @RequestBody OrderMenuRequest orderMenuRequest) {
+        Long id = orderMenuService.createOrderMenu(accessCode, orderMenuRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode + "/order-menus/" + id);
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping
     @Operation(summary = "주문 메뉴 목록")
-    public ResponseEntity<List<ParticipantDetailResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
+    public ResponseEntity<List<ParticipantResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
         return ResponseEntity.ok().body(orderMenuService.findOrderMenusByAccessCode(accessCode));
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "주문 메뉴")
-    public ResponseEntity<OrderMenuDetailResponse> getOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
-        return ResponseEntity.ok().body(orderMenuService.findOrderMenuByAccessCodeAndId(accessCode, id));
     }
 
     /*

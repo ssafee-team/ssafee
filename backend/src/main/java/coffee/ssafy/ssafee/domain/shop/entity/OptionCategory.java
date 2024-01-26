@@ -3,13 +3,14 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
 @Entity
 @Table(name = "option_categories")
-@SQLRestriction("option_category_deleted = false")
+@SQLRestriction("deleted = false")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -22,7 +23,7 @@ public class OptionCategory {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
@@ -33,7 +34,8 @@ public class OptionCategory {
     @Column(nullable = false)
     private Integer maxCount;
 
-    @Column(nullable = false)
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
     private Boolean deleted;
 
     @OneToMany(mappedBy = "optionCategory")

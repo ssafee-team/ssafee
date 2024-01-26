@@ -26,6 +26,10 @@ public class Party extends BaseTimeEntity {
     private Long id;
 
     @NotNull
+    @Column(nullable = false, unique = true, updatable = false)
+    private String accessCode;
+
+    @NotNull
     @Column(nullable = false)
     private String name;
 
@@ -40,10 +44,6 @@ public class Party extends BaseTimeEntity {
     @NotNull
     @Column(nullable = false)
     private LocalDateTime lastOrderTime;
-
-    @NotNull
-    @Column(nullable = false, updatable = false)
-    private String accessCode;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
@@ -61,7 +61,7 @@ public class Party extends BaseTimeEntity {
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
     private OrderDelivery orderDelivery;
 
-    public void updateCreator(String accessCode, Shop shop, CreatorRequest creatorRequest) {
+    public void prepareCreation(String accessCode, Shop shop, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
         this.shop = shop;
         this.creator = Creator.builder()

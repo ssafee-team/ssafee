@@ -12,6 +12,7 @@ public record PartyResponse(
         Integer generation,
         Integer classroom,
         LocalDateTime lastOrderTime,
-        LocalDateTime createdTime
+        LocalDateTime createdTime,
+        Long shopId
 ) {
 }

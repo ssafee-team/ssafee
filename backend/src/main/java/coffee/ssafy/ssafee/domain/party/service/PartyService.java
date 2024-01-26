@@ -6,7 +6,8 @@ import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyRequestMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyResponseMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PartyService {
 
@@ -28,7 +28,8 @@ public class PartyService {
     @PersistenceContext
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
-    private final PartyMapper partyMapper;
+    private final PartyRequestMapper partyRequestMapper;
+    private final PartyResponseMapper partyResponseMapper;
 
     private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -42,24 +43,25 @@ public class PartyService {
         return stringBuilder.toString();
     }
 
+    @Transactional
     public String createParty(PartyRequest partyRequest) {
-        Party party = partyMapper.INSTANCE.toEntity(partyRequest);
-
         String accessCode = generateAccessCode();
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
-        party.updateCreator(accessCode, shopReference, partyRequest.creator());
+
+        Party party = partyRequestMapper.toEntity(partyRequest);
+        party.prepareCreation(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
         return accessCode;
     }
 
     public List<PartyResponse> findPartiesToday() {
-        return partyRepository.findAll().stream()
-                .map(partyMapper.INSTANCE::toDto)
+        return partyRepository.findAllByCreatedTimeToday().stream()
+                .map(partyResponseMapper::toDto)
                 .toList();
     }
 
     public PartyDetailResponse findPartyByAccessCode(String accessCode) {
-        return partyMapper.INSTANCE.toDetailDto(partyRepository.findByAccessCode(accessCode)
+        return partyResponseMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
     }
 

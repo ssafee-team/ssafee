@@ -18,12 +18,12 @@ public class Creator {
     private Long id;
 
     @NotNull
-    @Column(nullable = false)
-    private String name;
-
-    @NotNull
     @Column(nullable = false, updatable = false)
     private String email;
+
+    @NotNull
+    @Column(nullable = false)
+    private String name;
 
     @NotNull
     @Column(nullable = false)

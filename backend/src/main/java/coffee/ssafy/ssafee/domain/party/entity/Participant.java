@@ -2,13 +2,15 @@ package coffee.ssafy.ssafee.domain.party.entity;
 
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
 
 @Entity
 @Table(name = "participants")
+@DynamicInsert
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -23,20 +25,19 @@ public class Participant extends BaseTimeEntity {
     @Column
     private String name;
 
-    @NotNull
     @Column(nullable = false)
     private Boolean isCreator;
 
-    @NotNull
     @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean isCarrier;
 
-    @NotNull
     @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean payed;
 
-    @NotNull
     @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean payConfirmed;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

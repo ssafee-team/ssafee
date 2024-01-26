@@ -3,13 +3,14 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
 @Entity
 @Table(name = "menu_categories")
-@SQLRestriction("menu_category_deleted = false")
+@SQLRestriction("deleted = false")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -25,7 +26,8 @@ public class MenuCategory {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
     private Boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

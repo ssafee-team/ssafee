@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ParticipantRequest(
-        String participantName,
-        List<OrderMenuRequest> orderMenus
+public record ChosenOptionCategoryRequest(
+        Long optionCategoryId,
+        List<ChosenOptionRequest> options
 ) {
 }

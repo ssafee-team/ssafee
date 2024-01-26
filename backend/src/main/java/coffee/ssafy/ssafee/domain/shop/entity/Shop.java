@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@NotNull
+@Setter
 public class Shop {
 
     @Id
@@ -35,12 +36,13 @@ public class Shop {
     @Column
     private String image;
 
-    @Column(nullable = false)
-    private Boolean deleted;
-
     @NotNull
     @Column(nullable = false)
     private Boolean enabledAutoOrder;
+
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
+    private Boolean deleted;
 
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<MenuCategory> menuCategories;

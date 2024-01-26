@@ -2,7 +2,6 @@ package coffee.ssafy.ssafee.domain.party.entity;
 
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
-import coffee.ssafy.ssafee.domain.shop.entity.Option;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
+@Setter
 public class OrderMenu extends BaseTimeEntity {
 
     @Id
@@ -33,10 +33,13 @@ public class OrderMenu extends BaseTimeEntity {
     @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "order_menus_options",
-            joinColumns = @JoinColumn(name = "order_menu_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_id"))
-    private List<Option> options;
+    @OneToMany(mappedBy = "orderMenu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<OrderMenuOptionCategory> orderMenuOptionCategories;
+
+    public void prepareCreation(Party party, Menu menu, Participant participant) {
+        this.party = party;
+        this.menu = menu;
+        this.participant = participant;
+    }
 
 }

@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.party.dto.response;
+package coffee.ssafy.ssafee.domain.shop.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderMenuResponse(
+public record MenuCategoryResponse(
         Long id,
-        ChosenMenuResponse menu,
-        List<ChosenOptionCategoryResponse> optionCategories
+        String name,
+        List<MenuResponse> menus
 ) {
 }

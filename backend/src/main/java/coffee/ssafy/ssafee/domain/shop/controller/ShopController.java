@@ -1,14 +1,12 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,12 +19,18 @@ public class ShopController {
 
     @GetMapping
     public ResponseEntity<List<ShopResponse>> getShops() {
-        return ResponseEntity.ok().body(shopService.findAllShop());
+        return ResponseEntity.ok().body(shopService.findShops());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ShopDetailResponse> getShop(@PathVariable Long id) {
         return ResponseEntity.ok().body(shopService.findShopById(id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateShop(@PathVariable Long id, @RequestBody ShopRequest shopRequest) {
+        shopService.updateShop(id, shopRequest);
+        return ResponseEntity.noContent().build();
     }
 
 }

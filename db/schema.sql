@@ -7,11 +7,11 @@ DROP TABLE IF EXISTS `auto_orders`,
 `menus`,
 `menus_option_categories`,
 `option_categories`,
-`option_categories_options`,
 `options`,
 `order_deliveries`,
 `order_menus`,
-`order_menus_options`,
+`order_menu_option_categories`,
+`order_menu_options`,
 `participants`,
 `parties`,
 `shops`;
@@ -72,11 +72,11 @@ CREATE TABLE `options` (
 
 CREATE TABLE `parties` (
     `party_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `access_code` CHAR(10) NOT NULL UNIQUE,
     `name` varchar(32) NOT NULL,
     `generation` INT NOT NULL,
     `classroom` INT NOT NULL,
     `last_order_time` DATETIME NOT NULL,
-    `access_code` CHAR(10) NOT NULL,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE `parties` (
 
 CREATE TABLE `creators` (
     `creator_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(8) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(8) NOT NULL,
     `bank` VARCHAR(32) NOT NULL,
     `account` VARCHAR(32) NOT NULL,
     `party_id` BIGINT NOT NULL,
@@ -126,11 +126,19 @@ CREATE TABLE `order_menus` (
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
 
-CREATE TABLE `order_menus_options` (
+CREATE TABLE `order_menu_option_categories` (
+    `order_menu_option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_menu_id` BIGINT NOT NULL,
-    `option_id` BIGINT NOT NULL,
-    PRIMARY KEY (`order_menu_id`, `option_id`),
+    `option_category_id` BIGINT NOT NULL,
     FOREIGN KEY (`order_menu_id`) REFERENCES `order_menus`(`order_menu_id`),
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
+);
+
+CREATE TABLE `order_menu_options` (
+    `order_menu_option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `order_menu_option_category_id` BIGINT NOT NULL,
+    `option_id` BIGINT NOT NULL,
+    FOREIGN KEY (`order_menu_option_category_id`) REFERENCES `order_menu_option_categories`(`order_menu_option_category_id`),
     FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
 );
 
