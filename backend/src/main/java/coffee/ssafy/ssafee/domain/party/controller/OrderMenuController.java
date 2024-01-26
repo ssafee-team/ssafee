@@ -27,13 +27,11 @@ public class OrderMenuController {
         return ResponseEntity.created(location).build();
     }
 
-
     @GetMapping
     @Operation(summary = "주문 메뉴 목록")
     public ResponseEntity<List<ParticipantDetailResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
         return ResponseEntity.ok().body(orderMenuService.findOrderMenusByAccessCode(accessCode));
     }
-
 
     @GetMapping("/{id}")
     @Operation(summary = "주문 메뉴")
