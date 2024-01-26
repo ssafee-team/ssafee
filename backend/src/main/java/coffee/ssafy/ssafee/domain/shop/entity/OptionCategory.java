@@ -36,12 +36,7 @@ public class OptionCategory {
     @Column(nullable = false)
     private Boolean deleted;
 
-    @ManyToMany
-    @JoinTable(
-            name = "option_categories_options",
-            joinColumns = @JoinColumn(name = "option_category_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_id")
-    )
+    @OneToMany(mappedBy = "optionCategory")
     private List<Option> options;
 
 }

@@ -30,4 +30,8 @@ public class Option {
     @Column(nullable = false)
     private Boolean deleted;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "option_category_id", nullable = false)
+    private OptionCategory optionCategory;
+
 }

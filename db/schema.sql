@@ -65,15 +65,9 @@ CREATE TABLE `options` (
     `option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
     `price` INT NOT NULL,
-    `deleted` BOOL NOT NULL DEFAULT FALSE
-);
-
-CREATE TABLE `option_categories_options` (
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
     `option_category_id` BIGINT NOT NULL,
-    `option_id` BIGINT NOT NULL,
-    PRIMARY KEY (`option_category_id`, `option_id`),
-    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`),
-    FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
 );
 
 CREATE TABLE `parties` (
