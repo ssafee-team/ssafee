@@ -60,9 +60,9 @@
 		</div>
 			<div class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
-				<div style="width: 25%;">이름</div>
+				<div @click="sortByName()" style="width: 25%; cursor: grab; ">이름 ▼</div>
 				<div style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">메뉴</div>
-				<div style="width: 15%; box-sizing: border-box; padding-right: 2rem;">금액</div>
+				<div @click="sortByPrice()" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div>
 			</div>
 			<div class="orderbox" style="font-size: 2rem;">
 				<div
@@ -132,7 +132,7 @@ export default {
 			// })
 			// return {totalNum: this.orders.length, totalPrice: totalPrice}
 			return { totalNumStudent: this.orders.length, totalNumItem: this.orders.length, totalPrice: this.orders.reduce((acc, cur)=> acc + cur.menuPrice, 0)}
-		}
+		},
 	},
 	methods: {
 		selectStudent(index) {
@@ -151,7 +151,19 @@ export default {
 		},
 		closeModal() {
 			this.selectedStudentNo = -1;
-		}
+		},
+
+		sortByName() {
+			console.log("이름기준 정렬데이터를 호출합니다")
+			this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
+			// console.log(this.orders)
+		},
+		sortByPrice() {
+			console.log("가격기준 정렬데이터를 호출합니다")
+			this.orders.sort((a, b) => b.menuPrice - a.menuPrice);
+			// console.log(this.orders)
+			// this.orders.sort((b, a) => a.studentName.localeCompare(b.studentName));
+		},
 	},
 }
 </script>
@@ -293,7 +305,7 @@ export default {
 	.black-bg {
         width: 70%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        // background: rgba(0,0,0,0.5);
         position: fixed;
         padding: 20px;
 				// position: absolute;
