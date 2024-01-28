@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        GIT_URL = 'https://lab.ssafy.com/s10-webmobile1-sub2/S10P12C209.git'
-    }
-
     tools {
         nodejs 'nodejs-20.11.0'
     }
@@ -13,7 +9,6 @@ pipeline {
         stage('Pull') {
             steps {
                 updateGitlabCommitStatus name: 'build', state: 'pending'
-                git "${GIT_URL}"
             }
         }
 
