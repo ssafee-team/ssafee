@@ -1,8 +1,23 @@
+server:
+  port: 8080
+
 spring:
+  web:
+    resources:
+      add-mappings: false
   datasource:
-    url: jdbc:mysql://localhost:3306/S10P12C209
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ssafy
-    password: ssafy
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:S10P12C209
+    username: sa
+    password:
   jpa:
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

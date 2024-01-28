@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 group = 'coffee.ssafy'
@@ -28,9 +29,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-//    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
-//    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -50,14 +51,32 @@ dependencies {
     // https://github.com/mapstruct/mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-//    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-bootRun {
-    String activeProfile = System.properties['spring.profiles.active']
-    systemProperty 'spring.profiles.active', activeProfile
+node {
+    download = true
+    version = '20.11.0'
+    nodeProjectDir = file('../frontend')
 }
+
+tasks.register('npmBuild', NpmTask) {
+    dependsOn 'npmInstall'
+    args = ['run', 'build']
+}
+
+tasks.named('compileJava') {
+    dependsOn 'npmBuild'
+}
+
+tasks.register('copyNpmBuild', Copy) {
+    from file('../frontend/dist')
+    into file('build/resources/main/static')
+}
+
+//tasks.named('processResources') {
+//    dependsOn 'copyNpmBuild'
+//}
