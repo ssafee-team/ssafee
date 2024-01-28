@@ -3,13 +3,14 @@ package coffee.ssafy.ssafee.domain.shop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
 @Entity
 @Table(name = "option_categories")
-@SQLRestriction("option_category_deleted = false")
+@SQLRestriction("deleted = false")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,30 +19,26 @@ public class OptionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_category_id", nullable = false)
+    @Column(name = "option_category_id", nullable = false, updatable = false)
     private Long id;
 
     @NotNull
-    @Column(name = "option_categroy_name", updatable = false, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
-    @Column(name = "option_category_required", nullable = false)
+    @Column(nullable = false)
     private Boolean required;
 
     @NotNull
-    @Column(name = "option_category_max_count", nullable = false)
+    @Column(nullable = false)
     private Integer maxCount;
 
-    @Column(name = "option_category_deleted", nullable = false)
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
     private Boolean deleted;
 
-    @ManyToMany
-    @JoinTable(
-            name = "option_categories_options",
-            joinColumns = @JoinColumn(name = "option_category_id"),
-            inverseJoinColumns = @JoinColumn(name = "option_id")
-    )
+    @OneToMany(mappedBy = "optionCategory")
     private List<Option> options;
 
 }

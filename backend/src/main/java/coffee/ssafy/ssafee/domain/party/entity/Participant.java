@@ -2,14 +2,15 @@ package coffee.ssafy.ssafee.domain.party.entity;
 
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
 
 @Entity
 @Table(name = "participants")
+@DynamicInsert
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,32 +19,29 @@ public class Participant extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participant_id", nullable = false)
+    @Column(name = "participant_id", nullable = false, updatable = false)
     private Long id;
 
-    @NotNull
-    @Null
-    @Column(name = "participant_name")
+    @Column
     private String name;
 
-    @NotNull
-    @Column(name = "participant_is_creator", nullable = false)
+    @Column(nullable = false)
     private Boolean isCreator;
 
-    @NotNull
-    @Column(name = "participant_is_carrier", nullable = false)
+    @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean isCarrier;
 
-    @NotNull
-    @Column(name = "participant_payed", nullable = false)
+    @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean payed;
 
-    @NotNull
-    @Column(name = "participant_pay_confirmed", nullable = false)
+    @Column(nullable = false)
+    @ColumnDefault("false")
     private Boolean payConfirmed;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "party_id", updatable = false, nullable = false)
+    @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
     @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)

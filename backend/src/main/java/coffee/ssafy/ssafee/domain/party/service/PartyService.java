@@ -1,63 +1,68 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.*;
+import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyRequestMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyResponseMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class PartyService {
 
-    private final PartyRepository partyRepository;
+    private static final int ACCESS_CODE_LENGTH = 10;
+
+    @PersistenceContext
     private final EntityManager entityManager;
-    private final PartyMapper partyMapper;
+    private final PartyRepository partyRepository;
+    private final PartyRequestMapper partyRequestMapper;
+    private final PartyResponseMapper partyResponseMapper;
 
-    public void createParty(PartyReqDto partyReqDto) {
-        Shop shopReference = entityManager.getReference(Shop.class, partyReqDto.getShopId());
-        Party party = Party.builder()
-                .name(partyReqDto.getName())
-                .generation(partyReqDto.getGeneration())
-                .classroom(partyReqDto.getClassroom())
-                .lastOrderTime(partyReqDto.getLastOrderTime())
-                .accessCode(UUID.randomUUID().toString())
-                .shop(shopReference)
-                .creator(partyMapper.INSTANCE.toEntity(partyReqDto.getCreator()))
-                .build();
+    private static String generateAccessCode() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(ACCESS_CODE_LENGTH);
+        for (int i = 0; i < 10; i++) {
+            int index = random.nextInt(characters.length());
+            char randomChar = characters.charAt(index);
+            stringBuilder.append(randomChar);
+        }
+        return stringBuilder.toString();
+    }
+
+    @Transactional
+    public String createParty(PartyRequest partyRequest) {
+        String accessCode = generateAccessCode();
+        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
+
+        Party party = partyRequestMapper.toEntity(partyRequest);
+        party.prepareCreation(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
+        return accessCode;
     }
 
-    public List<PartyDto> findPartiesToday() {
-        return partyRepository.findAll().stream()
-                .map(partyMapper.INSTANCE::toDto)
+    public List<PartyResponse> findPartiesToday() {
+        return partyRepository.findAllByCreatedTimeToday().stream()
+                .map(partyResponseMapper::toDto)
                 .toList();
     }
 
-    public PartyDetailDto findPartyByAccessCode(String accessCode) {
-        return partyMapper.INSTANCE.toDetailDto(partyRepository.findByAccessCode(accessCode)
+    public PartyDetailResponse findPartyByAccessCode(String accessCode) {
+        return partyResponseMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
-    }
-
-    public List<ParticipantDetailDto> findOrderMenusByAccessCode(String accessCode) {
-        return partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
-                .getParticipants().stream()
-                .map(partyMapper.INSTANCE::toDetailDto)
-                .toList();
-    }
-
-    public OrderMenuDetailDto findOrderMenuByAccessCodeAndId(String accessCode, Long id) {
-        return partyMapper.INSTANCE.toDetailDto(partyRepository.findOrderMenuByAccessCodeAndId(accessCode, id)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY_OR_ORDER_MENU)));
     }
 
 }

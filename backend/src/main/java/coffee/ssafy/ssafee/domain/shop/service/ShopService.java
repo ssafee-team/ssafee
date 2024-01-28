@@ -1,13 +1,16 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDetailDto;
-import coffee.ssafy.ssafee.domain.shop.dto.ShopDto;
+import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
-import coffee.ssafy.ssafee.domain.shop.mapper.ShopMapper;
+import coffee.ssafy.ssafee.domain.shop.mapper.ShopRequestMapper;
+import coffee.ssafy.ssafee.domain.shop.mapper.ShopResponseMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,17 +19,24 @@ import java.util.List;
 public class ShopService {
 
     private final ShopRepository shopRepository;
-    private final ShopMapper shopMapper;
+    private final ShopRequestMapper shopRequestMapper;
+    private final ShopResponseMapper shopResponseMapper;
 
-    public ShopDetailDto findShopById(Long id) {
-        return shopMapper.INSTANCE.toDetailDto(shopRepository.findById(id)
+    public ShopDetailResponse findShopById(Long id) {
+        return shopResponseMapper.toDetailDto(shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 
-    public List<ShopDto> findAllShop() {
+    public List<ShopResponse> findShops() {
         return shopRepository.findAll().stream()
-                .map(shopMapper.INSTANCE::toDto)
+                .map(shopResponseMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public void updateShop(Long id, ShopRequest shopRequest) {
+        shopRequestMapper.updateFromDto(shopRequest, shopRepository.findById(id)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 
 }
