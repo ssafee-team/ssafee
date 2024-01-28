@@ -23,13 +23,17 @@ pipeline {
         stage('Gradle Build') {
             steps {
                 updateGitlabCommitStatus name: 'build', state: 'running'
-                sh './backend/gradlew clean bootJar -Dspring.profiles.active=prod'
+                dir('backend') {
+                    sh './gradlew clean bootJar -Dspring.profiles.active=prod'
+                }
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t backend ./backend/'
+                dir('backend') {
+                    sh 'docker build -t backend .'
+                }
             }
         }
 
