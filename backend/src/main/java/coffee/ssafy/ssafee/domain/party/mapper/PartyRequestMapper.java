@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PartyRequestMapper extends RequestMapper<PartyRequest, Party> {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "creator", ignore = true)
     Party toEntity(PartyRequest partyRequest);
 

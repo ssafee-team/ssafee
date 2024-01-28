@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "parties", indexes = {
-        @Index(name = "idx_party_access_code", columnList = "party_access_code", unique = true)
+        @Index(name = "idx_access_code", columnList = "access_code", unique = true)
 })
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

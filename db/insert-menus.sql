@@ -30,7 +30,7 @@ CREATE TABLE `menu_categories` (
   PRIMARY KEY (`menu_category_id`),
   KEY `shop_id` (`shop_id`),
   CONSTRAINT `menu_categories_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +61,7 @@ CREATE TABLE `menus` (
   PRIMARY KEY (`menu_id`),
   KEY `menu_category_id` (`menu_category_id`),
   CONSTRAINT `menus_ibfk_1` FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories` (`menu_category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,7 +88,7 @@ CREATE TABLE `menus_option_categories` (
   KEY `option_category_id` (`option_category_id`),
   CONSTRAINT `menus_option_categories_ibfk_1` FOREIGN KEY (`menu_id`) REFERENCES `menus` (`menu_id`),
   CONSTRAINT `menus_option_categories_ibfk_2` FOREIGN KEY (`option_category_id`) REFERENCES `option_categories` (`option_category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `option_categories` (
   `max_count` int DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`option_category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +144,7 @@ CREATE TABLE `options` (
   PRIMARY KEY (`option_id`),
   KEY `option_category_id` (`option_category_id`),
   CONSTRAINT `options_ibfk_1` FOREIGN KEY (`option_category_id`) REFERENCES `option_categories` (`option_category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=232 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=232 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
