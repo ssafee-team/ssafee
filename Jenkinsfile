@@ -15,7 +15,7 @@ pipeline {
         stage('Credentials') {
             steps {
                 withCredentials([file(credentialsId: 'application-prod-yml', variable: 'APPLICATION_PROD_YML')]) {
-                    sh 'cp $APPLICATION_PROD_YML ./backend/src/main/resources/application-prod.yml'
+                    sh 'cp -f $APPLICATION_PROD_YML ./backend/src/main/resources/application-prod.yml'
                 }
             }
         }
