@@ -20,19 +20,11 @@ pipeline {
             }
         }
 
-        stage('Gradle Build') {
+        stage('Build') {
             steps {
                 updateGitlabCommitStatus name: 'build', state: 'running'
                 dir('backend') {
                     sh './gradlew clean bootJar -Dspring.profiles.active=prod'
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                dir('backend') {
-                    sh 'docker build -t backend .'
                 }
             }
         }
@@ -42,6 +34,9 @@ pipeline {
                 branch 'master'
             }
             steps {
+                dir('backend') {
+                    sh 'docker build -t backend .'
+                }
                 sh 'docker ps -q --filter name=backend | grep -q . && docker stop backend && docker rm backend'
                 sh 'docker run -d --name backend backend'
                 sh 'docker images -qf dangling=true | xargs -I{} docker rmi {}'
@@ -52,6 +47,15 @@ pipeline {
             steps {
                 updateGitlabCommitStatus name: 'build', state: 'success'
             }
+        }
+    }
+
+    post {
+        success {
+            mattermostSend color: 'good', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+        }
+        failure {
+            mattermostSend color: 'danger', message: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
         }
     }
 }
