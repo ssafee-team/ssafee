@@ -24,11 +24,7 @@
   </div>
 </template>
 <script>
-<<<<<<< HEAD
 // import io from "vue-socket.io";
-=======
-//import io from "vue-socket.io";
->>>>>>> d65baee (fix: after창 수정 fetch 준비)
 export default {
   data() {
     return {
