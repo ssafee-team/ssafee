@@ -80,7 +80,7 @@ export default {
 </script>
 <style scoped>
 .chat-window {
-  height: 100%;
+  /* height: 100%; */
 }
 
 .chat-body {
@@ -102,7 +102,7 @@ export default {
 
 .chat-messages {
   padding: 10px;
-  height: 650px;
+  height: auto;
   font-size: 20px;
   overflow-y: hidden;
 }
@@ -152,7 +152,8 @@ export default {
 .chat-input {
   display: flex;
   width: 100%;
-  height: 140px;
+  height: auto;
+  /* height: 140px; */
   margin-top: 10px;
 }
 .chat-input > textarea {

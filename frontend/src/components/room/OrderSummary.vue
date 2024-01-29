@@ -11,7 +11,7 @@
       </button>
     </div>
     <hr />
-    <ul v-show="orderSummaryVisible" class="list">
+    <ul v-show="orderList.length > 0" class="list">
       <li v-for="(order, index) in limitedOrderList" :key="index" class="order-list">
         <div class="order-name">{{ order.name }}</div>
         <div class="order-options">옵션: {{ getOrderOptions(order.options) }}</div>
@@ -52,12 +52,13 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  width: 65%;
-  height: 160px;
-  margin: 10px 0px 0px 30px;
-  position: fixed;
-  bottom: 0;
+  height: auto;
+  /* width: 60%; */
+  margin: 10px 0px 0px 20px;
+  /* position: fixed; */
+  /* bottom: 0; */
 }
+
 .title {
   display: flex;
   justify-content: space-between;
@@ -70,14 +71,15 @@ export default {
 }
 .btn-order {
   cursor: pointer;
-  height: 50px;
+  height: auto;
   margin-left: 20px;
   background-color: #00a5e7;
   color: white;
   font-weight: bold;
   border-radius: 5px;
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 14px;
+  border: none;
 }
 
 .btn-toggle {
@@ -92,11 +94,13 @@ export default {
 }
 .list {
   margin-top: 5px;
+  height: auto;
 }
 .order-list {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
+  height: auto;
 }
 .order-list > div {
   flex: 1;

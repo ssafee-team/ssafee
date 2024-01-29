@@ -314,7 +314,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: scroll;
-  height: 650px;
+  height: 600px;
 }
 
 .drink-item {
@@ -328,8 +328,8 @@ export default {
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 15px;
   cursor: pointer;
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
   margin-bottom: 10px;
 }
 .price {
@@ -357,6 +357,7 @@ export default {
   color: white;
   position: relative;
   z-index: 10000;
+  border: none;
 }
 .close {
   width: 120px;
@@ -384,12 +385,6 @@ export default {
   font-size: 18px;
 }
 
-.close:hover {
-  /* color: white; */
-  /* font-weight: bold; */
-  /* transform: scale(1.1); */
-  /* transition: all 0.5s; */
-}
 .modal-title {
   /* 상우좌하 */
   margin: 0px 10px 10px 5px;
