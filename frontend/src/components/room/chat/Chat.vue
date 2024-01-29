@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-//import io from "vue-socket.io";
+import io from "vue-socket.io";
 export default {
   data() {
     return {
