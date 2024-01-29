@@ -1,17 +1,11 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'nodejs-20.11.0'
+    environment {
+        NO_COLOR = 'true'
     }
 
     stages {
-        stage('Pull') {
-            steps {
-                updateGitlabCommitStatus name: 'build', state: 'pending'
-            }
-        }
-
         stage('Credentials') {
             steps {
                 withCredentials([file(credentialsId: 'application-prod-yml', variable: 'APPLICATION_PROD_YML')]) {
@@ -22,7 +16,6 @@ pipeline {
 
         stage('Build') {
             steps {
-                updateGitlabCommitStatus name: 'build', state: 'running'
                 dir('backend') {
                     sh './gradlew clean bootJar -Dspring.profiles.active=prod'
                 }
@@ -58,7 +51,6 @@ pipeline {
         stage('Finish') {
             steps {
                 sh 'docker images -qf dangling=true | xargs -I{} docker rmi {}'
-                updateGitlabCommitStatus name: 'build', state: 'success'
             }
         }
     }
