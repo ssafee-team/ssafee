@@ -150,7 +150,10 @@
 			.modalbody {
 				width: 450px;
 				height: 50px;
-				background-color: hotpink;
+        color: #f8f8f8;
+				background-color: #97AFBA;
+        /* opacity: 0.9; */
+        font-weight: bold;
 				border-radius: 10px;
 				transform: translateY(-28px);
         text-align: center;
@@ -164,7 +167,8 @@
 				height: 0;
 				border-top: 10px solid transparent;
 				border-bottom: 10px solid transparent;
-				border-left: 20px solid hotpink;
+				border-left: 20px solid #97AFBA;
+        /* opacity: 0.9; */
 				border-right: 10px solid transparent;
         transform: translateY(-4px);
 			}
