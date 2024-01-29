@@ -38,7 +38,7 @@ pipeline {
                     sh 'docker build -t backend .'
                 }
                 sh 'docker ps -q --filter name=backend | grep -q . && docker stop backend && docker rm backend'
-                sh 'docker run -d --name backend --network ssafee backend --server.port=8081'
+                sh 'docker run -d --name backend --network ssafee backend --spring.profiles.active=prod --server.port=8081'
             }
         }
 
