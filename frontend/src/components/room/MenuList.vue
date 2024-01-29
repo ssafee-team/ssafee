@@ -185,6 +185,17 @@ export default {
           { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
         ],
       },
+      options: {
+        0: [
+          { name: "휘핑 제공", price: "0" },
+          { name: "휘핑 미제공", price: "0" },
+          { name: "휘핑 적게", price: "0" },
+          { name: "설탕시럽 1펌프 추가", price: "500" },
+          { name: "설탕시럽 2펌프 추가", price: "1000" },
+          { name: "샷추가", price: "500" },
+          { name: "펄추가", price: "1000" },
+        ],
+      },
       selectedCategory: 0,
       drinkItemWidth: "20%", //각 음료 항목의 너비
       selectedDrinkIndex: null, //선택한 음료의 인덱스를 기억하는 데이터 추가
@@ -228,17 +239,14 @@ export default {
     selectOption(option, price) {
       console.log(option + "옵션 선택");
       console.log("가격 추가: " + price + "원");
-
-      // // 옵션을 선택할 때 해당 옵션이 이미 선택되었는지 확인하고, 선택되지 않은 경우에만 가격을 추가
-      // if (!this.checkedOptions[option]) {
-      //   this.$set(this.checkedOptions, option, price); // 옵션과 가격 추가
-      // }
-
-      this.calculateTotalPrice(); //가격 재계산
     },
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
+      console.log("현재", total);
+      //undefined
+      console.log(this.checkedOptions);
+      console.log(this.selectOption.price);
       Object.values(this.checkedOptions).forEach((price) => {
         total += parseFloat(price);
       });
