@@ -60,15 +60,13 @@
 		</div>
 			<div class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
-				<div @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
-				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
+				<div @click="sortByName()" style="width: 25%; cursor: grab; ">이름 ▼</div>
 				<div style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">메뉴</div>
-				<div @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
-				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
+				<div @click="sortByPrice()" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div>
 			</div>
 			<div class="orderbox" style="font-size: 2rem;">
 				<div
-					v-for="(order, index) in (isInit?orders:ordersCopied)"
+					v-for="(order, index) in orders"
 					:key="index"
 					@click="selectStudent(index)"
 					:class="{ordermenu: true, isSelected: selectedStudentNo == index}"
@@ -108,7 +106,6 @@ export default {
 				{classNo: "2", studentName: "박희찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
 				{classNo: "2", studentName: "주홍찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
 				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
-				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
 				{classNo: "2", studentName: "강민지", menuName: "ICE 자몽티", menuPrice: 3000},
 				{classNo: "2", studentName: "김우태", menuName: "캔디소다 밀크쉐이크", menuPrice: 6000},
 				{classNo: "2", studentName: "유병욱", menuName: "ICE 고구마라떼", menuPrice: 300},
@@ -116,13 +113,8 @@ export default {
 				{classNo: "2", studentName: "김요한", menuName: "키위주스", menuPrice: 12345},
 				{classNo: "2", studentName: "이유빈", menuName: "오렌지당근주스", menuPrice: 12345},
 					],
-			ordersCopied : [],
 			selectedStudentNo: -1,
 			selectedOrders: [],
-			isSortedByName: false,
-			isSortedByPrice: false,
-			isInit: true,
-
 		}
 	},
 
@@ -145,7 +137,6 @@ export default {
 	methods: {
 		selectStudent(index) {
 			// this.selectedStudentNo = this.selectedStudentNo === index? -99: index;
-			let menuNames = []
 			if (this.selectedStudentNo === index) {
 				this.selectedStudentNo = -99;
 				this.selectedOrders = ref([]);
@@ -153,19 +144,6 @@ export default {
 			else {
 				this.selectedStudentNo = index;
 				this.selectedOrders = this.orders.filter((order) => order.studentName ===  this.orders[this.selectedStudentNo].studentName);
-				
-				
-			// 	this.selectedOrders.forEach((order,index) => {
-			// 		if (!menuNames.includes(order.menuName)) {
-			// 			menuNames.push(order.menutName)
-			// 		} else {
-			// 			let idx = this.selectedOrders.findIndex(x => x.menuName === order.menuName)
-			// 			this.selectedOrders[idx].
-			// 			this.selectedOrders.splice(index,1)
-						
-			// 		}
-			// 	}) 
-
 			}
 			// console.log(this.selectedStudentNo);
 			// console.log(this.orders[this.selectedStudentNo].studentName);
@@ -175,38 +153,14 @@ export default {
 			this.selectedStudentNo = -1;
 		},
 
-		sortByName(event) {
-			this.isInit = false
-			if (!this.isSortedByName) {
-				this.isSortedByName = true
-				event.target.innerText = "이름 〓"
-				console.log("이름기준 정렬데이터를 호출합니다")
-				// this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
-				this.ordersCopied = this.orders.toSorted((a, b) => a.studentName.localeCompare(b.studentName));
-			} else {
-				this.isSortedByName = false
-				event.target.innerText = "이름 ▼"
-				this.ordersCopied = JSON.parse(JSON.stringify(this.orders))
-				
-			}
-			
+		sortByName() {
+			console.log("이름기준 정렬데이터를 호출합니다")
+			this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
 			// console.log(this.orders)
 		},
-		sortByPrice(event) {
-			this.isInit = false
-			if (!this.isSortedByPrice) {
-				this.isSortedByPrice = true
-				event.target.innerText = "금액 〓"
-				console.log("가격기준 정렬데이터를 호출합니다")
-				// this.orders.sort((a, b) => b.menuPrice - a.menuPrice);
-				this.ordersCopied = this.orders.toSorted((a, b) => b.menuPrice - a.menuPrice);
-			} else {
-				this.isSortedByPrice = false
-				event.target.innerText = "금액 ▼"
-				this.ordersCopied = JSON.parse(JSON.stringify(this.orders))
-				
-			}
-			
+		sortByPrice() {
+			console.log("가격기준 정렬데이터를 호출합니다")
+			this.orders.sort((a, b) => b.menuPrice - a.menuPrice);
 			// console.log(this.orders)
 			// this.orders.sort((b, a) => a.studentName.localeCompare(b.studentName));
 		},
