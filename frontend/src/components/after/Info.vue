@@ -104,6 +104,7 @@
           background-color:#344A53;
           border-radius: 50%;
           margin-right: 2rem;
+          cursor:help;
       }
 
       body {
