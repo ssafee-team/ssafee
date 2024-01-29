@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Gradle Build') {
+        stage('Build') {
             steps {
                 updateGitlabCommitStatus name: 'build', state: 'running'
                 dir('backend') {
@@ -29,29 +29,46 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                dir('backend') {
-                    sh 'docker build -t backend .'
-                }
-            }
-        }
-
-        stage('Deploy') {
+        stage('Deploy Backend') {
             when {
                 branch 'master'
             }
             steps {
+                dir('backend') {
+                    sh 'docker build -t backend .'
+                }
                 sh 'docker ps -q --filter name=backend | grep -q . && docker stop backend && docker rm backend'
-                sh 'docker run -d --name backend backend'
-                sh 'docker images -qf dangling=true | xargs -I{} docker rmi {}'
+                sh 'docker run -d --name backend --network ssafee backend --server.port=8081'
+            }
+        }
+
+        stage('Deploy Frontend') {
+            when {
+                branch 'master'
+            }
+            steps {
+                dir('frontend') {
+                    sh 'docker build -t frontend .'
+                }
+                sh 'docker ps -q --filter name=frontend | grep -q . && docker stop frontend && docker rm frontend'
+                sh 'docker run -d --name frontend --network ssafee frontend --port 8082'
             }
         }
 
         stage('Finish') {
             steps {
+                sh 'docker images -qf dangling=true | xargs -I{} docker rmi {}'
                 updateGitlabCommitStatus name: 'build', state: 'success'
             }
+        }
+    }
+
+    post {
+        success {
+            mattermostSend color: 'good', message: "✅ SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+        }
+        failure {
+            mattermostSend color: 'danger', message: "🟥 FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
         }
     }
 }

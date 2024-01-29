@@ -4,10 +4,8 @@
 
 ### network
 
-TODO: `--link` is deprecated.
-
 ```
-sudo docker network create inner-network
+docker network create ssafee
 ```
 
 # certbot
@@ -15,7 +13,7 @@ sudo docker network create inner-network
 ### 인증서 발급 (certonly)
 
 ```
-sudo docker run -it --rm --name certbot \
+docker run -it --rm --name certbot \
   -v /etc/letsencrypt:/etc/letsencrypt \
   -v /var/lib/letsencrypt:/var/lib/letsencrypt \
   -v /home/ubuntu/.secrets/certbot/cloudflare.ini:/etc/cloudflare.ini:ro \
@@ -29,7 +27,7 @@ sudo docker run -it --rm --name certbot \
 ### 인증서 갱신 (renew)
 
 ```
-sudo docker create --rm --name certbot-renew \
+docker create --rm --name certbot-renew \
   -v /etc/letsencrypt:/etc/letsencrypt \
   -v /var/lib/letsencrypt:/var/lib/letsencrypt \
   -v /home/ubuntu/.secrets/certbot/cloudflare.ini:/etc/cloudflare.ini:ro \
@@ -52,11 +50,12 @@ docker start certbot-renew
 # jenkins
 
 ```
-sudo docker run -d --name jenkins \
+docker run -d --name jenkins \
   -v /usr/bin/docker:/usr/bin/docker \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /home/ubuntu/jenkins-data:/var/jenkins_home \
   --group-add 998 \
+  --network ssafee \
   jenkins/jenkins:lts
 ```
 
@@ -81,17 +80,13 @@ sudo docker run -d --name jenkins \
 # nginx
 
 ```
-sudo docker run -d --name nginx \
+docker run -d --name nginx \
   -p 443:443 \
   -v /etc/letsencrypt:/etc/letsencrypt:ro \
   -v /var/lib/letsencrypt:/var/lib/letsencrypt:ro \
-  -v /home/ubuntu/nginx-data/conf.d/options-ssl-nginx.conf:/etc/nginx/conf.d/options-ssl-nginx.conf:ro \
-  -v /home/ubuntu/nginx-data/conf.d/jenkins.conf:/etc/nginx/conf.d/jenkins.conf:ro \
-  -v /home/ubuntu/nginx-data/conf.d/ssafee.conf:/etc/nginx/conf.d/ssafee.conf:ro \
-  -v /home/ubuntu/nginx-data/html:/usr/share/nginx/html:ro \
-  --link jenkins:jenkins \
-  --link backend:backend \
-  nginx
+  -v /home/ubuntu/nginx-data/conf.d:/etc/nginx/conf.d:ro \
+  --network ssafee \
+  nginx:alpine
 ```
 
 ### refs
