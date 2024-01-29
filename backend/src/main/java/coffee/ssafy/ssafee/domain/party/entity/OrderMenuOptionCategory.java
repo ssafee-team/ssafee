@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Setter
 public class OrderMenuOptionCategory {
 
     @Id
@@ -28,6 +27,7 @@ public class OrderMenuOptionCategory {
     @JoinColumn(name = "option_category_id", nullable = false, updatable = false)
     private OptionCategory optionCategory;
 
+    @Setter
     @OneToMany(mappedBy = "orderMenuOptionCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderMenuOption> orderMenuOptions;
 

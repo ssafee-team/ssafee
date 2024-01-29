@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Setter
 public class OrderMenu extends BaseTimeEntity {
 
     @Id
@@ -33,13 +32,8 @@ public class OrderMenu extends BaseTimeEntity {
     @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
+    @Setter
     @OneToMany(mappedBy = "orderMenu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderMenuOptionCategory> orderMenuOptionCategories;
-
-    public void prepareCreation(Party party, Menu menu, Participant participant) {
-        this.party = party;
-        this.menu = menu;
-        this.participant = participant;
-    }
 
 }

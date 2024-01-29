@@ -12,8 +12,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     Optional<Party> findByAccessCode(String accessCode);
 
-    Optional<Long> findIdByAccessCode(String accessCode);
-
     default List<Party> findAllByCreatedTimeToday() {
         LocalDate today = LocalDate.now();
         return findAllByCreatedTimeBetween(today.atStartOfDay(), today.plusDays(1).atStartOfDay());

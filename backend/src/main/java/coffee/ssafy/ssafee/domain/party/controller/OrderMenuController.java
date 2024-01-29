@@ -32,9 +32,6 @@ public class OrderMenuController {
         return ResponseEntity.ok().body(orderMenuService.findOrderMenusByAccessCode(accessCode));
     }
 
-    /*
-        TODO: 나중에 @Operation으로 주석이나 추가해보자
-     */
     @DeleteMapping("/{id}")
     @Operation(summary = "주문 메뉴 삭제")
     public ResponseEntity<Void> deleteOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
