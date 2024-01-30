@@ -6,8 +6,7 @@ import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyRequestMapper;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyResponseMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.EntityManager;
@@ -28,8 +27,7 @@ public class PartyService {
     @PersistenceContext
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
-    private final PartyRequestMapper partyRequestMapper;
-    private final PartyResponseMapper partyResponseMapper;
+    private final PartyMapper partyMapper;
 
     private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -48,7 +46,7 @@ public class PartyService {
         String accessCode = generateAccessCode();
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
 
-        Party party = partyRequestMapper.toEntity(partyRequest);
+        Party party = partyMapper.toEntity(partyRequest);
         party.prepareCreation(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
         return accessCode;
@@ -56,12 +54,12 @@ public class PartyService {
 
     public List<PartyResponse> findPartiesToday() {
         return partyRepository.findAllByCreatedTimeToday().stream()
-                .map(partyResponseMapper::toDto)
+                .map(partyMapper::toDto)
                 .toList();
     }
 
     public PartyDetailResponse findPartyByAccessCode(String accessCode) {
-        return partyResponseMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
+        return partyMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
     }
 

@@ -5,8 +5,7 @@ import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
-import coffee.ssafy.ssafee.domain.shop.mapper.ShopRequestMapper;
-import coffee.ssafy.ssafee.domain.shop.mapper.ShopResponseMapper;
+import coffee.ssafy.ssafee.domain.shop.mapper.ShopMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,23 +18,20 @@ import java.util.List;
 public class ShopService {
 
     private final ShopRepository shopRepository;
-    private final ShopRequestMapper shopRequestMapper;
-    private final ShopResponseMapper shopResponseMapper;
+    private final ShopMapper shopMapper;
 
     public ShopDetailResponse findShopById(Long id) {
-        return shopResponseMapper.toDetailDto(shopRepository.findById(id)
+        return shopMapper.toDetailDto(shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 
     public List<ShopResponse> findShops() {
-        return shopRepository.findAll().stream()
-                .map(shopResponseMapper::toDto)
-                .toList();
+        return shopMapper.toDtoList(shopRepository.findAll());
     }
 
     @Transactional
     public void updateShop(Long id, ShopRequest shopRequest) {
-        shopRequestMapper.updateFromDto(shopRequest, shopRepository.findById(id)
+        shopMapper.updateFromDto(shopRequest, shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
     }
 

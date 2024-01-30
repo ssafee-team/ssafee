@@ -1,96 +1,35 @@
 <template lang="">
   <!-- 모달 -->
   <div class="black-bg" v-if="openModal == true" @click="close($event)">
-    <div class="white-bg">
+    <div class="white-bg" :style="{ maxHeight: modalMaxHeight }">
       <div class="modal-title">
         <div>옵션</div>
         <div style="color: #00a7d0">{{ calculateTotalPrice() }}원</div>
       </div>
       <hr />
-      <p>휘핑선택</p>
-      <div class="whipping-choice">
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="휘핑 제공"
-              v-model="checkedOptions['whippingProvided']"
-              @change="selectOption('휘핑 제공', 0)"
-            />휘핑 제공</label
-          >
-          <div>+ 0원</div>
+      <div class="modal-content">
+        <p>휘핑선택</p>
+        <div class="choice">
+          <div class="row" v-for="option in whippingOptions" :key="option.value">
+            <label>
+              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
+              {{ option.label }}
+            </label>
+            <div>+ {{ option.price }}원</div>
+          </div>
         </div>
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="휘핑 미제공"
-              v-model="checkedOptions['whippingNotProvided']"
-              @change="selectOption('휘핑 미제공', 0)"
-            />휘핑 미제공</label
-          >
-          <div>+ 0원</div>
-        </div>
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="휘핑 적게"
-              v-model="checkedOptions['whippingLess']"
-              @change="selectOption('휘핑 적게', 0)"
-            />휘핑 적게</label
-          >
-          <div>+ 0원</div>
+        <p>추가선택</p>
+        <div class="choice">
+          <div class="row" v-for="option in additionalOptions" :key="option.value">
+            <label>
+              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
+              {{ option.label }}
+            </label>
+            <div>+ {{ option.price }}원</div>
+          </div>
         </div>
       </div>
-      <p>추가선택</p>
-      <div class="whipping-choice">
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="설탕시럽 1펌프 추가"
-              v-model="checkedOptions['sugarSyrup1Pump']"
-              @change="selectOption('설탕시럽 1펌프 추가', 500)"
-            />설탕시럽 1펌프 추가</label
-          >
-          <div>+ 500원</div>
-        </div>
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="설탕시럽 2펌프 추가"
-              v-model="checkedOptions['sugarSyrup2Pump']"
-              @change="selectOption('설탕시럽 2펌프 추가', 1000)"
-            />설탕시럽 2펌프 추가</label
-          >
-          <div>+ 1000원</div>
-        </div>
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="샷 추가"
-              v-model="checkedOptions['extraShot']"
-              @change="selectOption('샷 추가', 500)"
-            />샷 추가</label
-          >
-          <div>+ 500원</div>
-        </div>
-        <div class="row">
-          <label>
-            <input
-              type="checkbox"
-              value="펄 추가"
-              v-model="checkedOptions['pearl']"
-              @change="selectOption('펄 추가', 1000)"
-            />펄 추가</label
-          >
-          <div>+ 1000원</div>
-        </div>
-      </div>
-      <div class="btn">
+      <div class="modal-btn">
         <button class="close" @click="close">취소</button>
         <button class="addOrder" @click="addOrder">주문하기</button>
       </div>
@@ -144,6 +83,7 @@ export default {
   data() {
     return {
       openModal: false, //모달 기본적으로 안보이게 설정
+      modalMaxHeight: "80%",
       checkedOptions: {}, //선택한 옵션을 담을 객체 추가
       categories: [
         "인기메뉴",
@@ -185,6 +125,21 @@ export default {
           { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
         ],
       },
+      whippingOptions: [
+        { value: "1", label: "휘핑제공", price: 0 },
+        { value: "2", label: "휘핑미제공", price: 0 },
+        { value: "3", label: "휘핑적게", price: 0 },
+        { value: "4", label: "휘핑많이", price: 500 },
+        { value: "5", label: "휘핑많이2", price: 500 },
+      ],
+      additionalOptions: [
+        { value: "6", label: "설탕시럽 1펌프 추가", price: 500 },
+        { value: "7", label: "설탕시럽 2펌프 추가", price: 1000 },
+        { value: "8", label: "샷 추가", price: 500 },
+        { value: "9", label: "펄 추가", price: 500 },
+        { value: "10", label: "펄 추가2", price: 1000 },
+      ],
+      selectedOptions: [],
       selectedCategory: 0,
       drinkItemWidth: "20%", //각 음료 항목의 너비
       selectedDrinkIndex: null, //선택한 음료의 인덱스를 기억하는 데이터 추가
@@ -225,48 +180,45 @@ export default {
       this.checkedOptions = {};
     },
 
-    selectOption(option, price) {
-      console.log(option + "옵션 선택");
-      console.log("가격 추가: " + price + "원");
-
-      // // 옵션을 선택할 때 해당 옵션이 이미 선택되었는지 확인하고, 선택되지 않은 경우에만 가격을 추가
-      // if (!this.checkedOptions[option]) {
-      //   this.$set(this.checkedOptions, option, price); // 옵션과 가격 추가
-      // }
-
-      this.calculateTotalPrice(); //가격 재계산
-    },
-
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
-      Object.values(this.checkedOptions).forEach((price) => {
-        total += parseFloat(price);
-      });
-      console.log(total);
-      console.log("총 가격: " + total.toFixed(0) + "원");
-      // this.checkedOptions.forEach((option) => {
-      //   total += parseFloat(option.price.replace("원", "").replace(",", ""));
-      // });
-      // 각 선택 옵션에 대한 가격 계산
+      console.log("현재", total);
+
+      //선택한 옵션들의 가격을 합산
+      for (const option in this.checkedOptions) {
+        if (this.checkedOptions[option]) {
+          const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(
+            (opt) => opt.value === option
+          );
+          if (checkedOption) {
+            total += checkedOption.price;
+          }
+          // total += this.whippingOptions.find((opt) => opt.value === option).price;
+        }
+      }
+
       return total.toFixed(0);
     },
 
     addOrder() {
+      // const selectedOptions = Object.keys(this.checkedOptions).filter(
+      //   (option) => this.checkedOptions[option]
+      // );
       //주문 정보 정리
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        options: Object.values(this.checkedOptions), //선택한 옵션 복사해 전달함
+        options: this.selectedOptions,
       };
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
-      console.log(order.options.value);
+
       console.log("주문하기 버튼 클릭!");
-      // console.log(order.options);
+
       console.log(order);
       console.log("전체 주문 목록", this.orderList);
       //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
-      this.$emit("order-placed", this.orderList);
+      this.$emit("order-placed", order);
 
       //모달 닫기
       this.closeModal();
@@ -305,8 +257,12 @@ export default {
   font-weight: bold;
   margin-top: 20px;
   flex-wrap: wrap;
-  overflow-y: scroll;
-  height: 650px;
+  overflow-y: auto;
+  height: 600px;
+}
+
+.menu-items::-webkit-scrollbar {
+  display: none;
 }
 
 .drink-item {
@@ -320,8 +276,8 @@ export default {
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 15px;
   cursor: pointer;
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
   margin-bottom: 10px;
 }
 .price {
@@ -341,14 +297,15 @@ export default {
   margin: 80px auto;
   background: #344a53;
   border-radius: 5px;
-  padding: 10px 0;
+  padding: 10px;
   margin-top: 20px;
-  border: 2px solid black;
+  border: 1px solid black;
   text-align: center;
   /* height: 60%; */
   color: white;
   position: relative;
   z-index: 10000;
+  border: none;
 }
 .close {
   width: 120px;
@@ -376,23 +333,33 @@ export default {
   font-size: 18px;
 }
 
-.close:hover {
-  /* color: white; */
-  /* font-weight: bold; */
-  /* transform: scale(1.1); */
-  /* transition: all 0.5s; */
-}
 .modal-title {
   /* 상우좌하 */
   margin: 0px 10px 10px 5px;
   padding: 10px;
-  /* margin-left: 10px; */
-  /* margin-bottom: 5px; */
+
   font-size: 20px;
   font-weight: bold;
   text-align: left;
   justify-content: space-between;
   display: flex;
+  position: sticky;
+}
+
+.modal-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Webkit 브라우저용 스크롤바 숨기기 */
+.modal-content::-webkit-scrollbar {
+  display: none; /* 스크롤바 숨기기 */
+}
+
+.modal-btn {
+  position: sticky;
+  bottom: 0;
+  padding: 10px;
 }
 
 p {
@@ -403,7 +370,7 @@ p {
   margin-top: 20px;
 }
 
-.whipping-choice {
+.choice {
   display: flex;
   flex-direction: column;
   padding: 10px;

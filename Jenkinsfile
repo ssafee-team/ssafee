@@ -1,30 +1,23 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'nodejs-20.11.0'
-    }
-
     stages {
-        stage('Pull') {
+        stage('Build Backend') {
             steps {
-                updateGitlabCommitStatus name: 'build', state: 'pending'
-            }
-        }
-
-        stage('Credentials') {
-            steps {
-                withCredentials([file(credentialsId: 'application-prod-yml', variable: 'APPLICATION_PROD_YML')]) {
-                    sh 'cp -f $APPLICATION_PROD_YML ./backend/src/main/resources/application-prod.yml'
+                dir('backend') {
+                    sh 'docker run --rm -u gradle -v .:/home/gradle/project -w /home/gradle/project gradle:8.5-jdk17-alpine gradle bootJar'
                 }
             }
         }
 
-        stage('Build') {
+        stage('Build Frontend') {
+            environment {
+                NO_COLOR = 'true'
+            }
             steps {
-                updateGitlabCommitStatus name: 'build', state: 'running'
-                dir('backend') {
-                    sh './gradlew clean bootJar -Dspring.profiles.active=prod'
+                dir('frontend') {
+                    sh 'docker run --rm -u node -v .:/home/node/app -w /home/node/app node:20-alpine npm install'
+                    sh 'docker run --rm -u node -v .:/home/node/app -w /home/node/app node:20-alpine npm run build'
                 }
             }
         }
@@ -33,12 +26,14 @@ pipeline {
             when {
                 branch 'master'
             }
+            environment {
+                PROD_DB_URL = credentials('PROD_DB_URL')
+                PROD_DB_USERNAME = credentials('PROD_DB_USERNAME')
+                PROD_DB_PASSWORD = credentials('PROD_DB_PASSWORD')
+            }
             steps {
-                dir('backend') {
-                    sh 'docker build -t backend .'
-                }
-                sh 'docker ps -q --filter name=backend | grep -q . && docker stop backend && docker rm backend'
-                sh 'docker run -d --name backend --network ssafee backend --spring.profiles.active=prod --server.port=8081'
+                sh 'docker compose -p ssafee build backend'
+                sh 'docker compose -p ssafee up -d backend'
             }
         }
 
@@ -47,18 +42,14 @@ pipeline {
                 branch 'master'
             }
             steps {
-                dir('frontend') {
-                    sh 'docker build -t frontend .'
-                }
-                sh 'docker ps -q --filter name=frontend | grep -q . && docker stop frontend && docker rm frontend'
-                sh 'docker run -d --name frontend --network ssafee frontend --port 8082'
+                sh 'docker compose -p ssafee build frontend'
+                sh 'docker compose -p ssafee up -d frontend'
             }
         }
 
-        stage('Finish') {
+        stage('Cleanup Dangling') {
             steps {
-                sh 'docker images -qf dangling=true | xargs -I{} docker rmi {}'
-                updateGitlabCommitStatus name: 'build', state: 'success'
+                sh 'docker images prune'
             }
         }
     }

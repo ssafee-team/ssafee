@@ -1,16 +1,45 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
-})
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  //프론트 포트 설정, 백과 데이터 주고 받을 때는
+  server: {
+    https: false,
+    port: 8083,
+    open: true,
+    proxy: {
+      "/api/v1": {
+        target: "http://localhost:80/", //http://localhost:80/api/v1/shops
+      },
+    },
+    historyApiFallback: true,
+    hot: true,
+  },
+
+  // server: {
+  //   https: false,
+  //   port: 80,
+  //   open: true,
+  //   proxy: {
+  //     "/api/v1": {
+  //       target: "http://localhost:80/",
+  //     },
+  //   },
+  // },
+
+  // server: {
+  // port: 80,
+  // proxy: {
+  //   "/api": "https://localhost:80",
+  // },
+  // },
+});

@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import io from "vue-socket.io";
+// import io from "vue-socket.io";
 export default {
   data() {
     return {
@@ -35,6 +35,10 @@ export default {
           text: "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요",
         },
         { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+
         { username: "야생의 너구리", text: "퇴근마렵네" },
         { username: "야생의 너구리", text: "커피 뭐가" },
         { username: "야생의 너구리", text: "퇴근하고싶다" },
@@ -80,7 +84,7 @@ export default {
 </script>
 <style scoped>
 .chat-window {
-  height: 100%;
+  /* height: 100%; */
 }
 
 .chat-body {
@@ -102,9 +106,13 @@ export default {
 
 .chat-messages {
   padding: 10px;
-  height: 650px;
+  max-height: 600px;
   font-size: 20px;
-  overflow-y: hidden;
+  overflow-y: auto;
+}
+
+.chat-messages::-webkit-scrollbar {
+  display: none;
 }
 
 .message-box {
@@ -152,7 +160,8 @@ export default {
 .chat-input {
   display: flex;
   width: 100%;
-  height: 140px;
+  height: auto;
+  /* height: 140px; */
   margin-top: 10px;
 }
 .chat-input > textarea {
