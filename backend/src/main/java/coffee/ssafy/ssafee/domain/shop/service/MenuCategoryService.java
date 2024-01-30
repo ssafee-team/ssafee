@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuCategoryService {
 
-    private final MenuCategoryMapper menuCategoryMapper;
     private final MenuCategoryRepository menuCategoryRepository;
 
 

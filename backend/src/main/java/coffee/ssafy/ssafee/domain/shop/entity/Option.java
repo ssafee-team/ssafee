@@ -38,4 +38,9 @@ public class Option {
     @JoinColumn(name = "option_category_id", nullable = false)
     private OptionCategory optionCategory;
 
+    // Shop 엔티티에 대한 참조 추가
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "shop_id", nullable = false)
+    private Shop shop;
+
 }

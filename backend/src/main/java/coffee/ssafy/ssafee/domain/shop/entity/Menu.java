@@ -43,6 +43,11 @@ public class Menu {
     @JoinColumn(name = "menu_category_id", nullable = false)
     private MenuCategory menuCategory;
 
+    // Shop 엔티티에 대한 참조 추가
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "shop_id", nullable = false)
+    private Shop shop;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "menus_option_categories",

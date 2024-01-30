@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -19,11 +20,17 @@ public class MenuController {
 
     private final MenuService menuService;
 
+    // /api/v1/shops/{id}/menu-categories/{id}/menus
+
     // 1. (카테고리별) 메뉴 조회
-//    @GetMapping("/menu-categories/{mc_id}/menus")
-//    public ResponseEntity<List<MenuResponse>> getMenusByCategory(@PathVariable("mc_id") Long menuCategoryId){
-//        return ResponseEntity.ok().body(menuService.findMenusByShopId)
-//    }
+    @GetMapping("/menu-categories/{mc_id}/menus")
+    public ResponseEntity<List<Menu>> getMenusByCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("mc_id")  Long mcId) {
+        return ResponseEntity.ok().body(menuService.getMenusByCategory(shopId, mcId));
+    }
+
+
 
     // 2. 메뉴 생성
 
