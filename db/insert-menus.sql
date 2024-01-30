@@ -182,9 +182,9 @@ ALTER TABLE `menus`
 ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
 ADD CONSTRAINT `menus_ibfk_2` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
 
-ALTER TABLE `menus_option_categories` 
-ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
-ADD CONSTRAINT `menus_option_categories_ibfk_3` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
+-- ALTER TABLE `menus_option_categories` 
+-- ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
+-- ADD CONSTRAINT `menus_option_categories_ibfk_3` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
 
 ALTER TABLE `option_categories` 
 ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
