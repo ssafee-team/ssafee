@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 group = 'coffee.ssafy'
@@ -56,27 +55,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-node {
-    download = true
-    version = '20.11.0'
-    nodeProjectDir = file('../frontend')
-}
-
-tasks.register('npmBuild', NpmTask) {
-    dependsOn 'npmInstall'
-    args = ['run', 'build']
-}
-
-tasks.named('compileJava') {
-    dependsOn 'npmBuild'
-}
-
-tasks.register('copyNpmBuild', Copy) {
-    from file('../frontend/dist')
-    into file('build/resources/main/static')
-}
-
-//tasks.named('processResources') {
-//    dependsOn 'copyNpmBuild'
-//}
