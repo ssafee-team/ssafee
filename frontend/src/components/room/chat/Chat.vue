@@ -35,6 +35,10 @@ export default {
           text: "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요",
         },
         { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+        { username: "야생의 너구리", text: "아아아아" },
+
         { username: "야생의 너구리", text: "퇴근마렵네" },
         { username: "야생의 너구리", text: "커피 뭐가" },
         { username: "야생의 너구리", text: "퇴근하고싶다" },
@@ -102,9 +106,13 @@ export default {
 
 .chat-messages {
   padding: 10px;
-  height: auto;
+  max-height: 600px;
   font-size: 20px;
-  overflow-y: hidden;
+  overflow-y: auto;
+}
+
+.chat-messages::-webkit-scrollbar {
+  display: none;
 }
 
 .message-box {
