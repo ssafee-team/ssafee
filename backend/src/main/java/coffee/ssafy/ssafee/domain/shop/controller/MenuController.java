@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenusById;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class MenuController {
     // 1. (카테고리별) 메뉴 조회
     // shopId 와 menuCategoryId를 가지고 해당 menuCategoryId에 해당하는 메뉴들을 출력
     @GetMapping("/menu-categories/{mc_id}/menus")
+    @Operation(summary = "메뉴 조회")
     public ResponseEntity<List<MenusById>> getMenusByCategory(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id")  Long menuCategoryId) {

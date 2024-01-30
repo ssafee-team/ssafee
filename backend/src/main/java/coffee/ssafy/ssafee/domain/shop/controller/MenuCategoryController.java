@@ -2,6 +2,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,9 @@ public class MenuCategoryController {
     private final MenuCategoryService menuCategoryService;
 
     // 1. 메뉴 카테고리 조회
+
     @GetMapping("/menu-categories")
+    @Operation(summary = "메뉴 카테고리 조회")
     public ResponseEntity<List<String>> getMenuCategories(@PathVariable Long shopId) {
         return ResponseEntity.ok().body(menuCategoryService.findMenuCategories(shopId));
     }
