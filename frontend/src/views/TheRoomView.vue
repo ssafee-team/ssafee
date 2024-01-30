@@ -2,15 +2,16 @@
   <main>
     <header :style="{ height: headerHeight }">
       <div class="timeline">
-        <div class="time">마감시간</div>
-        <div>11:30</div>
+        <div>마감시간</div>
+
+        <div class="time">{{ deadLine }}</div>
       </div>
       <div class="center-content">
         <div>컴포즈커피 (광주수완점)</div>
       </div>
       <div class="timeline">
-        <div class="time">잔여시간</div>
-        <div style="color: red">32:18</div>
+        <div>잔여시간</div>
+        <div style="color: red" class="time">{{ remainingTime }}</div>
       </div>
     </header>
     <body>
@@ -41,29 +42,56 @@ import { ref, onMounted, onUnmounted } from "vue";
 import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
 
+const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
+const remainingTime = ref(""); //남은시간
+
 // 헤더 높이를 저장하는 변수
 const headerHeight = ref("");
 
 // 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
 const updateHeaderHeight = () => {
-  headerHeight.value = `${document.querySelector('header').offsetHeight}px`;
+  headerHeight.value = `${document.querySelector("header").offsetHeight}px`;
 };
 
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
   updateHeaderHeight();
-  window.addEventListener('resize', updateHeaderHeight);
+  window.addEventListener("resize", updateHeaderHeight);
+  updateRemainingTime(); //페이지 로드시 남은시간 계산
+  // 1초마다 남은시간 갱신
+  setInterval(updateRemainingTime, 1000);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateHeaderHeight);
+  window.removeEventListener("resize", updateHeaderHeight);
 });
+
+// 남은시간 갱신하는 함수 호출
+const updateRemainingTime = () => {
+  const now = new Date(); //현재시간 변수
+  const deadlineTimne = new Date();
+  const [hours, minutes] = deadLine.value.split(":").map(Number);
+
+  deadlineTimne.setHours(hours, minutes, 0);
+
+  //마감시간에서 현재시간 차이를 저장
+  const diff = deadlineTimne - now;
+
+  if (diff > 0) {
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
+  } else {
+    remainingTime.value = "마감";
+  }
+};
 
 const checkOrderStatus = () => {
   // 주문 현황 확인 로직을 추가할 수 있습니다.
   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
 };
-
 </script>
 
 <style scoped>
@@ -75,7 +103,7 @@ main {
   flex-direction: column;
   height: auto;
   overflow-x: hidden;
-  
+
   /* box-sizing: border-box; */
 }
 
@@ -101,7 +129,8 @@ header {
   font-weight: bold;
 }
 .time {
-  margin-right: 10px;
+  width: 120px;
+  margin-left: 10px;
 }
 .center-content {
   text-align: center;
@@ -134,6 +163,5 @@ button {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
   height: auto;
-
 }
 </style>
