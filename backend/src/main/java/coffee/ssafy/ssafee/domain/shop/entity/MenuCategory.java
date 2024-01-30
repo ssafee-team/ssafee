@@ -22,7 +22,7 @@ public class MenuCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_category_id", nullable = false, updatable = false)
-    private Long menuCategoryId;
+    private Long id;
 
     @NotNull
     @Column(nullable = false)

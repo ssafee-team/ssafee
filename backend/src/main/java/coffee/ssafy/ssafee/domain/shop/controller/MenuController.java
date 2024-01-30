@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenusById;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,12 @@ public class MenuController {
     // /api/v1/shops/{id}/menu-categories/{id}/menus
 
     // 1. (카테고리별) 메뉴 조회
+    // shopId 와 menuCategoryId를 가지고 해당 menuCategoryId에 해당하는 메뉴들을 출력
     @GetMapping("/menu-categories/{mc_id}/menus")
-    public ResponseEntity<List<Menu>> getMenusByCategory(
+    public ResponseEntity<List<MenusById>> getMenusByCategory(
             @PathVariable("shop_id") Long shopId,
-            @PathVariable("mc_id")  Long mcId) {
-        return ResponseEntity.ok().body(menuService.getMenusByCategory(shopId, mcId));
+            @PathVariable("mc_id")  Long menuCategoryId) {
+        return ResponseEntity.ok().body(menuService.getMenusByCategory(shopId, menuCategoryId));
     }
 
 
