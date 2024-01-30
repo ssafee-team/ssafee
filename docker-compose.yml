@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  inner:
+    driver: bridge
+
+services:
+  frontend:
+    image: frontend
+    build: frontend
+    networks:
+      - inner
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/lib/letsencrypt:/etc/lib/letsencrypt:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - 443:443
+    depends_on:
+      - backend
+      - jenkins
+
+  backend:
+    image: backend
+    build: backend
+    networks:
+      - inner
+    environment:
+      - TZ=Asia/Seoul
+      - SERVER_PORT=8081
+      - SPRING_PROFILE=prod
+      - PROD_DB_DRIVER
+      - PROD_DB_URL
+      - PROD_DB_USERNAME
+      - PROD_DB_PASSWORD
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    networks:
+      - inner
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - /usr/bin/docker:/usr/bin/docker:ro
+      - /usr/libexec/docker/cli-plugins/docker-compose:/usr/libexec/docker/cli-plugins/docker-compose:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/jenkins_home:/var/jenkins_home
+    group_add:
+      - 998
