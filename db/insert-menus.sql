@@ -64,9 +64,12 @@ CREATE TABLE `menus` (
 ) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
 --
 -- Dumping data for table `menus`
 --
+
+
 
 LOCK TABLES `menus` WRITE;
 /*!40000 ALTER TABLE `menus` DISABLE KEYS */;
@@ -77,6 +80,8 @@ UNLOCK TABLES;
 --
 -- Table structure for table `menus_option_categories`
 --
+
+
 
 DROP TABLE IF EXISTS `menus_option_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -90,6 +95,7 @@ CREATE TABLE `menus_option_categories` (
   CONSTRAINT `menus_option_categories_ibfk_2` FOREIGN KEY (`option_category_id`) REFERENCES `option_categories` (`option_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Dumping data for table `menus_option_categories`
@@ -167,3 +173,23 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-01-26 20:07:27
+
+
+
+-- 모든 테이블에 shop_id 칼럼을 추가하는 쿼리입니다.
+
+ALTER TABLE `menus` 
+ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
+ADD CONSTRAINT `menus_ibfk_2` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
+
+ALTER TABLE `menus_option_categories` 
+ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
+ADD CONSTRAINT `menus_option_categories_ibfk_3` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
+
+ALTER TABLE `option_categories` 
+ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
+ADD CONSTRAINT `option_categories_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
+
+ALTER TABLE `options` 
+ADD COLUMN `shop_id` BIGINT NOT NULL DEFAULT 1,
+ADD CONSTRAINT `options_ibfk_2` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`shop_id`);
