@@ -137,10 +137,10 @@ export default {
   /* 메세지 길이에 맞게 width를 줘야 함 */
   word-wrap: break-word; /* 긴 텍스트일 경우 자동으로 줄 바꿈되도록 설정합니다. */
   max-width: 80%; /*메시지 상자의 최대 너비를 설정합니다.*/
-  margin-top: 20px;
+  margin-top: 5px;
   margin-left: 5px;
   width: fit-content; /* 메세지 길이에 맞게 너비 조정*/
-  position: relative;
+  /* position: relative; */
 }
 
 .message:after {
@@ -155,6 +155,7 @@ export default {
   border-top: 0;
   /* margin-left: -40px; */
   margin-top: -13px;
+  
 }
 
 .chat-input {

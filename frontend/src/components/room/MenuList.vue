@@ -84,7 +84,7 @@ export default {
     return {
       openModal: false, //모달 기본적으로 안보이게 설정
       modalMaxHeight: "80%",
-      checkedOptions: {}, //선택한 옵션을 담을 객체 추가
+      checkedOptions: {},
       categories: [
         "인기메뉴",
         "시즌메뉴",
@@ -177,7 +177,7 @@ export default {
     closeModal() {
       this.openModal = false;
       //모달 닫힐 시 선택한 옵션 초기화
-      this.checkedOptions = {};
+      this.selectedOptions = [];
     },
 
     calculateTotalPrice() {
@@ -185,17 +185,15 @@ export default {
       console.log("현재", total);
 
       //선택한 옵션들의 가격을 합산
-      for (const option in this.checkedOptions) {
-        if (this.checkedOptions[option]) {
-          const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(
-            (opt) => opt.value === option
-          );
-          if (checkedOption) {
-            total += checkedOption.price;
-          }
-          // total += this.whippingOptions.find((opt) => opt.value === option).price;
+      for (const option of this.selectedOptions) {
+        const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(opt => opt.label === option);
+        if (checkedOption) {
+          total += checkedOption.price;
         }
       }
+          // total += this.whippingOptions.find((opt) => opt.value === option).price;
+        
+      
 
       return total.toFixed(0);
     },

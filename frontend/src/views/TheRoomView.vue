@@ -129,7 +129,7 @@ header {
   font-weight: bold;
 }
 .time {
-  width: 120px;
+  width: 130px;
   margin-left: 10px;
 }
 .center-content {
