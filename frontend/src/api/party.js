@@ -26,4 +26,33 @@ async function createParty(param, success, fail) {
 //     local.get(`${url}`, { params }).then(success).catch(fail);
 // }
 
-export { createParty };
+// 파티 입장 전 파티 상세정보 조회
+function getParty(code, success, fail){
+  console.log("파티정보 조회:",code);
+  local.get(`${url}/${code}`).then(success).catch(fail);
+  
+}
+
+//파티 입장 후 주문자&주문메뉴 내역 조회
+function getOrderList(code, success, fail){
+  console.log("주문내역 조회", code);
+  local.get(`${url}/${code}/order-menus`).then(success).catch(fail);
+}
+
+
+//파티 입장 후 주문 넣기
+function createOrder(code, success, fail){
+  console.log("주문넣기", code);
+  local.post(`${url}/${code}/order-menus`).then(success).catch(fail);
+}
+
+//파티 입장 후 주문 삭제
+function deleteOrderMenu(code, id, success, fail){
+  console.log("주문 삭제", code);
+  console.log("주문 삭제할 id", id)
+  local.delete(`${url}/${code}/order-menus/${id}`).then(success).catch(fail);
+}
+
+
+
+export { createParty, getParty, getOrderList, createOrder, deleteOrderMenu };
