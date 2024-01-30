@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.mapper;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryName;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
@@ -19,9 +20,13 @@ public interface MenuCategoryMapper {
     //    @Mapping(target = [반환타입], source = [])
 
 
+    MenuCategory toEntityReq (MenuCategoryRequest menuCategoryRequest);
+    MenuCategory toEntity (MenuCategoryResponse menuCategoryResponse);
+    MenuCategoryResponse toDto (MenuCategory menuCategory);
 
     // MenuCategoryName 타입을 String으로 변환하는 매핑 메소드
     default String map(MenuCategoryName value) {
-        return value.name(); // record에 대한 직접적인 접근
+        return value.name();
     }
+
 }

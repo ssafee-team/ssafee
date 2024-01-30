@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryName;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
@@ -18,7 +19,7 @@ import java.util.List;
 public class MenuCategoryService {
 
     private final MenuCategoryRepository menuCategoryRepository;
-
+    private final MenuCategoryMapper menuCategoryMapper;
 
 
     public List<String> findMenuCategories(Long shopId) {
@@ -29,4 +30,9 @@ public class MenuCategoryService {
         //        return menuCategoryMapper.toDtoList(menuCategoryName);
     }
 
+    public MenuCategoryResponse createMenuCategories(MenuCategoryRequest menuCategoryRequest) {
+        MenuCategory menuCategory = menuCategoryMapper.toEntityReq(menuCategoryRequest);
+        menuCategory = menuCategoryRepository.save(menuCategory);
+        return menuCategoryMapper.toDto(menuCategory);
+    }
 }
