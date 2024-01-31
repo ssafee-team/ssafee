@@ -22,9 +22,9 @@ async function createParty(param, success, fail) {
 
 //예시2)
 // 파티 목록을 조회
-// function getPartiesToday(param, success, fail) {
-//     local.get(`${url}`, { params }).then(success).catch(fail);
-// }
+function getPartiesToday(param, success, fail) {
+    local.get(`${url}`, { params: param }).then(success).catch(fail);
+}
 
 // 파티 입장 전 파티 상세정보 조회
 function getParty(code, success, fail){
@@ -55,4 +55,4 @@ function deleteOrderMenu(code, id, success, fail){
 
 
 
-export { createParty, getParty, getOrderList, createOrder, deleteOrderMenu };
+export { createParty, getParty, getPartiesToday, getOrderList, createOrder, deleteOrderMenu };
