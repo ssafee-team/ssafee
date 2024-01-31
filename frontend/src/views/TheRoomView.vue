@@ -4,10 +4,10 @@
       <div class="timeline">
         <div>마감시간</div>
 
-        <div class="time">{{ deadLine }}</div>
+        <div class="time">{{ formattedTime }}</div>
       </div>
       <div class="center-content">
-        <div>컴포즈커피 (광주수완점)</div>
+        <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
         <div>잔여시간</div>
@@ -44,10 +44,40 @@ import { ref, onMounted, onUnmounted } from "vue";
 import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
+import { getParty } from "@/api/party";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const code = ref("");
+
+const partyInfo = ref({
+  id: "",
+  name: "",
+  generation: "",
+  classroom: "",
+  last_order_time: "",
+  created_time: "",
+  shop_id: "",
+  creator: {
+    id: "",
+    name: "",
+    email: "",
+    bank: "",
+    account: "",
+  },
+});
+
 
 const isOrderListModalOpen = ref(false);
 
-const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
+//const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
+const lastOrderTime = partyInfo.value.last_order_time;
+const lastOrderDateTime = new Date(lastOrderTime);
+const hours = lastOrderDateTime.getHours();
+const minutes = lastOrderDateTime.getMinutes();
+
+const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+
 const remainingTime = ref(""); //남은시간
 
 // 헤더 높이를 저장하는 변수
@@ -65,22 +95,57 @@ onMounted(() => {
   updateRemainingTime(); //페이지 로드시 남은시간 계산
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000);
+  code.value = route.params.code;
+  getPartyInfo();
+  console.log(partyInfo.value.last_order_time);
+  console.log(lastOrderDateTime.value);
+  console.log(hours);
+  console.log(minutes);
+
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", updateHeaderHeight);
 });
 
+const getPartyInfo = () => {
+  getParty(
+    code.value,
+
+    ({ data }) => {
+      console.log(data);
+      partyInfo.value.id = data.id;
+      partyInfo.value.name = data.name;
+      partyInfo.value.generation = data.generation;
+      partyInfo.value.classroom = data.classroom;
+      partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.created_time = data.created_time;
+      partyInfo.value.shop_id = data.shop_id;
+      console.log(partyInfo);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+
 // 남은시간 갱신하는 함수 호출
 const updateRemainingTime = () => {
   const now = new Date(); //현재시간 변수
-  const deadlineTimne = new Date();
-  const [hours, minutes] = deadLine.value.split(":").map(Number);
+  const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
+  // console.log(deadlineTime);
 
-  deadlineTimne.setHours(hours, minutes, 0);
+  // const deadlineTime = new Date();
+  // const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
+
+
+  // deadlineTimne.setHours(hours, minutes, 0);
 
   //마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTimne - now;
+  const diff = deadlineTime - now;
+  // console.log(diff);
+
 
   if (diff > 0) {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

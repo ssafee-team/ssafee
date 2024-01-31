@@ -2,17 +2,18 @@
   <div id="app">
     <span>현재 개설된 방</span>
     <div class="link-container">
-    <RouterLink to="room" >
-      <button v-for = "room in rooms" :key="room">
-      {{ room }}
-    </button>
-    </RouterLink>
-  </div>
-  
+          <!-- <RouterLink :to="'/room/' + room.access_code" v-for="room in rooms" :key="room.access_code"> -->
+      <RouterLink :to="'/room/' + 'Y2UwvpN1GN'">
+        <button v-for="room in rooms" :key="room">
+          {{ room }}
+        </button>
+      </RouterLink>
+    </div>
+
     <div class="link-container">
-    <RouterLink to="CreateRoomView">
-      <button > +</button>
-    </RouterLink>
+      <RouterLink to="CreateRoomView">
+        <button>+</button>
+      </RouterLink>
     </div>
     <div class="link-container">
     <router-link :to="{ name: 'After', params: { access_code: 'jw7z4gw8QY' }}">
