@@ -50,6 +50,10 @@ dependencies {
     // https://github.com/mapstruct/mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // Dependency use for OpenVidu.
+    implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.29.0'
+
 }
 
 tasks.named('test') {
