@@ -7,8 +7,8 @@ import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record OrderMenuRequest(
-        String participantName,
         Long menuId,
+        String participantName,
         List<ChosenOptionCategoryRequest> optionCategories
 ) {
 }

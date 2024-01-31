@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.controller;
 
 import coffee.ssafy.ssafee.domain.party.dto.request.OrderMenuRequest;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuResponse;
 import coffee.ssafy.ssafee.domain.party.service.OrderMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class OrderMenuController {
 
     @GetMapping
     @Operation(summary = "주문 메뉴 목록")
-    public ResponseEntity<List<ParticipantResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
+    public ResponseEntity<List<OrderMenuResponse>> getOrderMenus(@PathVariable("access_code") String accessCode) {
         return ResponseEntity.ok().body(orderMenuService.findOrderMenusByAccessCode(accessCode));
     }
 

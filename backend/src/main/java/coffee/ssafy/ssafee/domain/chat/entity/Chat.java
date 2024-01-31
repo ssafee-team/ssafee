@@ -2,7 +2,6 @@ package coffee.ssafy.ssafee.domain.chat.entity;
 
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "chats")
 @Getter
-@NotNull
 public class Chat {
 
     @Id

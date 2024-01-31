@@ -8,6 +8,6 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ChosenOptionCategoryRequest(
         Long optionCategoryId,
-        List<ChosenOptionRequest> options
+        List<Long> optionIds
 ) {
 }

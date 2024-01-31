@@ -21,7 +21,7 @@ public class PartyController {
     @PostMapping
     public ResponseEntity<Void> createParty(@RequestBody PartyRequest partyRequest) {
         String accessCode = partyService.createParty(partyRequest);
-        URI location = URI.create("/p/" + accessCode);
+        URI location = URI.create("/api/v1/parties/" + accessCode);
         return ResponseEntity.created(location).build();
     }
 
