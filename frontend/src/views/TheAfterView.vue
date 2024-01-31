@@ -20,11 +20,15 @@
       <!-- <div class="center-content" style="margin-top: 25px">
         <button @click="checkOrderStatus">현재 주문현황 확인하기</button>
       </div> -->
-      <Info/>
+      <Info 
+        :creator="creator"
+      />
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
         <div class="left-panel">
-          <OrderList/>
+          <OrderList
+            :orders="orders"
+          />
           <!-- <div>메뉴가 들어갈 부분</div> -->
           <!-- <MenuList/> -->
           <!-- 여기에 내 담당을 추가한다 -->
@@ -52,7 +56,11 @@
   import Info from '@/components/after/Info.vue';
   import OrderList from '@/components/after/OrderList.vue';
   import Chat from "@/components/room/chat/Chat.vue";
+  import { useRoute } from 'vue-router';
+  import { getCreator, getOrderList } from '@/api/after.js'
 
+  const route = useRoute();
+ 
   const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
   const remainingTime = ref(""); //남은시간
 
@@ -64,8 +72,70 @@
     headerHeight.value = `${document.querySelector("header").offsetHeight}px`;
   };
 
+
+  const creator = ref({
+    id: "",
+    name: "",
+    bank: "",
+    account: "",
+  })
+  const orders = ref([])
+  // const orders = ref([])
+
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
+    // console.log(route.params.access_code);
+    getCreator(route.params.access_code, 
+    (res) => {
+      creator.value.id = res.data.creator.id;
+      creator.value.name = res.data.creator.name;
+      creator.value.bank = res.data.creator.bank;
+      creator.value.account = res.data.creator.account;
+      
+    }, 
+    (error)=>{
+      console.log(error)
+    });
+
+    getOrderList(route.params.access_code, 
+    (res) => {
+      // console.log(res.data)
+      res.data.forEach(elem => {
+        console.log('주문자:', elem.name)
+        // let options = []
+        elem.order_menus.forEach(menu => {
+          // console.log(menu.data)
+          console.log('메뉴:',menu.menu.name);
+          console.log('메뉴가격:',menu.menu.price);
+          menu.option_categories.forEach(category => {
+            console.log('카테고리:', category.name)
+            category.options.forEach(option => {
+              console.log('옵션:',option.name)
+              console.log('옵션가격:',option.price)
+            }) 
+          })
+        })
+
+        orders.value.push({
+          classNo: 2,
+          studentName: elem.name,
+          menuName: elem.order_menus[0].menu.name,
+          menuPrice: elem.order_menus[0].menu.price,
+
+        })
+
+
+      });
+
+      console.log(orders.value)
+    }, 
+    (error) => {
+      console.log(error)
+    });
+
+
+
+
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
     updateRemainingTime(); //페이지 로드시 남은시간 계산
