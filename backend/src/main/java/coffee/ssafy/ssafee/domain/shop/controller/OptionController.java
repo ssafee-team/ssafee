@@ -2,7 +2,6 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
-import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class OptionController {
 
     @PostMapping("/option")
     @Operation(summary = "옵션 생성")
-    public  ResponseEntity<Void> createOption(
+    public ResponseEntity<Void> createOption(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("oc_id") Long optionCategoryId,
             @RequestBody OptionRequest optionRequest) {

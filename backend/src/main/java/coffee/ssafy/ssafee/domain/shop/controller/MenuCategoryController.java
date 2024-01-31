@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/shop/{shop_id}/menu-categories")
+@RequestMapping("/api/v1/shops/{shop_id}/menu-categories")
 @RequiredArgsConstructor
 public class MenuCategoryController {
 

@@ -8,7 +8,6 @@ import coffee.ssafy.ssafee.domain.shop.mapper.OptionCategoryMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.OptionCategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
