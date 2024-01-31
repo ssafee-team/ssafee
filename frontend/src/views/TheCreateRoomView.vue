@@ -145,6 +145,7 @@ const getShopList = (param) => {
   //API 호출
   getShops(
     param,
+
     ({ data }) => {
       console.log("가져온 데이터: ", data);
       shops.value.id = data.id;

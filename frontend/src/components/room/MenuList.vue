@@ -186,14 +186,14 @@ export default {
 
       //선택한 옵션들의 가격을 합산
       for (const option of this.selectedOptions) {
-        const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(opt => opt.label === option);
+        const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(
+          (opt) => opt.label === option
+        );
         if (checkedOption) {
           total += checkedOption.price;
         }
       }
-          // total += this.whippingOptions.find((opt) => opt.value === option).price;
-        
-      
+      // total += this.whippingOptions.find((opt) => opt.value === option).price;
 
       return total.toFixed(0);
     },
@@ -288,7 +288,8 @@ export default {
   /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
   /* background: rgba(0, 0, 0, 0.6); */
   position: fixed;
-  z-index: 9999; /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
+  z-index: 9999;
+  /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
 }
 .white-bg {
   width: 40%;
