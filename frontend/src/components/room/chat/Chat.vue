@@ -143,21 +143,6 @@ export default {
   /* position: relative; */
 }
 
-.message:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10px;
-  width: 0;
-  height: 0;
-  border: 20px solid transparent;
-  border-bottom-color: white;
-  border-top: 0;
-  /* margin-left: -40px; */
-  margin-top: -13px;
-  
-}
-
 .chat-input {
   display: flex;
   width: 100%;

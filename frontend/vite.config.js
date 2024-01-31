@@ -26,6 +26,17 @@ export default defineConfig({
   },
 
   // server: {
+  //   proxy: {
+  //     "/server": {
+  //       // target: "https://3ea3-220-93-153-206.ngrok-free.app",
+  //       target: "http://127.0.0.1:8083",
+  //       changeOrigin: "true",
+  //       rewrite: (path) => path.replace(/^\/server/, ""),
+  //     },
+  //   },
+  // },
+
+  // server: {
   //   https: false,
   //   port: 80,
   //   open: true,
