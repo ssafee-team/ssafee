@@ -8,7 +8,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record OrderMenuResponse(
         Long id,
-        ChosenMenuResponse menu,
-        List<ChosenOptionCategoryResponse> optionCategories
+        String participantName,
+        ChosenMenuResponse chosenMenu,
+        List<ChosenOptionCategoryResponse> chosenOptionCategories
 ) {
 }

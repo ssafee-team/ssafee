@@ -9,6 +9,6 @@ import java.util.List;
 public record ChosenOptionCategoryResponse(
         Long id,
         String name,
-        List<ChosenOptionResponse> options
+        List<ChosenOptionResponse> chosenOptions
 ) {
 }

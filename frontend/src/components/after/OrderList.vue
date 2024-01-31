@@ -95,27 +95,32 @@
 </template>
 
 <script>
-import { computed, ref, registerRuntimeCompiler } from 'vue'
+import { computed, onMounted, ref, registerRuntimeCompiler } from 'vue'
+
 export default {
+	props: {
+        orders: Array,
+      },
+
 	data () {
 		return {
-			orders: [
-				{classNo: "2", studentName: "전상혁", menuName: "에스프레소", menuPrice: 1000},
-				{classNo: "2", studentName: "고영훈", menuName: "ICE 카페라떼", menuPrice: 2000},
-				{classNo: "2", studentName: "양희승", menuName: "HOT 바닐라라떼", menuPrice: 1300},
-				{classNo: "2", studentName: "강찬우", menuName: "ICE 로즈마리", menuPrice: 2500},
-				{classNo: "2", studentName: "강찬우", menuName: "공군짜장", menuPrice: 15000},
-				{classNo: "2", studentName: "박희찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
-				{classNo: "2", studentName: "주홍찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
-				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
-				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
-				{classNo: "2", studentName: "강민지", menuName: "ICE 자몽티", menuPrice: 3000},
-				{classNo: "2", studentName: "김우태", menuName: "캔디소다 밀크쉐이크", menuPrice: 6000},
-				{classNo: "2", studentName: "유병욱", menuName: "ICE 고구마라떼", menuPrice: 300},
-				{classNo: "2", studentName: "이도훈", menuName: "ICE 고구마라떼", menuPrice: 300},
-				{classNo: "2", studentName: "김요한", menuName: "키위주스", menuPrice: 12345},
-				{classNo: "2", studentName: "이유빈", menuName: "오렌지당근주스", menuPrice: 12345},
-					],
+			// orders: [
+			// 	{classNo: "2", studentName: "전상혁", menuName: "에스프레소", menuPrice: 1000},
+			// 	{classNo: "2", studentName: "고영훈", menuName: "ICE 카페라떼", menuPrice: 2000},
+			// 	{classNo: "2", studentName: "양희승", menuName: "HOT 바닐라라떼", menuPrice: 1300},
+			// 	{classNo: "2", studentName: "강찬우", menuName: "ICE 로즈마리", menuPrice: 2500},
+			// 	{classNo: "2", studentName: "강찬우", menuName: "공군짜장", menuPrice: 15000},
+			// 	{classNo: "2", studentName: "박희찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
+			// 	{classNo: "2", studentName: "강민지", menuName: "ICE 자몽티", menuPrice: 3000},
+			// 	{classNo: "2", studentName: "김우태", menuName: "캔디소다 밀크쉐이크", menuPrice: 6000},
+			// 	{classNo: "2", studentName: "유병욱", menuName: "ICE 고구마라떼", menuPrice: 300},
+			// 	{classNo: "2", studentName: "이도훈", menuName: "ICE 고구마라떼", menuPrice: 300},
+			// 	{classNo: "2", studentName: "김요한", menuName: "키위주스", menuPrice: 12345},
+			// 	{classNo: "2", studentName: "이유빈", menuName: "오렌지당근주스", menuPrice: 12345},
+			// 		],
 			ordersCopied : [],
 			selectedStudentNo: -1,
 			selectedOrders: [],

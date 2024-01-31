@@ -7,6 +7,10 @@ import coffee.ssafy.ssafee.domain.party.entity.Party;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Mapper(componentModel = "spring")
 public interface PartyMapper {
 
@@ -19,5 +23,13 @@ public interface PartyMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creator", ignore = true)
     Party toEntity(PartyRequest partyRequest);
+
+    default LocalDateTime map(LocalTime localTime) {
+        return LocalDateTime.of(LocalDate.now(), localTime);
+    }
+
+    default LocalTime map(LocalDateTime localDateTime) {
+        return localDateTime.toLocalTime();
+    }
 
 }

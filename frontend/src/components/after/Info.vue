@@ -13,9 +13,12 @@
 		</div>
     <div id="info">
       <div id="accountinfo">
-        <span>입금계좌:</span>
+        <!-- <span>입금계좌:</span>
         <span>농협 302-0051-8244-01</span>
-        <span>전상혁</span>
+        <span>전상혁</span> -->
+        <span>입금계좌: &nbsp; &nbsp;</span>
+        <span>{{ this.creator.bank }} &nbsp; {{ this.creator.account }} &nbsp;&nbsp;</span>
+        <span>{{ this.creator.name }}</span>
       </div>
     <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
     <!-- <div @click="onMoloo" @mouseout="offMoloo" id="moloo">?</div> -->
@@ -27,6 +30,9 @@
     import { ref } from 'vue'
     
     export default {
+      props: {
+        creator: Object,
+      },
     // setup () {
     //     let isVisible = ref(false)
     //     const onMoloo = function (event) {
@@ -51,6 +57,7 @@
     },
     methods: {
 			onMoloo(event) {
+        console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account)
 				// console.log(event)
 				// console.log("물음표에 들어왔어요")
 				this.isOpened = true

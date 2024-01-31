@@ -16,7 +16,7 @@
     </header>
     <body>
       <div class="center-content">
-        <button @click="checkOrderStatus">현재 주문현황 확인하기</button>
+        <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
@@ -34,6 +34,8 @@
         </div>
       </div>
     </body>
+    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" />
+    <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
   </main>
 </template>
 
@@ -41,8 +43,11 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
+import OrderListModal from "@/components/room/modal/OrderListModal.vue";
 
-const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
+const isOrderListModalOpen = ref(false);
+
+const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
 const remainingTime = ref(""); //남은시간
 
 // 헤더 높이를 저장하는 변수
@@ -84,14 +89,22 @@ const updateRemainingTime = () => {
 
     remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
   } else {
+    //go("/after")화면으로
     remainingTime.value = "마감";
   }
 };
 
-const checkOrderStatus = () => {
-  // 주문 현황 확인 로직을 추가할 수 있습니다.
-  console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
+const openOrderListModal = () => {
+  isOrderListModalOpen.value = true;
 };
+
+const closeOrderModal = () => {
+  isOrderListModalOpen.value = false;
+};
+// const checkOrderStatus = () => {
+//   // 주문 현황 확인 로직을 추가할 수 있습니다.
+//   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
+// };
 </script>
 
 <style scoped>

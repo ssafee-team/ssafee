@@ -1,11 +1,11 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
 import coffee.ssafy.ssafee.domain.party.dto.request.OrderMenuRequest;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuResponse;
 import coffee.ssafy.ssafee.domain.party.entity.*;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.ParticipantMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.OrderMenuMapper;
 import coffee.ssafy.ssafee.domain.party.repository.OrderMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
@@ -31,7 +31,7 @@ public class OrderMenuService {
     private final PartyRepository partyRepository;
     private final ParticipantRepository participantRepository;
     private final OrderMenuRepository orderMenuRepository;
-    private final ParticipantMapper participantMapper;
+    private final OrderMenuMapper orderMenuMapper;
 
     @Transactional
     public Long createOrderMenu(String accessCode, OrderMenuRequest orderMenuRequest) {
@@ -52,15 +52,15 @@ public class OrderMenuService {
                 .party(party)
                 .build();
         orderMenu.setOrderMenuOptionCategories(orderMenuRequest.optionCategories().stream()
-                .map(coc -> {
+                .map(chosenOptionCategoryRequest -> {
                     OrderMenuOptionCategory orderMenuOptionCategory = OrderMenuOptionCategory.builder()
                             .orderMenu(orderMenu)
-                            .optionCategory(entityManager.getReference(OptionCategory.class, coc.optionCategoryId()))
+                            .optionCategory(entityManager.getReference(OptionCategory.class, chosenOptionCategoryRequest.optionCategoryId()))
                             .build();
-                    orderMenuOptionCategory.setOrderMenuOptions(coc.options().stream()
-                            .map(co -> OrderMenuOption.builder()
+                    orderMenuOptionCategory.setOrderMenuOptions(chosenOptionCategoryRequest.optionIds().stream()
+                            .map(optionId -> OrderMenuOption.builder()
                                     .orderMenuOptionCategory(orderMenuOptionCategory)
-                                    .option(entityManager.getReference(Option.class, co.optionId()))
+                                    .option(entityManager.getReference(Option.class, optionId))
                                     .build())
                             .toList());
                     return orderMenuOptionCategory;
@@ -71,10 +71,10 @@ public class OrderMenuService {
         return orderMenu.getId();
     }
 
-    public List<ParticipantResponse> findOrderMenusByAccessCode(String accessCode) {
-        return participantMapper.toDtoList(partyRepository.findByAccessCode(accessCode)
+    public List<OrderMenuResponse> findOrderMenusByAccessCode(String accessCode) {
+        return orderMenuMapper.toDtoList(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
-                .getParticipants());
+                .getOrderMenus());
     }
 
     @Transactional
