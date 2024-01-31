@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.mapper;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenusById;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
@@ -11,5 +12,7 @@ public interface MenuMapper {
     MenusById menuToMenuDto(Menu menu);
 
     MenuResponse toDto(Menu Menu);
+
+    Menu toEntity(MenuRequest menuRequest);
 
 }
