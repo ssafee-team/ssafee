@@ -1,15 +1,14 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,6 +23,17 @@ public class OptionController {
     public ResponseEntity<List<OptionResponse>> getOptionsByCategory(
             @PathVariable("oc_id") Long optionCategoryId) {
         return ResponseEntity.ok().body(optionService.getOptionsByCategory(optionCategoryId));
+    }
+
+    @PostMapping("/option")
+    @Operation(summary = "옵션 생성")
+    public ResponseEntity<Void> createOption(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId,
+            @RequestBody OptionRequest optionRequest) {
+        Long optionId = optionService.createOption(shopId, optionCategoryId, optionRequest);
+        URI location = URI.create("/api/v1/shops/" + shopId + "/option-categories/" + optionCategoryId + "/options/" + optionId);
+        return ResponseEntity.created(location).build();
     }
 
 

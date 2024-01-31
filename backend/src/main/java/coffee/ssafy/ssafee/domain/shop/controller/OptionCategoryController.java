@@ -1,16 +1,14 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
-import coffee.ssafy.ssafee.domain.shop.entity.OptionCategory;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,8 +29,16 @@ public class OptionCategoryController {
         return ResponseEntity.ok().body(optionCategoryService.getOptionCategory(optionCategoryId));
     }
 
-
     // 2. 옵션 카테고리 생성
+    @PostMapping("/{oc_id}")
+    @Operation(summary = "옵션 카테고리 생성")
+    public ResponseEntity<Void> createOptionCategory(
+            @PathVariable("shop_id") Long shopId,
+            @RequestBody OptionCategoryRequest optionCategoryRequest) {
+        Long optionCategoryId = optionCategoryService.createOptionCategory(shopId, optionCategoryRequest);
+        URI location = URI.create("/api/v1/shops/" + shopId + "/option-categories/" + optionCategoryId);
+        return ResponseEntity.created(location).build();
+    }
 
     // 3. 옵션 카테고리 수정
 

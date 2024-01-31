@@ -1,15 +1,10 @@
 package coffee.ssafy.ssafee.domain.shop.mapper;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryName;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
-import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface MenuCategoryMapper {
@@ -20,9 +15,9 @@ public interface MenuCategoryMapper {
     //    @Mapping(target = [반환타입], source = [])
 
 
-    MenuCategory toEntityReq (MenuCategoryRequest menuCategoryRequest);
-    MenuCategory toEntity (MenuCategoryResponse menuCategoryResponse);
-    MenuCategoryResponse toDto (MenuCategory menuCategory);
+    MenuCategory toEntity(MenuCategoryRequest menuCategoryRequest);
+
+    MenuCategoryResponse toDto(MenuCategory menuCategory);
 
     // MenuCategoryName 타입을 String으로 변환하는 매핑 메소드
     default String map(MenuCategoryName value) {

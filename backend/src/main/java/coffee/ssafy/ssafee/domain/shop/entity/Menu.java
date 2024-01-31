@@ -35,17 +35,22 @@ public class Menu {
     @Column
     private String image;
 
+    @Column
+    private String description;
+
     @Column(insertable = false, nullable = false)
     @ColumnDefault("false")
     private Boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_category_id", nullable = false)
+    @Setter
     private MenuCategory menuCategory;
 
     // Shop 엔티티에 대한 참조 추가
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false)
+    @Setter
     private Shop shop;
 
     @ManyToMany(fetch = FetchType.LAZY)
