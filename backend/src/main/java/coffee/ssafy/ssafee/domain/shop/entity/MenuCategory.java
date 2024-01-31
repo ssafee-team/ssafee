@@ -39,4 +39,9 @@ public class MenuCategory {
     @OneToMany(mappedBy = "menuCategory")
     private List<Menu> Menus;
 
+    public void createMenuCategory(String name) {
+        this.name = name;
+
+    }
+
 }
