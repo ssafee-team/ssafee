@@ -39,7 +39,7 @@ public class MenuController {
             @PathVariable("mc_id") Long menuCategoryId,
             @RequestBody MenuRequest menuRequest) {
         Long menuId = menuService.createMenu(shopId, menuCategoryId, menuRequest);
-        URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId);
+        URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId + "/menus/" + menuId);
         return ResponseEntity.created(location).build();
     }
 
