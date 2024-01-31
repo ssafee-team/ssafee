@@ -24,9 +24,43 @@
   
   <script setup>
   import { ref } from 'vue'
-  // createapp, mount함수는 진입점(index.js, main.js)에서 사용함
   
-  const rooms = ref(['공차드실분', '공차안드실분','싸탈하실분','싸탈안하실분'])
+  import { getPartiesToday } from "@/api/party";
+
+  // createapp, mount함수는 진입점(index.js, main.js)에서 사용함
+ 
+  // console.log(getPartiesToday())
+  const queryParams = {
+    date: '2024-01-31'
+};
+const rooms = ref([])
+// 성공 콜백 함수를 정의합니다.
+function onSuccess(response) {
+    // 서버 응답의 data 속성에 접근합니다.
+    const responseData = response.data;
+
+    // 이후 responseData를 사용하여 필요한 처리를 수행합니다.
+    // 예: responseData가 배열인 경우, 각 요소를 출력
+    if (Array.isArray(responseData)) {
+        responseData.forEach(item => {
+          rooms.value.push(item.name)
+          console.log(item.name);
+        });
+    } else {
+        // responseData가 객체 또는 다른 형태인 경우의 처리
+        console.log(responseData);
+    }
+}
+
+// 실패 콜백 함수를 정의합니다.
+function onFailure(error) {
+    console.error('실패:', error);
+}
+
+
+// getPartiesToday 함수를 호출합니다.
+getPartiesToday(queryParams, onSuccess, onFailure);
+
   </script>
   
   
