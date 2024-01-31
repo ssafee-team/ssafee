@@ -5,7 +5,9 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('backend') {
-                    sh 'docker run --rm -u gradle -v .:/home/gradle/project -w /home/gradle/project gradle:8.5-jdk17-alpine gradle bootJar'
+                    withGradle {
+                        sh './gradlew bootJar'
+                    }
                 }
             }
         }
@@ -16,8 +18,20 @@ pipeline {
             }
             steps {
                 dir('frontend') {
-                    sh 'docker run --rm -u node -v .:/home/node/app -w /home/node/app node:20-alpine npm install'
-                    sh 'docker run --rm -u node -v .:/home/node/app -w /home/node/app node:20-alpine npm run build'
+                    nodejs(nodeJSInstallationName: 'node-20.11.0') {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+        stage('Test Backend') {
+            steps {
+                dir('backend') {
+                    withGradle {
+                        sh './gradlew test'
+                    }
                 }
             }
         }
