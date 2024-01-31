@@ -1,4 +1,4 @@
-import { localAxios } from "@util/http-commons";
+import { localAxios } from "@/util/http-commons";
 //http 통신 라이브러리 : axios
 //응답제어(예외처리): 성공 시 then(), 실패 시 catch()
 
@@ -10,12 +10,11 @@ import { localAxios } from "@util/http-commons";
 const local = localAxios();
 
 // const url = "/api/v1/";
-const url = `/api/v1/parties/${access_code}/order-menus`;
+const url = `/api/v1/parties/`;
 
-async function getAfterInfo(param, success, fail) {
-    console.log("params:", param);
-    await local.post(`${url}`,
-        param
+async function getCreator(param, success, fail) {
+    // console.log("params:", param);
+    await local.get(`${url}/${param}`
     )
     .then(
         success
@@ -25,4 +24,15 @@ async function getAfterInfo(param, success, fail) {
     );
 }
 
-export { getAfterInfo };
+async function getOrderList(param, success, fail) {
+    await local.get(`${url}/${param}/order-menus`
+    )
+    .then(
+        success
+    )
+    .catch(
+        fail
+    );
+}
+
+export { getCreator, getOrderList };
