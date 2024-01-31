@@ -57,6 +57,12 @@ export default {
                   name: "ICE",
                   price: 500,
                 },
+                {
+                  id: 1556,
+                  name: "Hot",
+                  price: 500,
+                },
+
               ],
             },
             {
