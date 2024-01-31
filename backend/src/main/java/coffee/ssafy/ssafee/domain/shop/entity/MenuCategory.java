@@ -34,14 +34,10 @@ public class MenuCategory {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
+    @Setter
     private Shop shop;
 
     @OneToMany(mappedBy = "menuCategory")
     private List<Menu> Menus;
-
-    public void createMenuCategory(String name) {
-        this.name = name;
-
-    }
 
 }

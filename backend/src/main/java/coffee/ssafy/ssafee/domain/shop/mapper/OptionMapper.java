@@ -7,6 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface OptionMapper {
 
-    OptionResponse optionToOptionResponse (Option option);
+    OptionResponse optionToOptionResponse(Option option);
 
 }
