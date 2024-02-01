@@ -8,6 +8,7 @@ import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.mapper.OptionMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.OptionRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OptionService {
 
+    @PersistenceContext
     private final EntityManager entityManager;
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;

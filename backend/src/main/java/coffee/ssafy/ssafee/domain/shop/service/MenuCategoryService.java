@@ -22,15 +22,14 @@ public class MenuCategoryService {
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuCategoryMapper menuCategoryMapper;
 
-
+    @Transactional
     public List<String> findMenuCategories(Long shopId) {
         return menuCategoryRepository.findAllByShopId(shopId).stream()
                 .map(MenuCategory::getName)
                 .toList();
-        //        List<MenuCategoryName> menuCategoryName = menuCategoryRepository.findAllCategoryByShopId(shopId);
-        //        return menuCategoryMapper.toDtoList(menuCategoryName);
     }
 
+    @Transactional
     public Long createMenuCategories(Long shopId, MenuCategoryRequest menuCategoryRequest) {
         MenuCategory menuCategory = menuCategoryMapper.toEntity(menuCategoryRequest);
         menuCategory.setShop(entityManager.getReference(Shop.class, shopId));
@@ -44,6 +43,11 @@ public class MenuCategoryService {
             menuCategoryMapper.updateMenuCategory(menuCategory, menuCategoryRequest);
             menuCategoryRepository.save(menuCategory);
         });
+    }
+
+    @Transactional
+    public void deleteMenuCategory(Long menuCategoryId) {
+        menuCategoryRepository.deleteById(menuCategoryId);
     }
 
 }
