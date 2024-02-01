@@ -54,9 +54,8 @@
       class="drink-item"
       :style="{ width: drinkItemWidth }"
     >
-      <!-- 이미지 들어가는거 다시 다뤄야 함-->
       <img
-        src="../../assets/img/blueberry.jpg"
+        :src="drink.image"
         :alt="drink.name"
         @click="
           openModal = true;
@@ -74,8 +73,9 @@
   ></order-summary>
 </template>
 <script>
-import { getMenuCategories } from "@/api/shop";
+import { getMenuCategories, getMenusByCategory } from "@/api/shop";
 import OrderSummary from "./OrderSummary.vue";
+
 export default {
   props: {
     shopId: {
@@ -92,47 +92,9 @@ export default {
       openModal: false, //모달 기본적으로 안보이게 설정
       modalMaxHeight: "80%",
       checkedOptions: {},
-      categories: {},
-      // categories: [
-      //   "인기메뉴",
-      //   "시즌메뉴",
-      //   "커피",
-      //   "디카페인",
-      //   "베버리지",
-      //   "스무디/프라페",
-      //   "밀크쉐이크",
-      //   "에이드/주스",
-      //   "티",
-      //   "기타",
-      // ],
-      drinks: {
-        0: [
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-        ],
-        1: [
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-        ],
-      },
+      categories: [],
+      drinks: [],
+
       whippingOptions: [
         { value: "1", label: "휘핑제공", price: 0 },
         { value: "2", label: "휘핑미제공", price: 0 },
@@ -157,6 +119,9 @@ export default {
   mounted() {
     //shopId를 기반 메뉴 카테고리 데이터 가져오기
     getMenuCategories(this.shopId, this.handleSuccess, this.handleFail);
+
+    // 첫 번째 카테고리를 선택
+    this.selectCategory(0);
   },
 
   computed: {
@@ -182,9 +147,17 @@ export default {
     },
 
     selectCategory(index) {
+      //카테고리 선택시 실행
       this.selectedCategory = index;
-      // console.log(this.selectedCategory);
+      // shopId와 mcId를 기반으로 카테고리 선택 시 메뉴 데이터 가져오기
+      getMenusByCategory(this.shopId, index + 1, this.handleMenuSuccess, this.handleFail);
     },
+
+    handleMenuSuccess(response) {
+      this.drinks[this.selectedCategory] = response.data;
+      console.log("메뉴 가져왔니?", this.drinks);
+    },
+
     setSelectedDrinkIndex(index) {
       this.selectedDrinkIndex = index;
       // console.log(this.selectedDrinkIndex);
@@ -280,7 +253,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: auto;
-  height: 600px;
+  height: 500px;
 }
 
 .menu-items::-webkit-scrollbar {
