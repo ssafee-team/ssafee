@@ -86,7 +86,7 @@ CREATE TABLE `parties` (
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
-    `user_id` BIGINT NOT NULL,
+    -- `user_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
 );
