@@ -41,9 +41,9 @@ function getOrderList(code, success, fail){
 
 
 //파티 입장 후 주문 넣기
-function createOrder(code, success, fail){
+function createOrder(code, params, success, fail){
   console.log("주문넣기", code);
-  local.post(`${url}/${code}/order-menus`).then(success).catch(fail);
+  local.post(`${url}/${code}/order-menus`, JSON.stringify(params)).then(success).catch(fail);
 }
 
 //파티 입장 후 주문 삭제
