@@ -19,11 +19,12 @@
         <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
     </ul>
-    <OrderModal v-if="isOrderModalOpen" @close="closeOrderModal" :items="limitedOrderList" />
+    <OrderModal v-if="isOrderModalOpen" @close="closeOrderModal" :orders="limitedOrderList" />
   </div>
 </template>
 <script>
 import OrderModal from "./modal/OrderModal.vue";
+
 
 export default {
   components: {

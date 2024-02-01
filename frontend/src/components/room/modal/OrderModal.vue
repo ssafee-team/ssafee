@@ -13,13 +13,16 @@
 </template>
 
 <script>
+import { createOrder } from '@/api/party';
+
 export default {
   props: {
-    items: Array,
+    orders: Array,
   },
   data() {
     return {
       nameInput: "",
+      partyCode: "Gqe3GwHFoK",
     };
   },
   methods: {
@@ -32,16 +35,41 @@ export default {
         return;
       }
 
-      // 백에 입력한 이름 및 주문 정보 전달하기 위해 저장
-      const orderInfo = {
+    // 주문 정보를 저장할 배열 초기화
+    const ordersData = [];
+
+    // 모든 주문에 대한 정보 추출
+    this.orders.forEach(order => {
+      const orderData = {
+        menu_id: order.menuId,
         participant_name: this.nameInput,
-        items: this.items, // items는 부모 컴포넌트에서 props로 받아온 데이터
+        option_categories: order.option_categories
       };
-      console.log("주문 정보:", orderInfo);
+      
+      // 주문 정보를 배열에 추가
+      ordersData.push(orderData);
+    });
+
+    // 최종 주문 정보 객체 생성
+    // const orderInfo = {
+    //   orders: ordersData
+    // };
+    const orderInfo = ordersData[0]; //현재 메뉴 한개만 들어감
+
+    console.log("주문 정보:", orderInfo);
+    // console.log(this.partyCode);
+
+    createOrder(this.partyCode, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
 
       // 모달 닫기
       this.closeModal();
     },
+    handleOrderSuccess(response){
+      console.log("주문 성공: ", response);
+    },
+    handleOrderFail(error){
+      console.error("주문 실패:", error);
+    }
   },
 };
 </script>

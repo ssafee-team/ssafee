@@ -23,7 +23,7 @@
       </div>
       <div class="modal-btn">
         <button class="close" @click="close">취소</button>
-        <button class="addOrder" @click="addOrder">주문하기</button>
+        <button class="addOrder" @click="addOrder">담기</button>
       </div>
     </div>
   </div>
@@ -151,6 +151,7 @@ export default {
 
       const selectedDrink = this.selectedDrinks[index];
       const menuId = selectedDrink.id;
+      console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
       } else {
@@ -212,14 +213,25 @@ export default {
     },
 
     addOrder() {
-      // const selectedOptions = Object.keys(this.checkedOptions).filter(
-      //   (option) => this.checkedOptions[option]
-      // );
+      const selectedDrink = this.selectedDrinks[this.selectedDrinkIndex];
+      const selectedDrinkId = selectedDrink.id; // 선택한 음료의 ID 가져오기
+     
+
+      // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID를 추출
+      const selectedOptionCategories = this.optionCategories.map(optionCategory => {
+        return {
+          option_category_id: optionCategory.id,
+          option_ids: optionCategory.options.filter(option => this.selectedOptions.includes(option.name)).map(option => option.id)
+        };
+      });
+      
       //주문 정보 정리
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        options: this.selectedOptions,
+        options: this.selectedOptions, //선택한 옵션  명
+        menuId: selectedDrinkId, //선택한 메뉴 ID
+        option_categories: selectedOptionCategories // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
