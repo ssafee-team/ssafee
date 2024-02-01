@@ -1,8 +1,10 @@
 package coffee.ssafy.ssafee.domain.shop.mapper;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryName;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
+import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import org.mapstruct.*;
 
@@ -33,6 +35,9 @@ public interface MenuCategoryMapper {
     @Mapping(target = "name", source = "menuCategoryRequest.name")
     void updateFromDto(MenuCategoryRequest menuCategoryRequest, @MappingTarget MenuCategory menuCategory);
 
-
+    @AfterMapping
+    default void updateMenuCategory(@MappingTarget Menu menu, MenuRequest menuRequest) {
+        menu.updateMenu(menuRequest, menu);
+    }
 
 }

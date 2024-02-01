@@ -8,6 +8,7 @@ import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.mapper.MenuMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.MenuRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,4 +39,13 @@ public class MenuService {
         menuRepository.save(menu);
         return menu.getId();
     }
+
+    @Transactional
+    public void updateMenu(Long menuId, MenuRequest menuRequest) {
+        menuRepository.findById(menuId).ifPresent(menu -> {
+            menuMapper.updateMenu(menu, menuRequest);
+            menuRepository.save(menu);
+        });
+    }
+
 }

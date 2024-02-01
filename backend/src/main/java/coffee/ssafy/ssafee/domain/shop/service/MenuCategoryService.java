@@ -42,9 +42,10 @@ public class MenuCategoryService {
     }
 
     @Transactional
-    public void updateMenuCategory(Long shopId, Long menuCategoryId, MenuCategoryRequest menuCategoryRequest) {
+    public void updateMenuCategory(Long menuCategoryId, MenuCategoryRequest menuCategoryRequest) {
         menuCategoryRepository.findById(menuCategoryId).ifPresent(menuCategory -> {
             menuCategoryMapper.updateFromDto(menuCategoryRequest, menuCategory);
         });
     }
+
 }

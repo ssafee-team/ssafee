@@ -46,7 +46,7 @@ public class MenuCategoryController {
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId,
             @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        menuCategoryService.updateMenuCategory(shopId, menuCategoryId, menuCategoryRequest);
+        menuCategoryService.updateMenuCategory(menuCategoryId, menuCategoryRequest);
         return ResponseEntity.noContent().build();
     }
 

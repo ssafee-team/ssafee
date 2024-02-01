@@ -5,7 +5,5 @@ public record MenuRequest(
         String description,
         Integer price,
         String image
-
 ) {
-
 }
