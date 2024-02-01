@@ -3,9 +3,8 @@
     <div class="title">
       <div style="display: flex">
         <p style="margin-left: 20px">전체주문금액 :</p>
-        <p class="total-price" style="margin-left: 20px; color: #00a7d0">{{totalPrice}}원</p>
+        <p class="total-price" style="margin-left: 20px; color: #00a7d0">{{ totalPrice }}원</p>
         <button class="btn-order" @click="openOrderModal">주문하기</button>
-        
       </div>
       <button class="btn-toggle" @click="toggleOrderSummary">
         {{ orderSummaryVisible ? "▼" : "▲" }}
@@ -20,24 +19,24 @@
         <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
     </ul>
-    <OrderModal v-if="isOrderModalOpen" @close="closeOrderModal" :items="limitedOrderList"/>
+    <OrderModal v-if="isOrderModalOpen" @close="closeOrderModal" :items="limitedOrderList" />
   </div>
 </template>
 <script>
 import OrderModal from "./modal/OrderModal.vue";
 
 export default {
-  components:{
-    OrderModal
+  components: {
+    OrderModal,
   },
 
   props: {
     orderList: Array,
     orderSummaryVisible: Boolean,
   },
-  data(){
-    return{
-      isOrderModalOpen: false
+  data() {
+    return {
+      isOrderModalOpen: false,
     };
   },
   computed: {
@@ -46,10 +45,12 @@ export default {
       return this.orderList.slice(0, 2);
     },
     totalPrice() {
-    return this.orderList.reduce((total, order) => {
-      return total + parseFloat(order.price.replace("원", "").replace(",", ""));
-    }, 0).toFixed(0);
-  }
+      return this.orderList
+        .reduce((total, order) => {
+          return total + parseFloat(order.price.replace("원", "").replace(",", ""));
+        }, 0)
+        .toFixed(0);
+    },
   },
   methods: {
     openOrderModal() {
@@ -69,9 +70,9 @@ export default {
       return options.join(", ");
     },
 
-    deleteOrder(index){ 
+    deleteOrder(index) {
       this.orderList.splice(index, 1); //해당 인덱스 요소를 제거
-    }
+    },
   },
 };
 </script>
@@ -80,7 +81,8 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  height: auto;
+  height: 120px;
+  max-height: 120px;
   /* width: 60%; */
   margin: 10px 0px 0px 20px;
   /* position: fixed; */
@@ -157,7 +159,7 @@ export default {
   font-size: 16px;
   margin-right: 10px;
 }
-p{
+p {
   font-weight: bold;
 }
 </style>

@@ -20,4 +20,9 @@ function getMenuCategories(id, success, fail) {
   local.get(`${url}/${id}/menu-categories`).then(success).catch(fail);
 }
 
-export { getShops, getMenuCategories };
+//메뉴 카테고리 선택 > 메뉴 조회
+function getMenusByCategory(shop_id, mc_id, success, fail) {
+  local.get(`${url}/${shop_id}/menu-categories/${mc_id}/menus`).then(success).catch(fail);
+}
+
+export { getShops, getMenuCategories, getMenusByCategory };
