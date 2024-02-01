@@ -90,6 +90,7 @@ export default {
 .chat-body {
   border-radius: 10px;
   background-color: #97afba;
+  border: 3px solid #97afba;
 }
 
 .cur-date {

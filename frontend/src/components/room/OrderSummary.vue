@@ -81,8 +81,8 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  height: 120px;
-  max-height: 120px;
+  height: 170px;
+  max-height: 170px;
   /* width: 60%; */
   margin: 10px 0px 0px 20px;
   /* position: fixed; */
@@ -125,6 +125,7 @@ export default {
 .list {
   margin-top: 5px;
   height: auto;
+  padding: 15px;
 }
 .order-list {
   display: flex;

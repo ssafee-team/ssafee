@@ -25,4 +25,9 @@ function getMenusByCategory(shop_id, mc_id, success, fail) {
   local.get(`${url}/${shop_id}/menu-categories/${mc_id}/menus`).then(success).catch(fail);
 }
 
-export { getShops, getMenuCategories, getMenusByCategory };
+//메뉴 선택 > 옵션 카테고리 조회
+function getOptionCategory(shop_id, option_category_id, success, fail) {
+  local.get(`${url}/${shop_id}/option-categories/${option_category_id}`).then(success).fail(fail);
+}
+
+export { getShops, getMenuCategories, getMenusByCategory, getOptionCategory };
