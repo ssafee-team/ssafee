@@ -26,6 +26,7 @@ public class MenuCategory {
 
     @NotNull
     @Column(nullable = false)
+    @Setter
     private String name;
 
     @Column(insertable = false, nullable = false)

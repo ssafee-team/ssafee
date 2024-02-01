@@ -4,7 +4,9 @@ import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryName;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
+
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface MenuCategoryMapper {
@@ -23,5 +25,14 @@ public interface MenuCategoryMapper {
     default String map(MenuCategoryName value) {
         return value.name();
     }
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "shop", ignore = true)
+    @Mapping(target = "menus", ignore = true)
+    @Mapping(target = "name", source = "menuCategoryRequest.name")
+    void updateFromDto(MenuCategoryRequest menuCategoryRequest, @MappingTarget MenuCategory menuCategory);
+
+
 
 }
