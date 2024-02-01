@@ -34,7 +34,7 @@
         </div>
       </div>
     </body>
-    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" />
+    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" :orderList="orderList"/>
     <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
   </main>
 </template>
@@ -44,7 +44,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
-import { getParty } from "@/api/party";
+import { getParty, getOrderList } from "@/api/party";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -66,6 +66,8 @@ const partyInfo = ref({
     account: "",
   },
 });
+
+const orderList = ref([]);
 
 //파티 객체 정보의 shop_id 추출
 const shopId = partyInfo.value.shop_id;
@@ -155,6 +157,18 @@ const updateRemainingTime = () => {
 
 const openOrderListModal = () => {
   isOrderListModalOpen.value = true;
+
+  // 주문 목록 조회
+  getOrderList(
+    code.value, //partyCode 전달
+    (response) => {
+      orderList.value = response.data;
+      console.log("주문 현황 불러오기: ",orderList.value);
+    },
+    (error) => {
+      console.error("주문 현황 조회 실패: ", error);
+    }
+  )
 };
 
 const closeOrderModal = () => {

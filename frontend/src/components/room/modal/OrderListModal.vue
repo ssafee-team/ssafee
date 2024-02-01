@@ -8,15 +8,19 @@
       <hr />
       <div class="order-list">
         <div class="row" v-for="order in orderList" :key="order.id">
-          <div>{{ order.name }}</div>
+          <div>{{ order.participant_name }}</div>
           <div class="menus">
-            <div class="menu-info" v-for="orderMenu in order.order_menus" :key="orderMenu.id">
-              <div>{{ orderMenu.menu.name }}</div>
-              <div v-for="option in orderMenu.options" :key="option.id">{{ option.name }}</div>
+            <div class="menu-info">
+              <div>{{ order.chosen_menu.name }}</div>
+              
+                <div v-for="optionCategory in order.chosen_menu.chosen_option_categories" :key="optionCategory.id">
+                  <div v-for="option in optionCategory.chosen_options" :key="option.id">{{ option.name }}</div>
+                </div>
+              
             </div>
           </div>
           <div>{{ calculateTotalPrice(order) }}원</div>
-          <button @click="deleteOrder(index)" class="delete">X</button>
+          <button @click="deleteOrder(order.id)" class="delete">X</button>
         </div>
       </div>
       <div class="modal-footer">
@@ -30,277 +34,35 @@
 <script>
 export default {
   props: {
-    // orderList: Array,
+    orderList: Array,
   },
-  data() {
-    return {
-      orderList: [
-        {
-          id: 348,
-          name: "고영훈",
-          is_creator: true,
-          is_carrier: false,
-          is_payed: true,
-          is_pay_confirmed: false,
-          order_menus: [
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-                {
-                  id: 1556,
-                  name: "Hot",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 348,
-          name: "고영훈",
-          is_creator: true,
-          is_carrier: false,
-          is_payed: true,
-          is_pay_confirmed: false,
-          order_menus: [
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 348,
-          name: "고영훈",
-          is_creator: true,
-          is_carrier: false,
-          is_payed: true,
-          is_pay_confirmed: false,
-          order_menus: [
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 348,
-          name: "고영훈",
-          is_creator: true,
-          is_carrier: false,
-          is_payed: true,
-          is_pay_confirmed: false,
-          order_menus: [
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-            {
-              id: 99,
-              menu: {
-                id: 77,
-                name: "아메리카노",
-                price: 1500,
-                image: "string",
-              },
-              options: [
-                {
-                  id: 1556,
-                  name: "ICE",
-                  price: 500,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-  },
+  
 
   methods: {
     closeModal() {
       this.$emit("close");
     },
     calculateTotalPrice(order) {
-      let totalPrice = 0;
-      for (const orderMenu of order.order_menus) {
-        totalPrice += orderMenu.menu.price;
-        for (const option of orderMenu.options) {
+      let totalPrice = order.chosen_menu.price;
+      for (const category of order.chosen_option_categories) {
+        for (const option of category.chosen_options) {
           totalPrice += option.price;
         }
       }
       return totalPrice;
     },
-    deleteOrder(index) {
-      this.orderList.splice(index, 1); // 주문 리스트에서 해당 인덱스의 주문 삭제
+    deleteOrder(orderId) {
+      // this.orderList.splice(index, 1); // 주문 리스트에서 해당 인덱스의 주문 삭제
+      const index = this.orderList.findIndex(order => order.id === orderId);
+      if (index !== -1) {
+        this.orderList.splice(index, 1);
+      }
+    
     },
   },
   computed: {
     calculateTotalOrderPrice() {
-      let totalOrderPrice = 0;
-      for (const order of this.orderList) {
-        totalOrderPrice += this.calculateTotalPrice(order);
-      }
-      return totalOrderPrice;
+      return this.orderList.reduce((total, order) => total + this.calculateTotalPrice(order), 0);
     },
   },
 };
