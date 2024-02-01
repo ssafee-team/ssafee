@@ -10,5 +10,6 @@ import java.util.List;
 public interface OptionRepository extends JpaRepository<Option, Long> {
 
     List<Option> findByOptionCategoryId(Long optionCategoryId);
+    void deleteById(Long optionCategoryId);
 
 }

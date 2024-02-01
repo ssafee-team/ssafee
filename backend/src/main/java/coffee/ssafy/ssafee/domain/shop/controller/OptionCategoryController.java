@@ -52,6 +52,14 @@ public class OptionCategoryController {
     }
 
     // 4. 옵션 카테고리 삭제
+    @DeleteMapping("/{oc_id}")
+    @Operation(summary = "옵션 카테고리 삭제")
+    public ResponseEntity<Void> deleteOptionCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId) {
+        optionCategoryService.deleteOptionCategory(optionCategoryId);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

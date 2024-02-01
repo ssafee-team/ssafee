@@ -8,6 +8,7 @@ import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.mapper.MenuMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.MenuRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,19 +20,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MenuService {
 
+    @PersistenceContext
     private final EntityManager entityManager;
     private final MenuMapper menuMapper;
     private final MenuRepository menuRepository;
 
-
+    @Transactional
     public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         List<Menu> menus = menuRepository.findByShopIdAndMenuCategoryId(shopId, menuCategoryId);
         return menus.stream()
                 .map(menuMapper::toDto).
                 collect(Collectors.toList());
-
     }
 
+    @Transactional
     public Long createMenu(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
         Menu menu = menuMapper.toEntity(menuRequest);
         menu.setMenuCategory(entityManager.getReference(MenuCategory.class, menuCategoryId));
@@ -46,6 +48,11 @@ public class MenuService {
             menuMapper.updateMenu(menu, menuRequest);
             menuRepository.save(menu);
         });
+    }
+
+   @Transactional
+    public void deleteMenu(Long menuId) {
+        menuRepository.deleteById(menuId);
     }
 
 }

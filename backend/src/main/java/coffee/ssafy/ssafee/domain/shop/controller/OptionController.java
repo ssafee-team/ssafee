@@ -47,5 +47,15 @@ public class OptionController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/options/{option_id}")
+    @Operation(summary = "옵션 삭제")
+    public ResponseEntity<Void> deleteOption(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId,
+            @PathVariable("option_id") Long optionId) {
+        optionService.deleteOption(optionCategoryId);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

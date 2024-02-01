@@ -49,5 +49,13 @@ public class MenuCategoryController {
     }
 
     // 4. 메뉴 카테고리 삭제
+    @DeleteMapping("/{mc_id}")
+    @Operation(summary = "메뉴 카테고리 삭제")
+    public ResponseEntity<Void> deleteMenuCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("mc_id") Long menuCategoryId) {
+        menuCategoryService.deleteMenuCategory(menuCategoryId);
+        return ResponseEntity.ok().build();
+    }
 
 }
