@@ -3,7 +3,7 @@
     <span>현재 개설된 방</span>
     <div class="link-container">
           <!-- <RouterLink :to="'/room/' + room.access_code" v-for="room in rooms" :key="room.access_code"> -->
-      <RouterLink :to="'/room/' + 'Y2UwvpN1GN'">
+      <RouterLink :to="'/room/' + 'Gqe3GwHFoK'">
         <button v-for="room in rooms" :key="room">
           {{ room }}
         </button>
