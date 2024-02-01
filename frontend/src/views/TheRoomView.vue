@@ -4,7 +4,7 @@
       <div class="timeline">
         <div>마감시간</div>
 
-        <div class="time">{{ formattedTime }}</div>
+        <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
       <div class="center-content">
         <div>{{ partyInfo.name }}</div>
@@ -22,7 +22,7 @@
       <div class="body-container">
         <div class="left-panel">
           <!-- <div>메뉴가 들어갈 부분</div> -->
-          <MenuList />
+          <MenuList :shopId="1" />
           <!-- 왼쪽 컨텐츠 (6:4 중 6 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
@@ -67,16 +67,18 @@ const partyInfo = ref({
   },
 });
 
+//파티 객체 정보의 shop_id 추출
+const shopId = partyInfo.value.shop_id;
 
 const isOrderListModalOpen = ref(false);
 
 //const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
-const lastOrderTime = partyInfo.value.last_order_time;
-const lastOrderDateTime = new Date(lastOrderTime);
-const hours = lastOrderDateTime.getHours();
-const minutes = lastOrderDateTime.getMinutes();
+// const lastOrderTime = partyInfo.value.last_order_time;
+// const lastOrderDateTime = new Date(lastOrderTime);
+// const hours = lastOrderDateTime.getHours();
+// const minutes = lastOrderDateTime.getMinutes();
 
-const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+// const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
 
 const remainingTime = ref(""); //남은시간
 
@@ -97,11 +99,6 @@ onMounted(() => {
   setInterval(updateRemainingTime, 1000);
   code.value = route.params.code;
   getPartyInfo();
-  console.log(partyInfo.value.last_order_time);
-  console.log(lastOrderDateTime.value);
-  console.log(hours);
-  console.log(minutes);
-
 });
 
 onUnmounted(() => {
@@ -129,7 +126,6 @@ const getPartyInfo = () => {
   );
 };
 
-
 // 남은시간 갱신하는 함수 호출
 const updateRemainingTime = () => {
   const now = new Date(); //현재시간 변수
@@ -139,13 +135,11 @@ const updateRemainingTime = () => {
   // const deadlineTime = new Date();
   // const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
 
-
   // deadlineTimne.setHours(hours, minutes, 0);
 
   //마감시간에서 현재시간 차이를 저장
   const diff = deadlineTime - now;
   // console.log(diff);
-
 
   if (diff > 0) {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

@@ -5,7 +5,6 @@ const local = localAxios();
 const url = "/api/v1/shops";
 // const url = "/server";
 
-
 function getShops(param, success, fail) {
   local.get(`${url}`, { param }).then(success).catch(fail);
   console.log("가져올게욧");
@@ -17,8 +16,8 @@ function getShops(param, success, fail) {
 // }
 
 //메뉴 카테고리 조회
-function getMenuCategories(id, param, success, fail) {
-  local.get(`${url}/${id}/menu-categories`, { param }).then(success).catch(fail);
+function getMenuCategories(id, success, fail) {
+  local.get(`${url}/${id}/menu-categories`).then(success).catch(fail);
 }
 
 export { getShops, getMenuCategories };
