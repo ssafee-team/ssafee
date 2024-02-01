@@ -50,4 +50,9 @@ public class MenuService {
         });
     }
 
+   @Transactional
+    public void deleteMenu(Long menuId) {
+        menuRepository.deleteById(menuId);
+    }
+
 }

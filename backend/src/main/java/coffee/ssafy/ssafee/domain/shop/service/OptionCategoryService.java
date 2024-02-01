@@ -47,4 +47,8 @@ public class OptionCategoryService {
         });
     }
 
+    @Transactional
+    public void deleteOptionCategory(Long optionCategoryId) {
+        optionCategoryRepository.deleteById(optionCategoryId);
+    }
 }

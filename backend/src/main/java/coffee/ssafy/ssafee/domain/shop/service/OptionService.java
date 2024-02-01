@@ -49,4 +49,9 @@ public class OptionService {
             optionRepository.save(option);
         });
     }
+
+    @Transactional
+    public void deleteOption(Long optionCategoryId) {
+        optionRepository.deleteById(optionCategoryId);
+    }
 }
