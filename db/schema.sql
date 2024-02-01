@@ -14,7 +14,8 @@ DROP TABLE IF EXISTS `auto_orders`,
 `order_menu_options`,
 `participants`,
 `parties`,
-`shops`;
+`shops`,
+`users`;
 
 CREATE TABLE `shops` (
     `shop_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -70,6 +71,11 @@ CREATE TABLE `options` (
     FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
 );
 
+CREATE TABLE `users` (
+    `user_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `email` VARCHAR(32) NOT NULL UNIQUE
+);
+
 CREATE TABLE `parties` (
     `party_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `access_code` CHAR(10) NOT NULL UNIQUE,
@@ -80,7 +86,9 @@ CREATE TABLE `parties` (
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
-    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+    `user_id` BIGINT NOT NULL,
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
 );
 
 CREATE TABLE `creators` (

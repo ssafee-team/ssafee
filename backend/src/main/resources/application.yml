@@ -8,6 +8,12 @@ spring:
 server:
   port: ${SERVER_PORT:80}
 
+jwt:
+  access-secret-key-base64: ${JWT_ACCESS_SECRET_KEY_BASE64:iAbBnFDrPJgglJr+yO0dC1qITxoCJcm1HB8ZiFWhtN19lWOdCaiPmvqXRTLmqe4cIdaT5X62swd/8lfp8rdw0Q==}
+  access-expiration-seconds: ${JWT_ACCESS_EXPIRATION_SECONDS:86400}
+  refresh-secret-key-base64: ${JWT_REFRESH_SECRET_KEY_BASE64:zxY3hKXBd6MPmmxha1rwte7GayIdjuzOTeD6nyuO7MockdamStat6G0nDF2T8EJP041sdz4eZxEPNJEGIXGmiQ==}
+  refresh-expiration-seconds: ${JWT_REFRESH_EXPIRATION_SECONDS:8640000}
+
 ---
 
 spring:
@@ -52,5 +58,3 @@ spring:
     url: ${PROD_DB_URL}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
-
----
