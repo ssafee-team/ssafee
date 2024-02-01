@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.party.entity;
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
+import coffee.ssafy.ssafee.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -60,6 +61,10 @@ public class Party extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
     private OrderDelivery orderDelivery;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private User user;
 
     public void prepareCreation(String accessCode, Shop shop, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
