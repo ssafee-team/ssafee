@@ -16,7 +16,7 @@
       </RouterLink>
     </div>
     <div class="link-container">
-    <router-link :to="{ name: 'After', params: { access_code: 'jw7z4gw8QY' }}">
+    <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' }}">
       <button > After</button>
     </router-link>
     <!-- <RouterLink to="After">
