@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,11 +24,11 @@ public class Option {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Integer price;
 
     @Column(insertable = false, nullable = false)
@@ -45,4 +46,8 @@ public class Option {
     @Setter
     private Shop shop;
 
+    public void updateOption(OptionRequest optionRequest) {
+        this.name = optionRequest.name();
+        this.price = optionRequest.price();
+    }
 }

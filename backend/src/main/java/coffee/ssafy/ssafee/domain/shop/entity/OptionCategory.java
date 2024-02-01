@@ -51,9 +51,6 @@ public class OptionCategory {
     private Shop shop;
 
     public void updateOptionCategory(OptionCategoryRequest optionCategoryRequest, OptionCategory optionCategory) {
-        System.out.println(optionCategoryRequest.name());
-        System.out.println(optionCategoryRequest.required());
-        System.out.println(optionCategoryRequest.maxCount());
         this.name = optionCategoryRequest.name();
         this.required = optionCategoryRequest.required();
         this.maxCount = optionCategoryRequest.maxCount();

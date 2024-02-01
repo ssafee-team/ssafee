@@ -36,5 +36,17 @@ public class OptionController {
         return ResponseEntity.created(location).build();
     }
 
+    @PatchMapping("/options/{option_id}")
+    @Operation(summary = "옵션 수정")
+    public ResponseEntity<Void> updateOption(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId,
+            @PathVariable("option_id") Long optionId,
+            @RequestBody OptionRequest optionRequest) {
+        optionService.updateOption(optionId, optionRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
