@@ -1,12 +1,10 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;

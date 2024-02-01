@@ -1,7 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
 import io.swagger.v3.oas.annotations.Operation;

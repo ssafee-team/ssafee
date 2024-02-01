@@ -50,7 +50,7 @@ public class OptionCategory {
     @Setter
     private Shop shop;
 
-    public void updateOptionCategory(OptionCategoryRequest optionCategoryRequest, OptionCategory optionCategory) {
+    public void updateOptionCategory(OptionCategoryRequest optionCategoryRequest) {
         this.name = optionCategoryRequest.name();
         this.required = optionCategoryRequest.required();
         this.maxCount = optionCategoryRequest.maxCount();

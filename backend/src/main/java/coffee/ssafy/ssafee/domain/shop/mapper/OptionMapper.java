@@ -16,5 +16,6 @@ public interface OptionMapper {
     @AfterMapping
     default void updateFromDto(OptionRequest optionRequest, Option option) {
         option.updateOption(optionRequest);
-    };
+    }
+
 }

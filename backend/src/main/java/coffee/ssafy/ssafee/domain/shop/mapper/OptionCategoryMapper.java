@@ -16,6 +16,7 @@ public interface OptionCategoryMapper {
 
     @AfterMapping
     default void updateFromDto(OptionCategoryRequest optionCategoryRequest, @MappingTarget OptionCategory optionCategory) {
-        optionCategory.updateOptionCategory(optionCategoryRequest, optionCategory);
-    };
+        optionCategory.updateOptionCategory(optionCategoryRequest);
+    }
+
 }

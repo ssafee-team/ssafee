@@ -62,7 +62,7 @@ public class Menu {
     )
     private List<OptionCategory> optionCategories;
 
-    public void updateMenu(MenuRequest menuRequest, Menu menu) {
+    public void updateMenu(MenuRequest menuRequest) {
         this.name = menuRequest.name();
         this.description = menuRequest.description();
         this.price = menuRequest.price();

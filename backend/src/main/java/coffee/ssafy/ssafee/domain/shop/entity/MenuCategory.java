@@ -27,7 +27,6 @@ public class MenuCategory {
 
     @NotNull
     @Column(nullable = false)
-    @Setter
     private String name;
 
     @Column(insertable = false, nullable = false)
@@ -41,5 +40,9 @@ public class MenuCategory {
 
     @OneToMany(mappedBy = "menuCategory")
     private List<Menu> Menus;
+
+    public void updateMenuCategory(MenuCategoryRequest menuCategoryRequest) {
+        this.name = menuCategoryRequest.name();
+    }
 
 }

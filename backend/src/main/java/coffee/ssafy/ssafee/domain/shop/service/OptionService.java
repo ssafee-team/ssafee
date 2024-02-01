@@ -42,7 +42,7 @@ public class OptionService {
 
     @Transactional
     public void updateOption(Long optionId, OptionRequest optionRequest) {
-        optionRepository.findById(optionId).ifPresent(option ->  {
+        optionRepository.findById(optionId).ifPresent(option -> {
             optionMapper.updateFromDto(optionRequest, option);
             optionRepository.save(option);
         });
