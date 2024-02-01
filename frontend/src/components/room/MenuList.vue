@@ -8,24 +8,16 @@
       </div>
       <hr />
       <div class="modal-content">
-        <p>휘핑선택</p>
-        <div class="choice">
-          <div class="row" v-for="option in whippingOptions" :key="option.value">
-            <label>
-              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
-              {{ option.label }}
-            </label>
-            <div>+ {{ option.price }}원</div>
-          </div>
-        </div>
-        <p>추가선택</p>
-        <div class="choice">
-          <div class="row" v-for="option in additionalOptions" :key="option.value">
-            <label>
-              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
-              {{ option.label }}
-            </label>
-            <div>+ {{ option.price }}원</div>
+        <div v-for="optionCategory in optionCategories" :key="optionCategory.id">
+          <p>{{ optionCategory.name }}</p>
+          <div class="choice">
+            <div class="row" v-for="option in optionCategory.options" :key="option.id">
+              <label>
+                <input type="checkbox" :value="option.name" v-model="selectedOptions" />
+                {{ option.name }}
+              </label>
+              <div>+ {{ option.price }}원</div>
+            </div>
           </div>
         </div>
       </div>
@@ -63,17 +55,13 @@
         "
       />
       <div>{{ drink.name }}</div>
-      <div class="price">{{ drink.price }}</div>
+      <div class="price">{{ drink.price }}원</div>
     </div>
   </div>
-  <order-summary
-    :order-list="orderList"
-    :order-summary-visible="orderSummaryVisible"
-    @toggle-order-summary="toggleOrderSummary"
-  ></order-summary>
+  <order-summary :order-list="orderList"></order-summary>
 </template>
 <script>
-import { getMenuCategories, getMenusByCategory } from "@/api/shop";
+import { getMenuCategories, getMenusByCategory, getOptionCategory } from "@/api/shop";
 import OrderSummary from "./OrderSummary.vue";
 
 export default {
@@ -94,21 +82,9 @@ export default {
       checkedOptions: {},
       categories: [],
       drinks: [],
-
-      whippingOptions: [
-        { value: "1", label: "휘핑제공", price: 0 },
-        { value: "2", label: "휘핑미제공", price: 0 },
-        { value: "3", label: "휘핑적게", price: 0 },
-        { value: "4", label: "휘핑많이", price: 500 },
-        { value: "5", label: "휘핑많이2", price: 500 },
-      ],
-      additionalOptions: [
-        { value: "6", label: "설탕시럽 1펌프 추가", price: 500 },
-        { value: "7", label: "설탕시럽 2펌프 추가", price: 1000 },
-        { value: "8", label: "샷 추가", price: 500 },
-        { value: "9", label: "펄 추가", price: 500 },
-        { value: "10", label: "펄 추가2", price: 1000 },
-      ],
+      optionCategories: [], // 옵션 카테고리를 담을 변수 추가
+      options: [], // 선택된 옵션을 담을 변수 추가
+      optionCategoriesMap: {},
       selectedOptions: [],
       selectedCategory: 0,
       drinkItemWidth: "20%", //각 음료 항목의 너비
@@ -120,7 +96,7 @@ export default {
     //shopId를 기반 메뉴 카테고리 데이터 가져오기
     getMenuCategories(this.shopId, this.handleSuccess, this.handleFail);
 
-    // 첫 번째 카테고리를 선택
+    //페이지 렌더링 시 첫 번째 카테고리를 선택하지 않고 기본적으로 보여줌
     this.selectCategory(0);
   },
 
@@ -154,13 +130,54 @@ export default {
     },
 
     handleMenuSuccess(response) {
-      this.drinks[this.selectedCategory] = response.data;
+      const menuData = response.data;
+      // 각 메뉴의 옵션 카테고리 데이터 저장
+      menuData.forEach((menu) => {
+        menu.option_categories.forEach((optionCategory) => {
+          // 옵션 카테고리를 저장할 때 메뉴의 id를 key로 사용
+          if (!this.optionCategoriesMap[menu.id]) {
+            this.optionCategoriesMap[menu.id] = [];
+          }
+          this.optionCategoriesMap[menu.id].push(optionCategory);
+        });
+      });
+
+      this.drinks[this.selectedCategory] = menuData;
       console.log("메뉴 가져왔니?", this.drinks);
     },
 
     setSelectedDrinkIndex(index) {
       this.selectedDrinkIndex = index;
-      // console.log(this.selectedDrinkIndex);
+
+      const selectedDrink = this.selectedDrinks[index];
+      const menuId = selectedDrink.id;
+      if (this.optionCategoriesMap[menuId]) {
+        this.optionCategories = this.optionCategoriesMap[menuId];
+      } else {
+        // 저장된 데이터가 없을 경우 API를 통해 불러옴
+        selectedDrink.option_categories.forEach((optionCategory) => {
+          this.loadOptionCategories(optionCategory.id);
+        });
+      }
+    },
+
+    loadOptionCategories(optionCategoryId) {
+      // 음료의 id를 기반으로 옵션 카테고리 데이터 가져오기
+      getOptionCategory(
+        this.shopId,
+        optionCategoryId, //옵션 카테고리 id 전달
+        this.handleOptionCategorySuccess, //성공 콜백
+        this.handleFail //실패 콜백
+      );
+    },
+
+    handleOptionCategorySuccess(response) {
+      // 모달이 열릴 때마다 옵션 카테고리 데이터 업데이트
+      this.optionCategories = response.data;
+
+      if (this.optionCategories) {
+        this.options = this.optionCategories[0].options;
+      }
     },
 
     close(event) {
@@ -178,19 +195,18 @@ export default {
     },
 
     calculateTotalPrice() {
-      let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
+      let total = parseFloat(this.selectedDrink.price);
       console.log("현재", total);
 
       //선택한 옵션들의 가격을 합산
-      for (const option of this.selectedOptions) {
-        const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(
-          (opt) => opt.label === option
-        );
-        if (checkedOption) {
-          total += checkedOption.price;
+      // 선택한 옵션들의 가격을 합산
+      for (const optionCategory of this.optionCategories) {
+        for (const option of optionCategory.options) {
+          if (this.selectedOptions.includes(option.name)) {
+            total += option.price;
+          }
         }
       }
-      // total += this.whippingOptions.find((opt) => opt.value === option).price;
 
       return total.toFixed(0);
     },
@@ -253,7 +269,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: auto;
-  height: 500px;
+  height: 450px;
 }
 
 .menu-items::-webkit-scrollbar {
@@ -362,7 +378,7 @@ p {
   font-size: 20px;
   font-weight: bold;
   text-align: left;
-  margin-left: 70px;
+  margin-left: 20px;
   margin-top: 20px;
 }
 
@@ -370,7 +386,7 @@ p {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  margin-left: 70px;
+  margin-left: 40px;
 }
 .row {
   font-size: 18px;
