@@ -74,8 +74,15 @@
   ></order-summary>
 </template>
 <script>
+import { getMenuCategories } from "@/api/shop";
 import OrderSummary from "./OrderSummary.vue";
 export default {
+  props: {
+    shopId: {
+      required: true,
+    },
+  },
+
   components: {
     OrderSummary,
   },
@@ -85,18 +92,19 @@ export default {
       openModal: false, //모달 기본적으로 안보이게 설정
       modalMaxHeight: "80%",
       checkedOptions: {},
-      categories: [
-        "인기메뉴",
-        "시즌메뉴",
-        "커피",
-        "디카페인",
-        "베버리지",
-        "스무디/프라페",
-        "밀크쉐이크",
-        "에이드/주스",
-        "티",
-        "기타",
-      ],
+      categories: {},
+      // categories: [
+      //   "인기메뉴",
+      //   "시즌메뉴",
+      //   "커피",
+      //   "디카페인",
+      //   "베버리지",
+      //   "스무디/프라페",
+      //   "밀크쉐이크",
+      //   "에이드/주스",
+      //   "티",
+      //   "기타",
+      // ],
       drinks: {
         0: [
           { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
@@ -146,6 +154,11 @@ export default {
       orderList: [], //주문 내역을 담을 배열 추가
     };
   },
+  mounted() {
+    //shopId를 기반 메뉴 카테고리 데이터 가져오기
+    getMenuCategories(this.shopId, this.handleSuccess, this.handleFail);
+  },
+
   computed: {
     selectedDrinks() {
       console.log(this.categories[this.selectedCategory], "선택");
@@ -157,6 +170,17 @@ export default {
     },
   },
   methods: {
+    handleSuccess(response) {
+      //데이터를 비동기적으로 불러올 경우, response 받아서 response.data로 세팅하기
+      //프록시 객체의 data 속성을 이용해 접근
+      //받은 데이터를 categories에 세팅
+      this.categories = response.data;
+      console.log("카테고리 출력", this.categories);
+    },
+    handleFail(error) {
+      console.error(error);
+    },
+
     selectCategory(index) {
       this.selectedCategory = index;
       // console.log(this.selectedCategory);
@@ -240,8 +264,8 @@ export default {
   flex: 1 0 20%; /* 확장 가능, 축소 불가능, 최대 너비 20% */
   cursor: pointer;
   padding: 10px;
-  box-sizing: border-box;
-  font-size: 20px;
+  /* box-sizing: border-box; */
+  font-size: 18px;
   font-weight: bold;
 }
 

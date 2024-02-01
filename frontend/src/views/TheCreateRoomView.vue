@@ -19,41 +19,58 @@
     <div class="child2">
       <main class="form-container">
         <div class="form-field">
-      <label for="roomTitle">방제목</label>
-      <input type="text" id="roomTitle" v-model="form.roomTitle" maxlength="32"
-      placeholder="방 제목을 입력해주세요">
-    </div>
-    <div class="form-field">
-      <label for="name">이름</label>
-      <input type="text" id="name" v-model="form.name" maxlength="8"
-      placeholder="김싸피">
-    </div>
-    <div class="form-field ">
-      <label for="class">반</label>
-      <input type="number" id="class" v-model="form.class"
-      placeholder="2">
-    </div>
-    <div class="form-field">
-      <label for="batch">기수</label>
-      <input type="number" id="batch" v-model="form.batch" min="1" max="14"
-      placeholder="10">
-    </div>
-    <div class="form-field">
-      <label for="deadline">마감시간</label>
-      <input type="text" id="deadline" v-model="form.deadline" maxlength="20"
-      placeholder="2024-01-01">
-    </div>
-    <div class="form-field">
-      <label for="bankName">은행명</label>
-      <input type="text" id="bankName" v-model="form.bankName" maxlength="32"
-      placeholder="삼성은행">
-    </div>
-    <div class="form-field">
-      <label for="accountNumber">계좌번호</label>
-      <input type="text" id="accountNumber" v-model="form.accountNumber" maxlength="32"
-      placeholder="123-4567-890">
-    </div>
-    <!-- <div class="form-field">
+          <label for="roomTitle">방제목</label>
+          <input
+            type="text"
+            id="roomTitle"
+            v-model="form.roomTitle"
+            maxlength="32"
+            placeholder="방 제목을 입력해주세요"
+          />
+        </div>
+        <div class="form-field">
+          <label for="name">이름</label>
+          <input type="text" id="name" v-model="form.name" maxlength="8" placeholder="김싸피" />
+        </div>
+        <div class="form-field">
+          <label for="class">반</label>
+          <input type="number" id="class" v-model="form.class" placeholder="2" />
+        </div>
+        <div class="form-field">
+          <label for="batch">기수</label>
+          <input type="number" id="batch" v-model="form.batch" min="1" max="14" placeholder="10" />
+        </div>
+        <div class="form-field">
+          <label for="deadline">마감시간</label>
+          <input
+            type="text"
+            id="deadline"
+            v-model="form.deadline"
+            maxlength="20"
+            placeholder="2024-01-01"
+          />
+        </div>
+        <div class="form-field">
+          <label for="bankName">은행명</label>
+          <input
+            type="text"
+            id="bankName"
+            v-model="form.bankName"
+            maxlength="32"
+            placeholder="삼성은행"
+          />
+        </div>
+        <div class="form-field">
+          <label for="accountNumber">계좌번호</label>
+          <input
+            type="text"
+            id="accountNumber"
+            v-model="form.accountNumber"
+            maxlength="32"
+            placeholder="123-4567-890"
+          />
+        </div>
+        <!-- <div class="form-field">
       <label for="phoneNumber">전화번호</label>
       <input type="text" id="phoneNumber" v-model="form.phoneNumber" maxlength="15"
       placeholder="010-1234-5678">
@@ -126,15 +143,15 @@ import { getShops } from "@/api/shop";
 import { createParty } from "@/api/party";
 
 const form = ref({
-        roomTitle: '',
-        name: '',
-        class: '',
-        batch: '',
-        deadline: '',
-        bankName: '',
-        accountNumber: '',
-        phoneNumber: ''
-})
+  roomTitle: "",
+  name: "",
+  class: "",
+  batch: "",
+  deadline: "",
+  bankName: "",
+  accountNumber: "",
+  phoneNumber: "",
+});
 
 //여기부터 상혁이가 작성--------------------
 const shops = ref({
@@ -225,20 +242,19 @@ const platformValue = computed(() => {
   return PickPlatform.value === "컴포즈드" ? 1 : 0;
 });
 
-
 const partyData = computed(() => ({
-     "name": form.value.roomTitle,
-     "generation": form.value.batch,
-     "classroom": form.value.class,
-     "last_order_time": "2024-01-31T00:18:18",
-     "shop_id": 1,
-     "creator": {
-       "name": form.value.name,
-       "email": "skip",
-       "bank": form.value.bankName,
-       "account": form.value.accountNumber
-     }
-   }));
+  name: form.value.roomTitle,
+  generation: form.value.batch,
+  classroom: form.value.class,
+  last_order_time: "11:50",
+  shop_id: 1,
+  creator: {
+    name: form.value.name,
+    email: "skip",
+    bank: form.value.bankName,
+    account: form.value.accountNumber,
+  },
+}));
 // const partyData = {
 //   "name": "test",
 //   "generation": 0,
@@ -252,7 +268,7 @@ const partyData = computed(() => ({
 //     "account": "string"
 //   }
 // };
-// const 
+// const
 // {
 //   "name": "test",
 //   "generation": 0,
@@ -271,30 +287,26 @@ const modalCheck = ref(false);
 
 function modalOpen() {
   modalCheck.value = !modalCheck.value;
-  
 }
-  console.log(modalCheck.value)
-  console.log(form.value)
+console.log(modalCheck.value);
+console.log(form.value);
 
 function submitForm() {
   modalOpen();
   createParty(partyData.value, onSuccess, onFailure);
 }
 
-
 // 성공 콜백 함수를 정의합니다.
 function onSuccess(response) {
-  console.log('성공:', response);
+  console.log("성공:", response);
 }
 
 // 실패 콜백 함수를 정의합니다.
 function onFailure(error) {
-  console.error('실패:', error);
-} 
+  console.error("실패:", error);
+}
 
 // createParty 함수를 호출합니다.
-
-
 </script>
 
 <style>
@@ -336,7 +348,7 @@ label {
   width: 180px;
 }
 
-input{
+input {
   flex-grow: 1;
   height: 40px;
   padding: 8px;

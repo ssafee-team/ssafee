@@ -62,7 +62,6 @@ export default {
                   name: "Hot",
                   price: 500,
                 },
-
               ],
             },
             {
@@ -321,7 +320,7 @@ export default {
 
 .modal-content {
   width: 40%;
-  height: 70%;
+  height: 500px;
   background: #344a53;
   border-radius: 5px;
   padding: 20px;
@@ -343,7 +342,7 @@ export default {
 }
 
 .order-content {
-  max-height: 380px;
+  /* max-height: 380px; */
 }
 .order-content::-webkit-scrollbar {
   display: none;
@@ -354,8 +353,9 @@ export default {
   flex-direction: column;
   padding: 10px;
   /* margin-left: 70px; */
-  height: 380px;
-  max-height: 380px;
+  height: 360px;
+  max-height: 360px;
+  bottom: 0;
   padding: 20px;
   gap: 20px;
   justify-content: space-between;
