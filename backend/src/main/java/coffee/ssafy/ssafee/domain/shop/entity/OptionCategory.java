@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -48,5 +49,14 @@ public class OptionCategory {
     @JoinColumn(name = "shop_id", nullable = false)
     @Setter
     private Shop shop;
+
+    public void updateOptionCategory(OptionCategoryRequest optionCategoryRequest, OptionCategory optionCategory) {
+        System.out.println(optionCategoryRequest.name());
+        System.out.println(optionCategoryRequest.required());
+        System.out.println(optionCategoryRequest.maxCount());
+        this.name = optionCategoryRequest.name();
+        this.required = optionCategoryRequest.required();
+        this.maxCount = optionCategoryRequest.maxCount();
+    }
 
 }

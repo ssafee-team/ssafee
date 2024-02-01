@@ -35,9 +35,4 @@ public interface MenuCategoryMapper {
     @Mapping(target = "name", source = "menuCategoryRequest.name")
     void updateFromDto(MenuCategoryRequest menuCategoryRequest, @MappingTarget MenuCategory menuCategory);
 
-    @AfterMapping
-    default void updateMenuCategory(@MappingTarget Menu menu, MenuRequest menuRequest) {
-        menu.updateMenu(menuRequest, menu);
-    }
-
 }

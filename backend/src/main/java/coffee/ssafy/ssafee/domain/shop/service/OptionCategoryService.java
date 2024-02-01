@@ -33,4 +33,12 @@ public class OptionCategoryService {
         optionCategoryRepository.save(optionCategory);
         return optionCategory.getId();
     }
+
+    public void updateOptionCategory(Long optionCategoryId, OptionCategoryRequest optionCategoryRequest) {
+        optionCategoryRepository.findById(optionCategoryId).ifPresent(optionCategory -> {
+            optionCategoryMapper.updateFromDto(optionCategoryRequest, optionCategory);
+            optionCategoryRepository.save(optionCategory);
+        });
+    }
+
 }

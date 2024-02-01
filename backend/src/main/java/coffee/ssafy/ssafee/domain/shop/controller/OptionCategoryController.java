@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
+import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,15 @@ public class OptionCategoryController {
     }
 
     // 3. 옵션 카테고리 수정
+    @PatchMapping("/{oc_id}")
+    @Operation(summary = "옵션 카테고리 수정")
+    public ResponseEntity<Void> updateOptionCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId,
+            @RequestBody OptionCategoryRequest optionCategoryRequest) {
+        optionCategoryService.updateOptionCategory(optionCategoryId, optionCategoryRequest);
+        return ResponseEntity.noContent().build();
+    }
 
     // 4. 옵션 카테고리 삭제
 
