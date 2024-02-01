@@ -28,6 +28,8 @@
         <div class="left-panel">
           <OrderList
             :orders="orders"
+            :name-set="nameSet"
+            :orders-menu-sorted="ordersMenuSorted"
           />
           <!-- <div>메뉴가 들어갈 부분</div> -->
           <!-- <MenuList/> -->
@@ -80,8 +82,10 @@
     account: "",
   })
   const orders = ref([])
-  // const orders = ref([])
-
+  const ordersMenuSorted = ref([])
+  const menuSet = new Set();
+  const nameSet = new Set();
+  
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
     // console.log(route.params.access_code);
@@ -91,43 +95,114 @@
       creator.value.name = res.data.creator.name;
       creator.value.bank = res.data.creator.bank;
       creator.value.account = res.data.creator.account;
-      
     }, 
     (error)=>{
       console.log(error)
     });
+    
 
     getOrderList(route.params.access_code, 
     (res) => {
       // console.log(res.data)
+      
+      // console.log(res.data)
       res.data.forEach(elem => {
-        console.log('주문자:', elem.name)
-        // let options = []
-        elem.order_menus.forEach(menu => {
-          // console.log(menu.data)
-          console.log('메뉴:',menu.menu.name);
-          console.log('메뉴가격:',menu.menu.price);
-          menu.option_categories.forEach(category => {
-            console.log('카테고리:', category.name)
-            category.options.forEach(option => {
-              console.log('옵션:',option.name)
-              console.log('옵션가격:',option.price)
-            }) 
-          })
+        // console.log('주문자:', elem.participant_name)        
+        nameSet.add(elem.participant_name);
+        menuSet.add(elem.chosen_menu.name);
+
+        let optionPrice = 0;
+        let options = [];
+        elem.chosen_option_categories.forEach(option_categories => {
+          option_categories.chosen_options.forEach(option => {
+            options.push({id:option.id, name:option.name, price:option.price})
+            optionPrice += option.price
+          })      
         })
+
+        // console.log("정렬 전 옵션",options)
+        // console.log("정렬된옵션:", options)
+        options.sort((a,b) => a.id - b.id)
+        // console.log("정렬 전 옵션", options)
+        let itCat = ''
+        options.forEach((opt) => {itCat += (opt.id + '_')})
+        itCat = itCat === "" ? "0" : itCat.substring(0,itCat.length-1)
+        // console.log(itCat)
+        options.unshift(1)
+        options.unshift(itCat)
 
         orders.value.push({
           classNo: 2,
-          studentName: elem.name,
-          menuName: elem.order_menus[0].menu.name,
-          menuPrice: elem.order_menus[0].menu.price,
-
+          studentName: elem.participant_name,
+          menuName: elem.chosen_menu.name,
+          menuPrice: elem.chosen_menu.price + optionPrice,
+          menuPriceNoOptions: elem.chosen_menu.price,
+          menuOptions: options,
         })
 
-
+        
       });
 
-      console.log(orders.value)
+      // 반복문 이후
+      // console.log("개발시작")
+      menuSet.forEach(menu => {
+        // console.log(menu)
+        // 개별메뉴 숫자
+        let optionsTemp = [];
+        let sortedByMenu = orders.value.filter(order => order.menuName === menu);
+        // sortedByMenu 에서 options 순회
+        // option이 tempOptions에 없으면 추가, 있으면 수량만 +1
+        let optionsSet = new Set();
+        let sumMenuPrice = 0;
+        sortedByMenu.forEach((order)=>{
+          sumMenuPrice += order.menuPrice
+          // console.log(order.menuPrice)
+          // console.log('우우웅:',order.menuOptions[0])
+          // console.log
+          // order.menuOptions[0] 번이 없으면 추가 있으면 위치를 찾아 count += 1
+          if (!optionsSet.has(order.menuOptions[0])) {
+            optionsSet.add(order.menuOptions[0])
+            optionsTemp.push(order.menuOptions)
+            // console.log(optionsSet)
+          } else {
+            let idx = optionsTemp.findIndex(elem => elem[0] === order.menuOptions[0])
+            // console.log("idx:",idx)
+            optionsTemp[idx][1] += 1
+          }
+          
+          // order.menuOptions.forEach((option)=>{
+          //   console.log("옵션이름:", option.name)
+          //   if (!temp1.includes(option.name)) {
+          //     temp1.push(option.name)
+          //     optionsTemp.push(option)
+          //   } else {
+          //     console.log('부힛 부히힛:',temp1.indexOf(option.name))
+          //   }
+          //   optionsTemp.push(option)
+          // })
+
+        })
+        optionsTemp.sort((a,b)=>a[0].localeCompare(b[0]))
+        // console.log('adfasdzcxv',optionsTemp[0])
+
+
+        ordersMenuSorted.value.push(
+          {
+            sumMenuPrice: sumMenuPrice,
+            menuName: menu,
+            menuCount: sortedByMenu.length,
+            options: optionsTemp,
+          }
+        )
+
+      });
+      // console.log("orders:", orders.value)
+      // console.log("메뉴기준정렬",ordersMenuSorted.value)
+
+      // console.log(orders.value)
+      // console.log(nameSet);
+      // console.log(menuSet);
+      // console.log(optionsSet);
     }, 
     (error) => {
       console.log(error)
