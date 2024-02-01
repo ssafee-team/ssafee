@@ -62,9 +62,9 @@ public class Party extends BaseTimeEntity {
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
     private OrderDelivery orderDelivery;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
+    // @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    // @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    // private User user;
 
     public void prepareCreation(String accessCode, Shop shop, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
