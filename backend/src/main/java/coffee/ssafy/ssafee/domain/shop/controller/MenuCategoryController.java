@@ -38,6 +38,15 @@ public class MenuCategoryController {
     }
 
     // 3. 메뉴 카테고리 수정
+    @PatchMapping("/{mc_id}")
+    @Operation(summary = "메뉴 카테고리 수정")
+    public ResponseEntity<Void> updateMenuCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("mc_id") Long menuCategoryId,
+            @RequestBody MenuCategoryRequest menuCategoryRequest) {
+        menuCategoryService.updateMenuCategory(menuCategoryId, menuCategoryRequest);
+        return ResponseEntity.noContent().build();
+    }
 
     // 4. 메뉴 카테고리 삭제
 

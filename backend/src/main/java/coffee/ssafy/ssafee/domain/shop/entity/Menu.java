@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,11 +26,11 @@ public class Menu {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Integer price;
 
     @Column
@@ -60,5 +61,12 @@ public class Menu {
             inverseJoinColumns = @JoinColumn(name = "option_category_id")
     )
     private List<OptionCategory> optionCategories;
+
+    public void updateMenu(MenuRequest menuRequest) {
+        this.name = menuRequest.name();
+        this.description = menuRequest.description();
+        this.price = menuRequest.price();
+        this.image = menuRequest.image();
+    }
 
 }

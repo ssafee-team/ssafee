@@ -41,6 +41,15 @@ public class OptionCategoryController {
     }
 
     // 3. 옵션 카테고리 수정
+    @PatchMapping("/{oc_id}")
+    @Operation(summary = "옵션 카테고리 수정")
+    public ResponseEntity<Void> updateOptionCategory(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("oc_id") Long optionCategoryId,
+            @RequestBody OptionCategoryRequest optionCategoryRequest) {
+        optionCategoryService.updateOptionCategory(optionCategoryId, optionCategoryRequest);
+        return ResponseEntity.noContent().build();
+    }
 
     // 4. 옵션 카테고리 삭제
 

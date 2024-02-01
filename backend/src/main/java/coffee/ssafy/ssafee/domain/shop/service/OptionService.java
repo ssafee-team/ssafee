@@ -8,6 +8,7 @@ import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.mapper.OptionMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.OptionRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;
 
+    @Transactional
     public List<OptionResponse> getOptionsByCategory(Long optionCategoryId) {
         List<Option> options = optionRepository.findByOptionCategoryId(optionCategoryId);
         return options.stream()
@@ -29,11 +31,20 @@ public class OptionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public Long createOption(Long shopId, Long optionCategoryId, OptionRequest optionRequest) {
         Option option = optionMapper.toEntity(optionRequest);
         option.setOptionCategory(entityManager.getReference(OptionCategory.class, optionCategoryId));
         option.setShop(entityManager.getReference(Shop.class, shopId));
         optionRepository.save(option);
         return option.getId();
+    }
+
+    @Transactional
+    public void updateOption(Long optionId, OptionRequest optionRequest) {
+        optionRepository.findById(optionId).ifPresent(option -> {
+            optionMapper.updateFromDto(optionRequest, option);
+            optionRepository.save(option);
+        });
     }
 }

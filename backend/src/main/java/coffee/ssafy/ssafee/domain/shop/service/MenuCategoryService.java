@@ -7,6 +7,7 @@ import coffee.ssafy.ssafee.domain.shop.mapper.MenuCategoryMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.MenuCategoryRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,14 @@ public class MenuCategoryService {
         menuCategory.setShop(entityManager.getReference(Shop.class, shopId));
         menuCategoryRepository.save(menuCategory);
         return menuCategory.getId();
+    }
+
+    @Transactional
+    public void updateMenuCategory(Long menuCategoryId, MenuCategoryRequest menuCategoryRequest) {
+        menuCategoryRepository.findById(menuCategoryId).ifPresent(menuCategory -> {
+            menuCategoryMapper.updateMenuCategory(menuCategory, menuCategoryRequest);
+            menuCategoryRepository.save(menuCategory);
+        });
     }
 
 }
