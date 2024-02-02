@@ -35,6 +35,7 @@ const router = createRouter({
       path: "/After/:access_code",
       name: "After",
       component: () => import("../views/TheAfterView.vue"),
+      props: true
     },
   ],
 });

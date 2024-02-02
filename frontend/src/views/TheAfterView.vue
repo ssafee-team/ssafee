@@ -85,9 +85,11 @@
   const ordersMenuSorted = ref([])
   const menuSet = new Set();
   const nameSet = new Set();
+  const access_code = ref("");
   
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
+    console.log(access_code.value)
     // console.log(route.params.access_code);
     getCreator(route.params.access_code, 
     (res) => {

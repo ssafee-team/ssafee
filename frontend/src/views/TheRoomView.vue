@@ -131,17 +131,20 @@ const getPartyInfo = () => {
 // 남은시간 갱신하는 함수 호출
 const updateRemainingTime = () => {
   const now = new Date(); //현재시간 변수
-  const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
+  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
+  
   // console.log(deadlineTime);
 
-  // const deadlineTime = new Date();
-  // const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
+  const deadlineTime = new Date();
+  const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
 
-  // deadlineTimne.setHours(hours, minutes, 0);
+  deadlineTime.setHours(hours, minutes, 0);
+  // deadlineTime.setHours(11, 48, 0);
 
   //마감시간에서 현재시간 차이를 저장
   const diff = deadlineTime - now;
-  // console.log(diff);
+  console.log(diff);
+  // console.log(code.value)
 
   if (diff > 0) {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -152,6 +155,10 @@ const updateRemainingTime = () => {
   } else {
     //go("/after")화면으로
     remainingTime.value = "마감";
+    // window.location.href = 'http://localhost:8083/After/' + code.value
+    console.log(code.value)
+    setTimeout(() => { window.location.href = `http://localhost:8083/After/${code.value}`}, 100)
+   
   }
 };
 
@@ -178,6 +185,11 @@ const closeOrderModal = () => {
 //   // 주문 현황 확인 로직을 추가할 수 있습니다.
 //   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
 // };
+
+// 마감시간 시 After 창으로 이동하는 코드
+
+
+
 </script>
 
 <style scoped>

@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       nameInput: "",
-      partyCode: "Gqe3GwHFoK",
+      partyCode: "5xsXwXlJ91",
     };
   },
   methods: {
