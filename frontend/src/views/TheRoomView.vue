@@ -22,7 +22,8 @@
       <div class="body-container">
         <div class="left-panel">
           <!-- <div>메뉴가 들어갈 부분</div> -->
-          <MenuList :shopId="1" />
+          <MenuList :shopId="1" :code="code" />
+
           <!-- 왼쪽 컨텐츠 (6:4 중 6 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
@@ -34,7 +35,7 @@
         </div>
       </div>
     </body>
-    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" :orderList="orderList"/>
+    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" :orderList="orderList" />
     <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
   </main>
 </template>
@@ -46,6 +47,8 @@ import Chat from "@/components/room/chat/Chat.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
 import { getParty, getOrderList } from "@/api/party";
 import { useRoute } from "vue-router";
+
+// const roomCode = ref("");
 
 const route = useRoute();
 const code = ref("");
@@ -100,6 +103,7 @@ onMounted(() => {
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000);
   code.value = route.params.code;
+  console.log("현재 방 코드: ", code.value);
   getPartyInfo();
 });
 
@@ -163,12 +167,12 @@ const openOrderListModal = () => {
     code.value, //partyCode 전달
     (response) => {
       orderList.value = response.data;
-      console.log("주문 현황 불러오기: ",orderList.value);
+      console.log("주문 현황 불러오기: ", orderList.value);
     },
     (error) => {
       console.error("주문 현황 조회 실패: ", error);
     }
-  )
+  );
 };
 
 const closeOrderModal = () => {

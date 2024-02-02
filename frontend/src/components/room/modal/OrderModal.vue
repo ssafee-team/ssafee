@@ -13,16 +13,19 @@
 </template>
 
 <script>
-import { createOrder } from '@/api/party';
+import { createOrder } from "@/api/party";
 
 export default {
   props: {
     orders: Array,
+    code: {
+      required: true,
+    },
   },
   data() {
     return {
       nameInput: "",
-      partyCode: "Gqe3GwHFoK",
+      // partyCode: "Gqe3GwHFoK",
     };
   },
   methods: {
@@ -35,41 +38,42 @@ export default {
         return;
       }
 
-    // 주문 정보를 저장할 배열 초기화
-    const ordersData = [];
+      // 주문 정보를 저장할 배열 초기화
+      const ordersData = [];
 
-    // 모든 주문에 대한 정보 추출
-    this.orders.forEach(order => {
-      const orderData = {
-        menu_id: order.menuId,
-        participant_name: this.nameInput,
-        option_categories: order.option_categories
-      };
-      
-      // 주문 정보를 배열에 추가
-      ordersData.push(orderData);
-    });
+      // 모든 주문에 대한 정보 추출
+      this.orders.forEach((order) => {
+        const orderData = {
+          menu_id: order.menuId,
+          participant_name: this.nameInput,
+          option_categories: order.option_categories,
+        };
 
-    // 최종 주문 정보 객체 생성
-    // const orderInfo = {
-    //   orders: ordersData
-    // };
-    const orderInfo = ordersData[0]; //현재 메뉴 한개만 들어감
+        // 주문 정보를 배열에 추가
+        ordersData.push(orderData);
+      });
 
-    console.log("주문 정보:", orderInfo);
-    // console.log(this.partyCode);
+      // 최종 주문 정보 객체 생성
+      // const orderInfo = {
+      //   orders: ordersData
+      // };
+      const orderInfo = ordersData[0]; //현재 메뉴 한개만 들어감
 
-    createOrder(this.partyCode, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
+      console.log("주문 정보:", orderInfo);
+      // console.log(this.partyCode);
+
+      createOrder(this.code, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
 
       // 모달 닫기
       this.closeModal();
     },
-    handleOrderSuccess(response){
+    handleOrderSuccess(response) {
       console.log("주문 성공: ", response);
+      window.location.reload();
     },
-    handleOrderFail(error){
+    handleOrderFail(error) {
       console.error("주문 실패:", error);
-    }
+    },
   },
 };
 </script>
