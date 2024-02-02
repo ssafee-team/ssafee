@@ -28,6 +28,7 @@ public class MenuService {
     @Transactional
     public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         List<Menu> menus = menuRepository.findByShopIdAndMenuCategoryId(shopId, menuCategoryId);
+
         return menus.stream()
                 .map(menuMapper::toDto).
                 collect(Collectors.toList());
@@ -50,7 +51,7 @@ public class MenuService {
         });
     }
 
-   @Transactional
+    @Transactional
     public void deleteMenu(Long menuId) {
         menuRepository.deleteById(menuId);
     }
