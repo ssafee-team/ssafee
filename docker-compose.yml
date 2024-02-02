@@ -32,12 +32,15 @@ services:
       - TZ=Asia/Seoul
       - SERVER_PORT=8081
       - SPRING_PROFILE=prod
-      - PROD_DB_DRIVER
       - PROD_DB_URL
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
+      - JWT_ACCESS_SECRET_KEY_BASE64
+      - JWT_ACCESS_EXPIRATION_SECONDS
+      - JWT_REFRESH_SECRET_KEY_BASE64
+      - JWT_REFRESH_EXPIRATION_SECONDS
 
   jenkins:
     image: jenkins/jenkins:lts
