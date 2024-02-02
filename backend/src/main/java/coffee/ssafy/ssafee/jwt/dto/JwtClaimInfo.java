@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record JwtTokenInfo(
+public record JwtClaimInfo(
         Long id,
         String role
 ) {

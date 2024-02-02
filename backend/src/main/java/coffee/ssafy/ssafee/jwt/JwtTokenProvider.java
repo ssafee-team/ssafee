@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.jwt;
 
-import coffee.ssafy.ssafee.jwt.dto.JwtTokenInfo;
+import coffee.ssafy.ssafee.jwt.dto.JwtClaimInfo;
 import coffee.ssafy.ssafee.jwt.exception.JwtTokenErrorCode;
 import coffee.ssafy.ssafee.jwt.exception.JwtTokenException;
 import io.jsonwebtoken.Claims;
@@ -22,10 +22,10 @@ public class JwtTokenProvider {
     private static final String CLAIMS_ROLE = "role";
     private final JwtProps jwtProps;
 
-    public String issueAccessToken(JwtTokenInfo jwtTokenInfo) {
+    public String issueAccessToken(JwtClaimInfo jwtClaimsInfo) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, jwtTokenInfo.id())
-                .add(CLAIMS_ROLE, jwtTokenInfo.role())
+                .add(CLAIMS_ID, jwtClaimsInfo.id())
+                .add(CLAIMS_ROLE, jwtClaimsInfo.role())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
     }
@@ -34,9 +34,9 @@ public class JwtTokenProvider {
         return issueToken(null, jwtProps.getRefreshExpiration(), jwtProps.getRefreshSecretKey());
     }
 
-    public JwtTokenInfo parseAccessToken(String accessToken) {
+    public JwtClaimInfo parseAccessToken(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
-        return JwtTokenInfo.builder()
+        return JwtClaimInfo.builder()
                 .id(claims.get(CLAIMS_ID, Long.class))
                 .role(claims.get(CLAIMS_ROLE, String.class))
                 .build();
