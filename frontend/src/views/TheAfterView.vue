@@ -5,7 +5,7 @@
         <div class="time">마감시간</div>
         <!-- last_order_time -->
         <!-- <div>11:30</div> -->
-        <div class="time">{{ deadLine }}</div>
+        <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
       <div class="center-content">
         <div>컴포즈커피 (광주수완점)</div>
@@ -60,6 +60,7 @@
   import Chat from "@/components/room/chat/Chat.vue";
   import { useRoute } from 'vue-router';
   import { getCreator, getOrderList } from '@/api/after.js'
+  import { getParty } from "@/api/party";
 
   const route = useRoute();
  
@@ -85,11 +86,25 @@
   const ordersMenuSorted = ref([])
   const menuSet = new Set();
   const nameSet = new Set();
-  const access_code = ref("");
   
+  const partyInfo = ref({
+  id: "",
+  name: "",
+  generation: "",
+  classroom: "",
+  last_order_time: "",
+  created_time: "",
+  shop_id: "",
+  creator: {
+    id: "",
+    name: "",
+    email: "",
+    bank: "",
+    account: "",
+  },
+});
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
-    console.log(access_code.value)
     // console.log(route.params.access_code);
     getCreator(route.params.access_code, 
     (res) => {
@@ -218,12 +233,36 @@
     updateRemainingTime(); //페이지 로드시 남은시간 계산
     // 1초마다 남은시간 갱신
     setInterval(updateRemainingTime, 1000);
+    getPartyInfo();
   });
 
   onUnmounted(() => {
     window.removeEventListener("resize", updateHeaderHeight);
+    
   });
 
+
+  const getPartyInfo = () => {
+    // console.log('파티피플')
+  getParty(
+    route.params.access_code,
+
+    ({ data }) => {
+      console.log(data);
+      partyInfo.value.id = data.id;
+      partyInfo.value.name = data.name;
+      partyInfo.value.generation = data.generation;
+      partyInfo.value.classroom = data.classroom;
+      partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.created_time = data.created_time;
+      partyInfo.value.shop_id = data.shop_id;
+      // console.log('파티정보:',partyInfo);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 // 남은시간 갱신하는 함수 호출
   const updateRemainingTime = () => {
     const now = new Date(); //현재시간 변수
