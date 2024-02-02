@@ -108,6 +108,7 @@ CREATE TABLE `creators` (
     `name` VARCHAR(8) NOT NULL,
     `bank` VARCHAR(32) NOT NULL,
     `account` VARCHAR(32) NOT NULL,
+    `webhook_url` varchar(255) null,
     `party_id` BIGINT NOT NULL,
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
