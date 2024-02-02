@@ -40,9 +40,14 @@
 </template>
 
 <script>
+import { deleteOrderMenu } from "@/api/party";
+
 export default {
   props: {
     orderList: Array,
+    code: {
+      required: true,
+    },
   },
 
   methods: {
@@ -60,9 +65,22 @@ export default {
     },
     deleteOrder(orderId) {
       // this.orderList.splice(index, 1); // 주문 리스트에서 해당 인덱스의 주문 삭제
+
       const index = this.orderList.findIndex((order) => order.id === orderId);
       if (index !== -1) {
-        this.orderList.splice(index, 1);
+        // 서버에 삭제 요청 보내기
+        deleteOrderMenu(
+          this.code,
+          orderId,
+          () => {
+            //성공 시 주문 리스트에서 해당 주문 삭제
+            this.orderList.splice(index, 1);
+          },
+          (error) => {
+            //실패 시
+            console.error("주문 삭제 실패:", error);
+          }
+        );
       }
     },
   },
@@ -126,7 +144,7 @@ export default {
   bottom: 0;
   padding: 20px;
   gap: 20px;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   overflow-y: auto;
 }
 
