@@ -11,9 +11,9 @@ select * from parties;
 -- ++++++++++++++++++ 파티 덤프 ++++++++++++++++++
 -- Users Table Dummy Data
 INSERT INTO users (user_id, email) VALUES
-(1, 'user1@example.com'),
-(2, 'user2@example.com'),
-(3, 'user3@example.com');
+(1, 'goyo@goyo.kr'),
+(2, 'gmltmd@gmltmd.com'),
+(3, 'j@j.com');
 
 -- Managers Table Dummy Data
 INSERT INTO managers (manager_id, manager_pw, shop_id) VALUES
@@ -34,7 +34,7 @@ INSERT INTO orders (order_id, confirmed, rejected, maked, delivered, party_id) V
 (1, 0, 0, 0, 0, 1);
 
 INSERT INTO creators (email, name, bank, account, party_id) VALUES 
-('example@domain.com', 'CreatorName', 'BankName', '1234567890', 1);
+('gmltmd@ssafy.coffee', '양희승', '국민은행', '697201-00-080159', 1);
 
 
 -- ++++++++++++++++++ 메뉴 덤프 ++++++++++++++++++
