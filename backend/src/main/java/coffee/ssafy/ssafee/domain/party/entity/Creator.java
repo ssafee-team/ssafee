@@ -2,6 +2,7 @@ package coffee.ssafy.ssafee.domain.party.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.*;
 
 @Entity
@@ -32,6 +33,10 @@ public class Creator {
     @NotNull
     @Column(nullable = false)
     private String account;
+
+    @Null
+    @Column(nullable = true)
+    private String webhookUrl;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "party_id", nullable = false, updatable = false)
