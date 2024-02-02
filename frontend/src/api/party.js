@@ -47,6 +47,7 @@ function createOrder(code, params, success, fail) {
 //파티 입장 후 주문 삭제
 function deleteOrderMenu(code, id, success, fail) {
   console.log("주문 삭제", code);
+  //id = order_menu_id
   console.log("주문 삭제할 id", id);
   local.delete(`${url}/${code}/order-menus/${id}`).then(success).catch(fail);
 }

@@ -62,6 +62,12 @@ export default {
   },
   methods: {
     openOrderModal() {
+      //장바구니에 주문이 없다면 주문 불가
+      if (this.orderList.length === 0) {
+        alert("담은 주문내역이 없습니다!");
+        return;
+      }
+
       this.isOrderModalOpen = true;
     },
     closeOrderModal() {

@@ -35,7 +35,12 @@
         </div>
       </div>
     </body>
-    <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderModal" :orderList="orderList" />
+    <OrderListModal
+      v-if="isOrderListModalOpen"
+      @close="closeOrderModal"
+      :orderList="orderList"
+      :code="code"
+    />
     <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
   </main>
 </template>
@@ -51,7 +56,7 @@ import { useRoute } from "vue-router";
 // const roomCode = ref("");
 
 const route = useRoute();
-const code = ref("");
+const code = ref(""); //파티 코드
 
 const partyInfo = ref({
   id: "",
@@ -136,7 +141,7 @@ const getPartyInfo = () => {
 const updateRemainingTime = () => {
   const now = new Date(); //현재시간 변수
   // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
-  
+
   // console.log(deadlineTime);
 
   const deadlineTime = new Date();
@@ -147,7 +152,7 @@ const updateRemainingTime = () => {
 
   //마감시간에서 현재시간 차이를 저장
   const diff = deadlineTime - now;
-  console.log(diff);
+  // console.log(diff);
   // console.log(code.value)
 
   if (diff > 0) {
@@ -155,14 +160,18 @@ const updateRemainingTime = () => {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
-  } else {
+    remainingTime.value = `${hours < 10 ? "0" + hours : hours} : ${
+      minutes < 10 ? "0" + minutes : minutes
+    } : ${seconds < 10 ? "0" + seconds : seconds}`;
+  } else if (diff <= 0) {
+    //마감시간 지난 경우
     //go("/after")화면으로
     remainingTime.value = "마감";
     // window.location.href = 'http://localhost:8083/After/' + code.value
-    console.log(code.value)
-    setTimeout(() => { window.location.href = `http://localhost:8083/After/${code.value}`}, 100)
-   
+    console.log(code.value);
+    setTimeout(() => {
+      window.location.href = `http://localhost:8083/After/${code.value}`;
+    }, 100);
   }
 };
 
@@ -191,9 +200,6 @@ const closeOrderModal = () => {
 // };
 
 // 마감시간 시 After 창으로 이동하는 코드
-
-
-
 </script>
 
 <style scoped>

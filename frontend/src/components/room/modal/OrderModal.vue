@@ -50,19 +50,20 @@ export default {
         };
 
         // 주문 정보를 배열에 추가
-        ordersData.push(orderData);
+        // ordersData.push(orderData);
+        createOrder(this.code, orderData, this.handleOrderSuccess, this.handleOrderFail);
       });
 
       // 최종 주문 정보 객체 생성
       // const orderInfo = {
-      //   orders: ordersData
+      //   orders: ordersData,
       // };
-      const orderInfo = ordersData[0]; //현재 메뉴 한개만 들어감
+      // const orderInfo = ordersData[0]; //현재 메뉴 한개만 들어감
 
-      console.log("주문 정보:", orderInfo);
+      // console.log("주문 정보:", orderInfo);
       // console.log(this.partyCode);
 
-      createOrder(this.code, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
+      // createOrder(this.code, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
 
       // 모달 닫기
       this.closeModal();
