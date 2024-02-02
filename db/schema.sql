@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `auto_orders`,
 `menus_option_categories`,
 `option_categories`,
 `options`,
+`orders`,
 `order_deliveries`,
 `order_menus`,
 `order_menu_option_categories`,
@@ -86,9 +87,19 @@ CREATE TABLE `parties` (
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
-    -- `user_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL, 
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
+);
+
+CREATE TABLE `orders` (
+	`order_id` BIGINT NOT NULL PRIMARY KEY auto_increment,
+    `confirmed` bool not null default false,
+    `rejected` bool not null default false,
+    `maked`bool not null default false,
+    `delivered` bool not null default false,
+    `party_id` bigint not null,
+    foreign key (`party_id`) references `parties`(`party_id`)
 );
 
 CREATE TABLE `creators` (
@@ -112,12 +123,8 @@ CREATE TABLE `chats` (
 CREATE TABLE `participants` (
     `participant_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(8) NULL,
-    `is_creator` BOOL NOT NULL DEFAULT FALSE,
     `is_carrier` BOOL NOT NULL DEFAULT FALSE,
-    `payed` BOOL NOT NULL DEFAULT FALSE,
-    `pay_confirmed` BOOL NOT NULL DEFAULT FALSE,
-    `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `paid` BOOL NOT NULL DEFAULT FALSE,
     `party_id` BIGINT NOT NULL,
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
@@ -150,39 +157,10 @@ CREATE TABLE `order_menu_options` (
     FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
 );
 
-CREATE TABLE `order_deliveries` (
-    `order_delivery_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `fee` INT NOT NULL,
-    `wanted_time` DATETIME NULL,
-    `expected_time` DATETIME NULL,
-    `arrived_time` DATETIME NULL,
-    `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `party_id` BIGINT NOT NULL,
-    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
-);
-
-CREATE TABLE `auto_orders` (
-    `auto_order_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `access_code` CHAR(10) NULL UNIQUE,
-    `accepted_time` DATETIME NOT NULL,
-    `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `party_id` BIGINT NOT NULL,
-    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
-);
-
-CREATE TABLE `auto_payers` (
-    `auto_payer_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `phone` VARCHAR(32) NOT NULL,
-    `creator_id` BIGINT NOT NULL,
-    `auto_order_id` BIGINT NOT NULL,
-    FOREIGN KEY (`creator_id`) REFERENCES `creators`(`creator_id`),
-    FOREIGN KEY (`auto_order_id`) REFERENCES `auto_orders`(`auto_order_id`)
-);
 
 CREATE TABLE `managers` (
-    `manager_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `manager_id` varchar(20) NOT NULL PRIMARY KEY,
+    `manager_pw` varchar(20) not null,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );

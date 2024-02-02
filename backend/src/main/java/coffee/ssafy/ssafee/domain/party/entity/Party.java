@@ -59,8 +59,6 @@ public class Party extends BaseTimeEntity {
     @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
     private List<OrderMenu> orderMenus;
 
-    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
-    private OrderDelivery orderDelivery;
 
     // @ManyToOne(fetch = FetchType.LAZY, optional = false)
     // @JoinColumn(name = "user_id", nullable = false, updatable = false)

@@ -41,7 +41,6 @@ public class OrderMenuService {
 
         Participant participant = Participant.builder()
                 .name(orderMenuRequest.participantName())
-                .isCreator(false)
                 .party(party)
                 .build();
         participantRepository.save(participant);
