@@ -64,23 +64,23 @@
 				</div>
 		</div>
 		<div class="menulistbox">
-			<div class="menulisttitle">
+			<!-- <div class="menulisttitle">
 			전체 주문 내역
-		</div>
+		</div> -->
 			<div v-if="!isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
 				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
 				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
-				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">메뉴 ▼</div>
+				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">메뉴 ▼</div>
 				<div id="price-click" @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
 				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
 			</div>
 
 			<div v-if="isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;"></div>
-				<div @click="sortByMenu" style="width: 25%; cursor: pointer; ">메뉴</div>
+				<div @click="sortByMenu" style="width: 25%; cursor: pointer; ">메뉴〓</div>
 				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
-				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">옵션</div>
+				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">옵션</div>
 				<div @click="sortByMenu" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액</div>
 				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
 			</div>

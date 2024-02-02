@@ -88,7 +88,8 @@
       }
   
       #info {
-          margin-top: 25px;
+          margin-top: 10px;
+          margin-bottom: 20px;
           height: 50px;
           display: flex;
           align-items: center;
@@ -115,7 +116,7 @@
       }
 
       body {
-        margin: 0;
+        /* margin: 0; */
       }
       .dv {
         box-sizing: border-box;
@@ -151,7 +152,7 @@
         /* margin: 0px auto; */
         /* margin-right: 6rem; */
         position: absolute;
-        right: -2rem;
+        right: 0rem;
         
 			}
 			.modalbody {
