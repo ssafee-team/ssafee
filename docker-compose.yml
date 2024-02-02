@@ -36,6 +36,8 @@ services:
       - PROD_DB_URL
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
 
   jenkins:
     image: jenkins/jenkins:lts
