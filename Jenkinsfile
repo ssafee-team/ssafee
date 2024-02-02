@@ -40,14 +40,12 @@ pipeline {
             when {
                 branch 'master'
             }
-            environment {
-                PROD_DB_URL = credentials('PROD_DB_URL')
-                PROD_DB_USERNAME = credentials('PROD_DB_USERNAME')
-                PROD_DB_PASSWORD = credentials('PROD_DB_PASSWORD')
-            }
             steps {
                 sh 'docker compose -p ssafee build backend'
-                sh 'docker compose -p ssafee up -d backend'
+                withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
+                    writeFile file: '.env', text: readFile(dotenv)
+                    sh 'docker compose -p ssafee up -d backend'
+                }
             }
         }
 
