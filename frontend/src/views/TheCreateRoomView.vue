@@ -396,6 +396,13 @@ function modalOpen() {
 // 성공 콜백 함수를 정의합니다.
 function onSuccess(response) {
   console.log('성공:', response);
+  console.log(response.headers.location)
+  // const responseObject = response.data.headers.location
+  const locationPath = response.headers.location;
+  const parts = locationPath.split('/'); // '/'를 기준으로 문자열을 분할
+  const roomcode = parts[parts.length - 1];
+  window.location.href = 'http://localhost:8083/room/' + roomcode
+  
 }
 
 // 실패 콜백 함수를 정의합니다.
