@@ -3,8 +3,8 @@
     <div class="title">
       <div style="display: flex">
         <p style="margin-left: 20px">전체주문금액 :</p>
-        <p style="margin-left: 20px; color: #00a7d0">7,000원</p>
-        <button class="btn-order">주문하기</button>
+        <p class="total-price" style="margin-left: 20px; color: #00a7d0">{{ totalPrice }}원</p>
+        <button class="btn-order" @click="openOrderModal">주문하기</button>
       </div>
       <button class="btn-toggle" @click="toggleOrderSummary">
         {{ orderSummaryVisible ? "▼" : "▲" }}
@@ -16,24 +16,63 @@
         <div class="order-name">{{ order.name }}</div>
         <div class="order-options">옵션: {{ getOrderOptions(order.options) }}</div>
         <div class="order-price">{{ order.price }}</div>
-        <button class="btn-delete" @click="close">취소</button>
+        <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
     </ul>
+    <OrderModal
+      v-if="isOrderModalOpen"
+      @close="closeOrderModal"
+      :orders="limitedOrderList"
+      :code="code"
+    />
   </div>
 </template>
 <script>
+import OrderModal from "./modal/OrderModal.vue";
+
 export default {
+  components: {
+    OrderModal,
+  },
+
   props: {
     orderList: Array,
     orderSummaryVisible: Boolean,
+    code: {
+      required: true,
+    },
+  },
+  data() {
+    return {
+      isOrderModalOpen: false,
+    };
   },
   computed: {
     limitedOrderList() {
       // 최대 2개까지의 주문만 보여주기
       return this.orderList.slice(0, 2);
     },
+    totalPrice() {
+      return this.orderList
+        .reduce((total, order) => {
+          return total + parseFloat(order.price.replace("원", "").replace(",", ""));
+        }, 0)
+        .toFixed(0);
+    },
   },
   methods: {
+    openOrderModal() {
+      //장바구니에 주문이 없다면 주문 불가
+      if (this.orderList.length === 0) {
+        alert("담은 주문내역이 없습니다!");
+        return;
+      }
+
+      this.isOrderModalOpen = true;
+    },
+    closeOrderModal() {
+      this.isOrderModalOpen = false;
+    },
     toggleOrderSummary() {
       console.log("주문내역확인하자~");
       console.log("받은 데이터", this.orderList.value);
@@ -44,6 +83,10 @@ export default {
       // 여기서 각 옵션의 value 값을 가져와서 출력할 수 있음
       return options.join(", ");
     },
+
+    deleteOrder(index) {
+      this.orderList.splice(index, 1); //해당 인덱스 요소를 제거
+    },
   },
 };
 </script>
@@ -52,7 +95,8 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  height: auto;
+  height: 170px;
+  max-height: 170px;
   /* width: 60%; */
   margin: 10px 0px 0px 20px;
   /* position: fixed; */
@@ -95,6 +139,7 @@ export default {
 .list {
   margin-top: 5px;
   height: auto;
+  padding: 15px;
 }
 .order-list {
   display: flex;
@@ -128,5 +173,8 @@ export default {
   border-radius: 5px;
   font-size: 16px;
   margin-right: 10px;
+}
+p {
+  font-weight: bold;
 }
 </style>

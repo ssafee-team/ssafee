@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,15 +26,18 @@ public class Menu {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private String name;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Integer price;
 
     @Column
     private String image;
+
+    @Column
+    private String description;
 
     @Column(insertable = false, nullable = false)
     @ColumnDefault("false")
@@ -41,7 +45,14 @@ public class Menu {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_category_id", nullable = false)
+    @Setter
     private MenuCategory menuCategory;
+
+    // Shop 엔티티에 대한 참조 추가
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "shop_id", nullable = false)
+    @Setter
+    private Shop shop;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -50,5 +61,12 @@ public class Menu {
             inverseJoinColumns = @JoinColumn(name = "option_category_id")
     )
     private List<OptionCategory> optionCategories;
+
+    public void updateMenu(MenuRequest menuRequest) {
+        this.name = menuRequest.name();
+        this.description = menuRequest.description();
+        this.price = menuRequest.price();
+        this.image = menuRequest.image();
+    }
 
 }

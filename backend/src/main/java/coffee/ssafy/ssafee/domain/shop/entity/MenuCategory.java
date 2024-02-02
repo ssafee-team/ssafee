@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -34,9 +35,14 @@ public class MenuCategory {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
+    @Setter
     private Shop shop;
 
     @OneToMany(mappedBy = "menuCategory")
     private List<Menu> Menus;
+
+    public void updateMenuCategory(MenuCategoryRequest menuCategoryRequest) {
+        this.name = menuCategoryRequest.name();
+    }
 
 }

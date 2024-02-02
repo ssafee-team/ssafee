@@ -7,13 +7,13 @@
 						<div style="background-color: red; width: 10%; height: 40px;">dd</div>
 					</div> -->
 					<div style="  width: 100%; height: 30px; display: flex; transform: translateY(-5px);">
-						<div style=" width: 80%; line-height: 30px; text-align: left; padding-left: 10px;">{{ this.orders[selectedStudentNo].studentName }} 님의 주문내역</div>
+						<div style=" width: 80%; line-height: 30px; text-align: left; padding-left: 10px;">{{ isInit? this.orders[selectedStudentNo].studentName: this.ordersCopied[selectedStudentNo].studentName }} 님의 주문내역</div>
 						<div style=" width: 20%;  text-align: right; padding-right: 10px;">
 							<button @click="closeModal()" style=" background-color: #EB4E5A; color:white; width: 25px; height: 25px; border-radius: 8px; font-weight: bold; font-size: 1rem; border: 0px;">X</button>
 						</div>
 					</div>
 					<div style="margin-left: auto; margin-right: auto;">
-						<hr style="width: 380px; margin: 0px;">
+						<hr style="width: 630px; margin: 0px;">
 					</div>
 					<div id="bb" style="width: 100%; height: 300px; display: flex; flex-direction: column; align-items: center;">
 					<!-- <p>{{ this.orders.filter((order) => order.studentName ===  this.orders[selectedStudentNo].studentName) }}</p>	 -->
@@ -27,7 +27,16 @@
 								{{ selectedOrder.menuName }} 1잔
 							</div>
 							<div style="height: 30px; text-align: left; line-height: 30px;">
-								옵션: 없음
+								<div style="display: flex; flex-direction: row;" v-if="selectedOrder.menuOptions.length >=3">
+									<div v-for="(option, idx) in selectedOrder.menuOptions.slice(2)" :key="idx">
+										{{ option.name }} &nbsp; &nbsp;
+									</div>
+								</div>
+								<div v-if="selectedOrder.menuOptions.length <=2">
+									<div>
+										기본옵션
+									</div>
+								</div>
 							</div>
 						</div>
 						<div style="width: 25%; height; text-align: right; line-height: 60px; padding-right: 0px;">
@@ -36,7 +45,7 @@
 						</div>
 					</div>
 				</div>
-					<div style="width: 100%; height: 40px;  display: flex; flex-direction: column; align-items: center;">
+					<div style="width: 100%; height: 40px; padding-top: 50px; display: flex; flex-direction: column; align-items: center;">
 						<div style="width: 95%; height: 100%;  display: flex;">
 							<div style=" width: 80%; line-height: 100%;  color: white; line-height: 40px; text-align: right;">
 								총
@@ -58,28 +67,79 @@
 			<div class="menulisttitle">
 			전체 주문 내역
 		</div>
-			<div class="orderheader">
+			<div v-if="!isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
-				<div @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
+				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
 				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
-				<div style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">메뉴</div>
-				<div @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
+				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">메뉴 ▼</div>
+				<div id="price-click" @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
 				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
 			</div>
-			<div class="orderbox" style="font-size: 2rem;">
+
+			<div v-if="isSortedByMenu" class="orderheader">
+				<div style="width: 10%; border-box; padding-left: 0.5rem;"></div>
+				<div @click="sortByMenu" style="width: 25%; cursor: pointer; ">메뉴</div>
+				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
+				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left;">옵션</div>
+				<div @click="sortByMenu" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액</div>
+				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
+			</div>
+
+			<div v-if="!isSortedByMenu" class="orderbox" style="font-size: 2rem;">
 				<div
 					v-for="(order, index) in (isInit?orders:ordersCopied)"
 					:key="index"
 					@click="selectStudent(index)"
 					:class="{ordermenu: true, isSelected: selectedStudentNo == index}"
 					>
-					<!-- {{ order.classNo }} {{ order.studentName }} {{ order.menuName }} {{ order.menuPrice }} -->
+					<!-- {{ order.classNo }} {{ order.studentName }} {{ order.menuName }} {{ order.menuPrice }}-->
 					<div class="classno">{{ order.classNo }}</div>
 					<div class="studentname">{{ order.studentName }}</div>
 					<div class="menuname">{{ order.menuName }}</div>
 					<div class="menuprice">{{ order.menuPrice }}</div>
 				</div>
 			</div>
+
+
+			<div v-if="isSortedByMenu" class="orderbox" style="font-size:2rem;">
+				<div 
+				class="ordermenu2"
+				v-for="(order, index) in ordersMenuSorted"
+				:key="index"
+				>
+				<div class="classno">{{ order.classNo }}</div>
+				<div class="studentname">{{ order.menuName }} X {{ order.menuCount }}</div>
+				<div class="menuname" style="">
+				<!-- <div class="menuname" style="background-color: bisque;"> -->
+					<div class="baker" v-for="(option, indexOpt) in order.options" 
+					:key="indexOpt">
+					<div style="display: flex; flex-direction: row; height: ;">
+						<div style="display: flex; flex-direction: row;" v-if="option.length>=3">
+						<!-- <div style="background-color: mediumseagreen; display: flex; flex-direction: row;" v-if="option.length>=3"> -->
+							<div style="height: 20px; color: #344A53;" v-for="(a,b) in option.slice(2)" 
+							:key="b">
+								{{ a.name }}
+							</div>
+					</div>
+
+					<div style=""  v-if="option.length<=2">
+					<!-- <div style="background-color: red;"  v-if="option.length<=2"> -->
+						기본옵션 &nbsp
+					</div>
+					= {{ option[1] }}개
+				</div>	
+					</div>	
+				</div>
+				<div class="menuprice">{{ order.sumMenuPrice }}</div>
+
+
+
+				<!-- <div>{{ order.menuName }} X {{ order.menuCount }} {{ order.sumMenuPrice }} 원 </div> -->
+				
+				
+				</div>
+			</div>
+
 			<div class="summary">
 				<div>총 인원 {{ summaryData.totalNumStudent  }} 명</div>
 				<!-- <div></div> -->
@@ -87,41 +147,49 @@
 				<!-- <div></div> -->
 				<div>총 금액 {{ summaryData.totalPrice }} 원</div>
 				<!-- <div></div> -->
-
-
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { computed, ref, registerRuntimeCompiler } from 'vue'
+import { computed, onMounted, ref, registerRuntimeCompiler } from 'vue'
+
 export default {
+	props: {
+        orders: Array,
+		ordersMenuSorted: Array,
+		nameSet: Set,
+      },
+
 	data () {
 		return {
-			orders: [
-				{classNo: "2", studentName: "전상혁", menuName: "에스프레소", menuPrice: 1000},
-				{classNo: "2", studentName: "고영훈", menuName: "ICE 카페라떼", menuPrice: 2000},
-				{classNo: "2", studentName: "양희승", menuName: "HOT 바닐라라떼", menuPrice: 1300},
-				{classNo: "2", studentName: "강찬우", menuName: "ICE 로즈마리", menuPrice: 2500},
-				{classNo: "2", studentName: "강찬우", menuName: "공군짜장", menuPrice: 15000},
-				{classNo: "2", studentName: "박희찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
-				{classNo: "2", studentName: "주홍찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
-				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
-				{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
-				{classNo: "2", studentName: "강민지", menuName: "ICE 자몽티", menuPrice: 3000},
-				{classNo: "2", studentName: "김우태", menuName: "캔디소다 밀크쉐이크", menuPrice: 6000},
-				{classNo: "2", studentName: "유병욱", menuName: "ICE 고구마라떼", menuPrice: 300},
-				{classNo: "2", studentName: "이도훈", menuName: "ICE 고구마라떼", menuPrice: 300},
-				{classNo: "2", studentName: "김요한", menuName: "키위주스", menuPrice: 12345},
-				{classNo: "2", studentName: "이유빈", menuName: "오렌지당근주스", menuPrice: 12345},
-					],
+			// orders: [
+			// 	{classNo: "2", studentName: "전상혁", menuName: "에스프레소", menuPrice: 1000},
+			// 	{classNo: "2", studentName: "고영훈", menuName: "ICE 카페라떼", menuPrice: 2000},
+			// 	{classNo: "2", studentName: "양희승", menuName: "HOT 바닐라라떼", menuPrice: 1300},
+			// 	{classNo: "2", studentName: "강찬우", menuName: "ICE 로즈마리", menuPrice: 2500},
+			// 	{classNo: "2", studentName: "강찬우", menuName: "공군짜장", menuPrice: 15000},
+			// 	{classNo: "2", studentName: "박희찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "HOT 페퍼민트", menuPrice: 2400},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
+			// 	{classNo: "2", studentName: "주홍찬", menuName: "해병 팥빙수", menuPrice: 100},
+			// 	{classNo: "2", studentName: "강민지", menuName: "ICE 자몽티", menuPrice: 3000},
+			// 	{classNo: "2", studentName: "김우태", menuName: "캔디소다 밀크쉐이크", menuPrice: 6000},
+			// 	{classNo: "2", studentName: "유병욱", menuName: "ICE 고구마라떼", menuPrice: 300},
+			// 	{classNo: "2", studentName: "이도훈", menuName: "ICE 고구마라떼", menuPrice: 300},
+			// 	{classNo: "2", studentName: "김요한", menuName: "키위주스", menuPrice: 12345},
+			// 	{classNo: "2", studentName: "이유빈", menuName: "오렌지당근주스", menuPrice: 12345},
+			// 		],
 			ordersCopied : [],
 			selectedStudentNo: -1,
 			selectedOrders: [],
 			isSortedByName: false,
 			isSortedByPrice: false,
 			isInit: true,
+			
+			// isSortedByMenu: true,
+			isSortedByMenu: false,
 
 		}
 	},
@@ -139,21 +207,28 @@ export default {
 			// 	this.orders.reduce((acc, cur) => {order}, 0)
 			// })
 			// return {totalNum: this.orders.length, totalPrice: totalPrice}
-			return { totalNumStudent: this.orders.length, totalNumItem: this.orders.length, totalPrice: this.orders.reduce((acc, cur)=> acc + cur.menuPrice, 0)}
+			return { totalNumStudent: this.nameSet.size, totalNumItem: this.orders.length, totalPrice: this.orders.reduce((acc, cur)=> acc + cur.menuPrice, 0)}
+			// return { totalNumStudent: this.orders.length, totalNumItem: this.orders.length, totalPrice: this.orders.reduce((acc, cur)=> acc + cur.menuPrice, 0)}
 		},
 	},
 	methods: {
 		selectStudent(index) {
 			// this.selectedStudentNo = this.selectedStudentNo === index? -99: index;
-			let menuNames = []
+			// let menuNames = []
+			console.log(index)
 			if (this.selectedStudentNo === index) {
 				this.selectedStudentNo = -99;
 				this.selectedOrders = ref([]);
 			}
 			else {
 				this.selectedStudentNo = index;
-				this.selectedOrders = this.orders.filter((order) => order.studentName ===  this.orders[this.selectedStudentNo].studentName);
-				
+				// this.selectedOrders = this.orders.filter((order) => order.studentName ===  this.orders[this.selectedStudentNo].studentName);
+				// this.selectedOrders = this.orders.filter((order) => order.studentName ===  this.orders[this.selectedStudentNo].studentName);
+				if (this.isInit) {
+					this.selectedOrders = this.orders.filter((order) => order.studentName ===  this.orders[this.selectedStudentNo].studentName);
+				} else {
+					this.selectedOrders = this.ordersCopied.filter((order) => order.studentName ===  this.ordersCopied[this.selectedStudentNo].studentName)
+				}
 				
 			// 	this.selectedOrders.forEach((order,index) => {
 			// 		if (!menuNames.includes(order.menuName)) {
@@ -176,13 +251,18 @@ export default {
 		},
 
 		sortByName(event) {
+			document.querySelector("#price-click").innerText = "금액 ▼"
+			// console.log(this.isInit)
 			this.isInit = false
+			// console.log(this.isInit)
 			if (!this.isSortedByName) {
 				this.isSortedByName = true
 				event.target.innerText = "이름 〓"
+				
 				console.log("이름기준 정렬데이터를 호출합니다")
 				// this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
 				this.ordersCopied = this.orders.toSorted((a, b) => a.studentName.localeCompare(b.studentName));
+				// this.ordersCopied = this.orders.toSorted((a, b) => a.studentName.localeCompare(b.studentName));
 			} else {
 				this.isSortedByName = false
 				event.target.innerText = "이름 ▼"
@@ -192,7 +272,22 @@ export default {
 			
 			// console.log(this.orders)
 		},
+		sortByMenu() {
+			// const nameClick= document.querySelector('#name-click');
+			// console.log(nameClick.innerText)
+			if (this.isSortedByMenu) {
+				console.log('정렬됨')
+				this.isSortedByMenu = false
+				console.log(this.isSortedByMenu)
+			} else {
+				console.log('정렬안됨')
+				this.isSortedByMenu = true
+				console.log(this.isSortedByMenu)
+			}
+		},
+
 		sortByPrice(event) {
+			document.querySelector("#name-click").innerText = "이름 ▼"
 			this.isInit = false
 			if (!this.isSortedByPrice) {
 				this.isSortedByPrice = true
@@ -316,6 +411,8 @@ export default {
 
 	.studentname {
 		width: 25%;
+		display: flex;
+		align-items: center;
 		// border: 1px dashed black;
 		// position: absolute;
 		// left: 20%;
@@ -326,7 +423,7 @@ export default {
 		width: 50%;
 		// border: 1px dashed black;
 		box-sizing: border-box;
-		padding-left: 5rem;
+		padding-left: 3rem;
 		text-align: left;
 		// position: absolute;
 		// left: 45%;
@@ -339,6 +436,10 @@ export default {
 		text-align: right;
 		box-sizing: border-box;
 		padding-right: 2rem;
+
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
 		// position: absolute;
 		// left: 90%;
 		// flex-grow: 2;
@@ -356,12 +457,13 @@ export default {
         padding: 20px;
 				// position: absolute;
 				z-index: 3;
-				transform: translateX(30%);
+				transform: translateX(20%);
 				margin-left: 0;
       }
 	.white-bg {
-				width: 400px;
-				height: 300px;
+				width: 650px;
+				// height: 300px;
+				height: auto;
 				margin: 80px auto;
 				margin-left: 0px;
 				background: #344a53;
@@ -375,6 +477,36 @@ export default {
 				// margin-right: 0;
 				display: flex;
 				flex-direction: column;
+				transform: translateY(-100px);
 }		
-	
+	.faker {
+		background-color: purple;
+		width: 100%;
+		margin-top: 10px;
+	}
+
+	.baker {
+		// background-color: mediumturquoise;
+	}
+
+	.ordermenu2 {
+		display: flex;
+		flex-direction: row;
+		color: #344A53;
+		// height: 64px;
+		// line-height: 64px;
+		text-align: center;
+		font-size: 1rem;
+		background-color: #F5F5F5;
+		margin: 0.25rem;
+		position: relative;
+		padding-top: 0.25rem;
+		padding-bottom: 0.25rem;
+	}
+
+	.ordermenu2 > .classno, .studentname, .menuprice {
+		font-size: 1.5rem;
+    font-weight: bold;
+    color: #344A53;
+	}
 </style>

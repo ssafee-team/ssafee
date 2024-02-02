@@ -4,10 +4,10 @@
       <div class="timeline">
         <div>마감시간</div>
 
-        <div class="time">{{ deadLine }}</div>
+        <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
       <div class="center-content">
-        <div>컴포즈커피 (광주수완점)</div>
+        <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
         <div>잔여시간</div>
@@ -16,13 +16,14 @@
     </header>
     <body>
       <div class="center-content">
-        <button @click="checkOrderStatus">현재 주문현황 확인하기</button>
+        <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
         <div class="left-panel">
           <!-- <div>메뉴가 들어갈 부분</div> -->
-          <MenuList />
+          <MenuList :shopId="1" :code="code" />
+
           <!-- 왼쪽 컨텐츠 (6:4 중 6 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
@@ -34,6 +35,13 @@
         </div>
       </div>
     </body>
+    <OrderListModal
+      v-if="isOrderListModalOpen"
+      @close="closeOrderModal"
+      :orderList="orderList"
+      :code="code"
+    />
+    <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
   </main>
 </template>
 
@@ -41,8 +49,47 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
+import OrderListModal from "@/components/room/modal/OrderListModal.vue";
+import { getParty, getOrderList } from "@/api/party";
+import { useRoute } from "vue-router";
 
-const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
+// const roomCode = ref("");
+
+const route = useRoute();
+const code = ref(""); //파티 코드
+
+const partyInfo = ref({
+  id: "",
+  name: "",
+  generation: "",
+  classroom: "",
+  last_order_time: "",
+  created_time: "",
+  shop_id: "",
+  creator: {
+    id: "",
+    name: "",
+    email: "",
+    bank: "",
+    account: "",
+  },
+});
+
+const orderList = ref([]);
+
+//파티 객체 정보의 shop_id 추출
+const shopId = partyInfo.value.shop_id;
+
+const isOrderListModalOpen = ref(false);
+
+//const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
+// const lastOrderTime = partyInfo.value.last_order_time;
+// const lastOrderDateTime = new Date(lastOrderTime);
+// const hours = lastOrderDateTime.getHours();
+// const minutes = lastOrderDateTime.getMinutes();
+
+// const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+
 const remainingTime = ref(""); //남은시간
 
 // 헤더 높이를 저장하는 변수
@@ -60,38 +107,99 @@ onMounted(() => {
   updateRemainingTime(); //페이지 로드시 남은시간 계산
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000);
+  code.value = route.params.code;
+  console.log("현재 방 코드: ", code.value);
+  getPartyInfo();
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", updateHeaderHeight);
 });
 
+const getPartyInfo = () => {
+  getParty(
+    code.value,
+
+    ({ data }) => {
+      console.log(data);
+      partyInfo.value.id = data.id;
+      partyInfo.value.name = data.name;
+      partyInfo.value.generation = data.generation;
+      partyInfo.value.classroom = data.classroom;
+      partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.created_time = data.created_time;
+      partyInfo.value.shop_id = data.shop_id;
+      console.log(partyInfo);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
 // 남은시간 갱신하는 함수 호출
 const updateRemainingTime = () => {
   const now = new Date(); //현재시간 변수
-  const deadlineTimne = new Date();
-  const [hours, minutes] = deadLine.value.split(":").map(Number);
+  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
 
-  deadlineTimne.setHours(hours, minutes, 0);
+  // console.log(deadlineTime);
+
+  const deadlineTime = new Date();
+  const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
+
+  deadlineTime.setHours(hours, minutes, 0);
+  // deadlineTime.setHours(11, 48, 0);
 
   //마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTimne - now;
+  const diff = deadlineTime - now;
+  // console.log(diff);
+  // console.log(code.value)
 
   if (diff > 0) {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
-  } else {
+    remainingTime.value = `${hours < 10 ? "0" + hours : hours} : ${
+      minutes < 10 ? "0" + minutes : minutes
+    } : ${seconds < 10 ? "0" + seconds : seconds}`;
+  } else if (diff <= 0) {
+    //마감시간 지난 경우
+    //go("/after")화면으로
     remainingTime.value = "마감";
+    // window.location.href = 'http://localhost:8083/After/' + code.value
+    console.log(code.value);
+    setTimeout(() => {
+      window.location.href = `http://localhost:8083/After/${code.value}`;
+    }, 100);
   }
 };
 
-const checkOrderStatus = () => {
-  // 주문 현황 확인 로직을 추가할 수 있습니다.
-  console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
+const openOrderListModal = () => {
+  isOrderListModalOpen.value = true;
+
+  // 주문 목록 조회
+  getOrderList(
+    code.value, //partyCode 전달
+    (response) => {
+      orderList.value = response.data;
+      console.log("주문 현황 불러오기: ", orderList.value);
+    },
+    (error) => {
+      console.error("주문 현황 조회 실패: ", error);
+    }
+  );
 };
+
+const closeOrderModal = () => {
+  isOrderListModalOpen.value = false;
+};
+// const checkOrderStatus = () => {
+//   // 주문 현황 확인 로직을 추가할 수 있습니다.
+//   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
+// };
+
+// 마감시간 시 After 창으로 이동하는 코드
 </script>
 
 <style scoped>
@@ -129,7 +237,7 @@ header {
   font-weight: bold;
 }
 .time {
-  width: 120px;
+  width: 130px;
   margin-left: 10px;
 }
 .center-content {

@@ -8,30 +8,22 @@
       </div>
       <hr />
       <div class="modal-content">
-        <p>휘핑선택</p>
-        <div class="choice">
-          <div class="row" v-for="option in whippingOptions" :key="option.value">
-            <label>
-              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
-              {{ option.label }}
-            </label>
-            <div>+ {{ option.price }}원</div>
-          </div>
-        </div>
-        <p>추가선택</p>
-        <div class="choice">
-          <div class="row" v-for="option in additionalOptions" :key="option.value">
-            <label>
-              <input type="checkbox" :value="option.label" v-model="selectedOptions" />
-              {{ option.label }}
-            </label>
-            <div>+ {{ option.price }}원</div>
+        <div v-for="optionCategory in optionCategories" :key="optionCategory.id">
+          <p>{{ optionCategory.name }}</p>
+          <div class="choice">
+            <div class="row" v-for="option in optionCategory.options" :key="option.id">
+              <label>
+                <input type="checkbox" :value="option.name" v-model="selectedOptions" />
+                {{ option.name }}
+              </label>
+              <div>+ {{ option.price }}원</div>
+            </div>
           </div>
         </div>
       </div>
       <div class="modal-btn">
         <button class="close" @click="close">취소</button>
-        <button class="addOrder" @click="addOrder">주문하기</button>
+        <button class="addOrder" @click="addOrder">담기</button>
       </div>
     </div>
   </div>
@@ -46,6 +38,7 @@
       {{ category }}
     </div>
   </div>
+
   <!-- 메뉴판 -->
   <div class="menu-items">
     <div
@@ -54,9 +47,8 @@
       class="drink-item"
       :style="{ width: drinkItemWidth }"
     >
-      <!-- 이미지 들어가는거 다시 다뤄야 함-->
       <img
-        src="../../assets/img/blueberry.jpg"
+        :src="drink.image"
         :alt="drink.name"
         @click="
           openModal = true;
@@ -64,18 +56,26 @@
         "
       />
       <div>{{ drink.name }}</div>
-      <div class="price">{{ drink.price }}</div>
+      <div class="price">{{ drink.price }}원</div>
     </div>
   </div>
-  <order-summary
-    :order-list="orderList"
-    :order-summary-visible="orderSummaryVisible"
-    @toggle-order-summary="toggleOrderSummary"
-  ></order-summary>
+  <order-summary :order-list="orderList" :code="code"></order-summary>
 </template>
 <script>
+import { getMenuCategories, getMenusByCategory, getOptionCategory } from "@/api/shop";
 import OrderSummary from "./OrderSummary.vue";
+
 export default {
+  props: {
+    shopId: {
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+    },
+  },
+
   components: {
     OrderSummary,
   },
@@ -84,61 +84,12 @@ export default {
     return {
       openModal: false, //모달 기본적으로 안보이게 설정
       modalMaxHeight: "80%",
-      checkedOptions: {}, //선택한 옵션을 담을 객체 추가
-      categories: [
-        "인기메뉴",
-        "시즌메뉴",
-        "커피",
-        "디카페인",
-        "베버리지",
-        "스무디/프라페",
-        "밀크쉐이크",
-        "에이드/주스",
-        "티",
-        "기타",
-      ],
-      drinks: {
-        0: [
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry", price: "2,000원" },
-        ],
-        1: [
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-          { name: "블루베리스무디", photo: "blueberry.jpg", price: "2,000원" },
-        ],
-      },
-      whippingOptions: [
-        { value: "1", label: "휘핑제공", price: 0 },
-        { value: "2", label: "휘핑미제공", price: 0 },
-        { value: "3", label: "휘핑적게", price: 0 },
-        { value: "4", label: "휘핑많이", price: 500 },
-        { value: "5", label: "휘핑많이2", price: 500 },
-      ],
-      additionalOptions: [
-        { value: "6", label: "설탕시럽 1펌프 추가", price: 500 },
-        { value: "7", label: "설탕시럽 2펌프 추가", price: 1000 },
-        { value: "8", label: "샷 추가", price: 500 },
-        { value: "9", label: "펄 추가", price: 500 },
-        { value: "10", label: "펄 추가2", price: 1000 },
-      ],
+      checkedOptions: {},
+      categories: [],
+      drinks: [],
+      optionCategories: [], // 옵션 카테고리를 담을 변수 추가
+      options: [], // 선택된 옵션을 담을 변수 추가
+      optionCategoriesMap: {},
       selectedOptions: [],
       selectedCategory: 0,
       drinkItemWidth: "20%", //각 음료 항목의 너비
@@ -146,6 +97,14 @@ export default {
       orderList: [], //주문 내역을 담을 배열 추가
     };
   },
+  mounted() {
+    //shopId를 기반 메뉴 카테고리 데이터 가져오기
+    getMenuCategories(this.shopId, this.handleSuccess, this.handleFail);
+
+    //페이지 렌더링 시 첫 번째 카테고리를 선택하지 않고 기본적으로 보여줌
+    this.selectCategory(0);
+  },
+
   computed: {
     selectedDrinks() {
       console.log(this.categories[this.selectedCategory], "선택");
@@ -157,13 +116,74 @@ export default {
     },
   },
   methods: {
-    selectCategory(index) {
-      this.selectedCategory = index;
-      // console.log(this.selectedCategory);
+    handleSuccess(response) {
+      //데이터를 비동기적으로 불러올 경우, response 받아서 response.data로 세팅하기
+      //프록시 객체의 data 속성을 이용해 접근
+      //받은 데이터를 categories에 세팅
+      this.categories = response.data;
+      console.log("카테고리 출력", this.categories);
     },
+    handleFail(error) {
+      console.error(error);
+    },
+
+    selectCategory(index) {
+      //카테고리 선택시 실행
+      this.selectedCategory = index;
+      // shopId와 mcId를 기반으로 카테고리 선택 시 메뉴 데이터 가져오기
+      getMenusByCategory(this.shopId, index + 1, this.handleMenuSuccess, this.handleFail);
+    },
+
+    handleMenuSuccess(response) {
+      const menuData = response.data;
+      // 각 메뉴의 옵션 카테고리 데이터 저장
+      menuData.forEach((menu) => {
+        menu.option_categories.forEach((optionCategory) => {
+          // 옵션 카테고리를 저장할 때 메뉴의 id를 key로 사용
+          if (!this.optionCategoriesMap[menu.id]) {
+            this.optionCategoriesMap[menu.id] = [];
+          }
+          this.optionCategoriesMap[menu.id].push(optionCategory);
+        });
+      });
+
+      this.drinks[this.selectedCategory] = menuData;
+      console.log("메뉴 가져왔니?", this.drinks);
+    },
+
     setSelectedDrinkIndex(index) {
       this.selectedDrinkIndex = index;
-      // console.log(this.selectedDrinkIndex);
+
+      const selectedDrink = this.selectedDrinks[index];
+      const menuId = selectedDrink.id;
+      console.log("선택한메뉴아이디확인", menuId);
+      if (this.optionCategoriesMap[menuId]) {
+        this.optionCategories = this.optionCategoriesMap[menuId];
+      } else {
+        // 저장된 데이터가 없을 경우 API를 통해 불러옴
+        selectedDrink.option_categories.forEach((optionCategory) => {
+          this.loadOptionCategories(optionCategory.id);
+        });
+      }
+    },
+
+    loadOptionCategories(optionCategoryId) {
+      // 음료의 id를 기반으로 옵션 카테고리 데이터 가져오기
+      getOptionCategory(
+        this.shopId,
+        optionCategoryId, //옵션 카테고리 id 전달
+        this.handleOptionCategorySuccess, //성공 콜백
+        this.handleFail //실패 콜백
+      );
+    },
+
+    handleOptionCategorySuccess(response) {
+      // 모달이 열릴 때마다 옵션 카테고리 데이터 업데이트
+      this.optionCategories = response.data;
+
+      if (this.optionCategories) {
+        this.options = this.optionCategories[0].options;
+      }
     },
 
     close(event) {
@@ -177,23 +197,20 @@ export default {
     closeModal() {
       this.openModal = false;
       //모달 닫힐 시 선택한 옵션 초기화
-      this.checkedOptions = {};
+      this.selectedOptions = [];
     },
 
     calculateTotalPrice() {
-      let total = parseFloat(this.selectedDrink.price.replace("원", "").replace(",", ""));
+      let total = parseFloat(this.selectedDrink.price);
       console.log("현재", total);
 
       //선택한 옵션들의 가격을 합산
-      for (const option in this.checkedOptions) {
-        if (this.checkedOptions[option]) {
-          const checkedOption = [...this.whippingOptions, ...this.additionalOptions].find(
-            (opt) => opt.value === option
-          );
-          if (checkedOption) {
-            total += checkedOption.price;
+      // 선택한 옵션들의 가격을 합산
+      for (const optionCategory of this.optionCategories) {
+        for (const option of optionCategory.options) {
+          if (this.selectedOptions.includes(option.name)) {
+            total += option.price;
           }
-          // total += this.whippingOptions.find((opt) => opt.value === option).price;
         }
       }
 
@@ -201,14 +218,26 @@ export default {
     },
 
     addOrder() {
-      // const selectedOptions = Object.keys(this.checkedOptions).filter(
-      //   (option) => this.checkedOptions[option]
-      // );
+      const selectedDrink = this.selectedDrinks[this.selectedDrinkIndex];
+      const selectedDrinkId = selectedDrink.id; // 선택한 음료의 ID 가져오기
+
+      // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID를 추출
+      const selectedOptionCategories = this.optionCategories.map((optionCategory) => {
+        return {
+          option_category_id: optionCategory.id,
+          option_ids: optionCategory.options
+            .filter((option) => this.selectedOptions.includes(option.name))
+            .map((option) => option.id),
+        };
+      });
+
       //주문 정보 정리
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        options: this.selectedOptions,
+        options: this.selectedOptions, //선택한 옵션  명
+        menuId: selectedDrinkId, //선택한 메뉴 ID
+        option_categories: selectedOptionCategories, // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
@@ -242,8 +271,8 @@ export default {
   flex: 1 0 20%; /* 확장 가능, 축소 불가능, 최대 너비 20% */
   cursor: pointer;
   padding: 10px;
-  box-sizing: border-box;
-  font-size: 20px;
+  /* box-sizing: border-box; */
+  font-size: 18px;
   font-weight: bold;
 }
 
@@ -258,7 +287,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: auto;
-  height: 600px;
+  height: 450px;
 }
 
 .menu-items::-webkit-scrollbar {
@@ -290,7 +319,8 @@ export default {
   /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
   /* background: rgba(0, 0, 0, 0.6); */
   position: fixed;
-  z-index: 9999; /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
+  z-index: 9999;
+  /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
 }
 .white-bg {
   width: 40%;
@@ -366,7 +396,7 @@ p {
   font-size: 20px;
   font-weight: bold;
   text-align: left;
-  margin-left: 70px;
+  margin-left: 20px;
   margin-top: 20px;
 }
 
@@ -374,7 +404,7 @@ p {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  margin-left: 70px;
+  margin-left: 40px;
 }
 .row {
   font-size: 18px;
