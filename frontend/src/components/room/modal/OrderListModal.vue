@@ -8,18 +8,26 @@
       <hr />
       <div class="order-list">
         <div class="row" v-for="order in orderList" :key="order.id">
-          <div>{{ order.participant_name }}</div>
+          <div class="name">{{ order.participant_name }}</div>
           <div class="menus">
             <div class="menu-info">
-              <div>{{ order.chosen_menu.name }}</div>
-              
-                <div v-for="optionCategory in order.chosen_menu.chosen_option_categories" :key="optionCategory.id">
-                  <div v-for="option in optionCategory.chosen_options" :key="option.id">{{ option.name }}</div>
+              <div class="menu-name">{{ order.chosen_menu.name }}</div>
+
+              <div
+                v-for="optionCategory in order.chosen_option_categories"
+                :key="optionCategory.id"
+              >
+                <div
+                  class="menu-option"
+                  v-for="option in optionCategory.chosen_options"
+                  :key="option.id"
+                >
+                  {{ option.name }}
                 </div>
-              
+              </div>
             </div>
           </div>
-          <div>{{ calculateTotalPrice(order) }}원</div>
+          <div class="price">{{ calculateTotalPrice(order) }}원</div>
           <button @click="deleteOrder(order.id)" class="delete">X</button>
         </div>
       </div>
@@ -36,7 +44,6 @@ export default {
   props: {
     orderList: Array,
   },
-  
 
   methods: {
     closeModal() {
@@ -53,11 +60,10 @@ export default {
     },
     deleteOrder(orderId) {
       // this.orderList.splice(index, 1); // 주문 리스트에서 해당 인덱스의 주문 삭제
-      const index = this.orderList.findIndex(order => order.id === orderId);
+      const index = this.orderList.findIndex((order) => order.id === orderId);
       if (index !== -1) {
         this.orderList.splice(index, 1);
       }
-    
     },
   },
   computed: {
@@ -135,13 +141,33 @@ export default {
 }
 
 .menus {
+  align-items: center;
   display: flex;
   flex-direction: column;
   font-size: 14px;
+  width: 60%;
+}
+
+.price {
+  width: 80px; /* 고정된 너비 부여 */
+  margin-top: 10px;
+  color: #00a7d0;
 }
 
 .menu-info {
   margin-bottom: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+.menu-name {
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.menu-option {
+  font-size: 12px;
 }
 
 .row {
@@ -149,6 +175,7 @@ export default {
   font-size: 18px;
   display: flex;
   margin-bottom: 20px;
+  align-items: center;
   justify-content: space-between;
 }
 
