@@ -1,5 +1,9 @@
 <template>
 	<div class="menulist">
+		<!-- <div style="width: 100%; height: 200px; z-index: 900; background:rgba(0, 0, 0, 0.2);  top:100px;  left: 200px; position:fixed"> -->
+			<!-- <div style="width:100%; height: 100px; z-index: 0; background-color: red; position:fixed">
+			</div> -->
+		<!-- </div> -->
 		<div v-if="selectedStudentNo >= 0" class="black-bg">
 				<div class="white-bg">
 					<!-- <div id="aa" style="background-color: aqua;  width: 100%; height: 40px; border: 1px dashed black display: block">
@@ -9,11 +13,11 @@
 					<div style="  width: 100%; height: 30px; display: flex; transform: translateY(-5px);">
 						<div style=" width: 80%; line-height: 30px; text-align: left; padding-left: 10px;">{{ isInit? this.orders[selectedStudentNo].studentName: this.ordersCopied[selectedStudentNo].studentName }} 님의 주문내역</div>
 						<div style=" width: 20%;  text-align: right; padding-right: 10px;">
-							<button @click="closeModal()" style=" background-color: #EB4E5A; color:white; width: 25px; height: 25px; border-radius: 8px; font-weight: bold; font-size: 1rem; border: 0px;">X</button>
+							<button @click="closeModal()" style=" background-color: #EB4E5A; color:white; width: 25px; height: 25px; border-radius: 8px; font-weight: bold; font-size: 16px; border: 0px;">X</button>
 						</div>
 					</div>
 					<div style="margin-left: auto; margin-right: auto;">
-						<hr style="width: 630px; margin: 0px;">
+						<hr>
 					</div>
 					<div id="bb" style="width: 100%; height: 300px; display: flex; flex-direction: column; align-items: center;">
 					<!-- <p>{{ this.orders.filter((order) => order.studentName ===  this.orders[selectedStudentNo].studentName) }}</p>	 -->
@@ -63,18 +67,22 @@
 					</div>					
 				</div>
 		</div>
-		<div class="menulistbox">
+		<div style="z-index: 1;" class="menulistbox">
 			<!-- <div class="menulisttitle">
 			전체 주문 내역
 		</div> -->
 			<div v-if="!isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
 				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
-				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
 				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">메뉴 ▼</div>
 				<div id="price-click" @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
-				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
 			</div>
+			<!-- <div v-if="!isSortedByMenu" class="orderheader">
+				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
+				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
+				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">메뉴 ▼</div>
+				<div id="price-click" @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
+			</div> -->
 
 			<div v-if="isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;"></div>
@@ -85,7 +93,7 @@
 				<!-- <div @click="sortByPrice(this.isSortedByPrice)" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: grab;">금액 ▼</div> -->
 			</div>
 
-			<div v-if="!isSortedByMenu" class="orderbox" style="font-size: 2rem;">
+			<div v-if="!isSortedByMenu" class="orderbox" style="font-size: 32px;">
 				<div
 					v-for="(order, index) in (isInit?orders:ordersCopied)"
 					:key="index"
@@ -101,7 +109,7 @@
 			</div>
 
 
-			<div v-if="isSortedByMenu" class="orderbox" style="font-size:2rem;">
+			<div v-if="isSortedByMenu" class="orderbox" style="font-size:32px;">
 				<div 
 				class="ordermenu2"
 				v-for="(order, index) in ordersMenuSorted"
@@ -315,20 +323,6 @@ export default {
 		flex-direction: column;
 		height: 100%;
 	}
-
-	.menulisttitle {
-		
-		
-		width: 100%;
-		height: 50px;
-		line-height: 50px;
-		text-align: center;
-		font-size: 1.5rem;
-		// background-color: pink;
-		color: #344A53;
-		flex-grow: 0;	
-	}
-
 	.menulistbox {
 		display: flex;
 		flex-direction: column;
@@ -344,7 +338,8 @@ export default {
 		height: 50px;
 		line-height: 50px;
 		text-align: center;
-		font-size: 1.5rem;
+		font-weight: bold;
+		font-size: 26px;
 		background-color: #97AFBA;
 		border-radius: 0.5rem 0.5rem 0 0;
 		// flex-grow: 0;
@@ -365,7 +360,7 @@ export default {
 		height: 64px;
 		line-height: 64px;
 		text-align: center;
-		font-size: 1rem;
+		font-size: 18px;
 		background-color: #F5F5F5;
 		margin: 0.25rem;
 		position: relative;
@@ -378,7 +373,7 @@ export default {
 		height: 50px;
 		line-height: 50px;
 		text-align: center;
-		font-size: 1.5rem;
+		font-size: 24px;
 		background-color: #F5F5F5;
 		border: 1px solid #344A53;
 		margin: 0.5rem;
@@ -391,7 +386,7 @@ export default {
 	}
 
 	.ordermenu > * {
-		font-size: 1.5rem;
+		font-size: 24px;
 		font-weight: bold;
 		color: #344A53;
 		// border: 1px dashed black;
@@ -450,24 +445,25 @@ export default {
 	}
 
 	.black-bg {
-        width: 70%;
+        width: 40%;
         height: 100%;
         // background: rgba(0,0,0,0.5);
         position: fixed;
-        padding: 20px;
-				// position: absolute;
-				z-index: 3;
-				transform: translateX(20%);
-				margin-left: 0;
+		left: 20%;
+        // padding: 20px;
+		
+		z-index: 3;
+		// transform: translateX(20%);
+		// margin-left: 0;
       }
 	.white-bg {
-				width: 650px;
+				// width: 650px;
+				width: 130%;
 				// height: 300px;
 				height: auto;
 				margin: 80px auto;
-				margin-left: 0px;
 				background: #344a53;
-				border-radius: 5px;
+				border-radius: 10px;
 				padding: 10px 0;
 				border: 2px solid black;
 				text-align: center;
@@ -477,7 +473,7 @@ export default {
 				// margin-right: 0;
 				display: flex;
 				flex-direction: column;
-				transform: translateY(-100px);
+				transform: translateY(-26px);
 }		
 	.faker {
 		background-color: purple;
@@ -496,7 +492,7 @@ export default {
 		// height: 64px;
 		// line-height: 64px;
 		text-align: center;
-		font-size: 1rem;
+		font-size: 16px;
 		background-color: #F5F5F5;
 		margin: 0.25rem;
 		position: relative;
@@ -505,8 +501,49 @@ export default {
 	}
 
 	.ordermenu2 > .classno, .studentname, .menuprice {
-		font-size: 1.5rem;
+		font-size: 24px;
     font-weight: bold;
     color: #344A53;
+	}
+	hr {
+		width: 50vw; 
+		margin: 0px;
+	}
+	@media screen and (max-width: 768px) {
+	.orderheader {
+		font-size: 20px;
+		// flex-grow: 0;
+	}
+	.ordermenu {
+		font-size: 12px;
+	}
+
+	.summary {
+		font-size: 18px;
+		// flex-grow: 0;
+	}
+
+	.ordermenu > * {
+		font-size: 18px;
+	}
+
+	.ordermenu2 {
+		font-size: 12px;
+	}
+	.black-bg {
+		left:2%;
+        width: 96%;
+        height: 100%;
+      }
+	.white-bg {
+				width: 99%;
+				transform: translateY(-26px);
+	}
+	hr {
+		width: 90vw; 
+	}
+	.ordermenu2 > .classno, .studentname, .menuprice {
+		font-size: 16px;
+	}
 	}
 </style>

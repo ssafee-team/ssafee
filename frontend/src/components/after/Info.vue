@@ -1,16 +1,26 @@
 <template>
 	<div>
-		<div class="black-bg" v-if="isOpened==true">
-		<!-- <div class="black-bg"> -->
-			<div class="flexmodal">
-				<div class="modalbody">
+    <div class="tooltip-bg-black" v-if="isOpened==true">
+      <div class="tooltip-bg-white">
+        <div class="tooptip-body">
           전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
           배달 인원은 6잔 당 1명씩 추가됩니다.
         </div>
-				<div class="modaltail"></div>
-			</div>
+				<div class="tooltip-tail"></div>
+      </div>
+    </div>
+    
+		<!-- <div class="black-bg" v-if="isOpened==true"> -->
 		<!-- <div class="black-bg"> -->
-		</div>
+			<!-- <div class="flexmodal"> -->
+				<!-- <div class="tooptip-body">
+          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
+          배달 인원은 6잔 당 1명씩 추가됩니다.
+        </div> -->
+				<!-- <div class="tooltip-tail"></div>
+			</div> -->
+		<!-- <div class="black-bg"> -->
+		<!-- </div> -->
     <div id="info">
       <div id="accountinfo">
         <!-- <span>입금계좌:</span>
@@ -21,7 +31,6 @@
         <span>{{ this.creator.name }}</span>
       </div>
     <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
-    <!-- <div @click="onMoloo" @mouseout="offMoloo" id="moloo">?</div> -->
     </div>
 	</div>
 </template>
@@ -33,19 +42,6 @@
       props: {
         creator: Object,
       },
-    // setup () {
-    //     let isVisible = ref(false)
-    //     const onMoloo = function (event) {
-    //         console.log('몰?루')
-    //         console.log(event.currentTarget())
-    //         // isVisible = ref(true)
-    //         // console.log(isVisible)
-    //     }
-    //     return {
-    //         isVisible,
-    //         onMoloo
-    //     }
-    // }
     data () {
 			return {
 				isOpened: false,
@@ -58,23 +54,12 @@
     methods: {
 			onMoloo(event) {
         console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account)
-				// console.log(event)
-				// console.log("물음표에 들어왔어요")
 				this.isOpened = true
         event.target.innerText = "!";
-        // <img class="image-thumbnail">
-        
-				// console.log(this.isOpened)
-				// console.log(event.currentTarget)
 			},
 			offMoloo(event) {
-				// console.log(event)
-				// console.log("물음표를 나가요")
 				this.isOpened = false
         event.target.innerText = "?";
-				// console.log(this.isOpened)
-				// this.isOpened = false
-				// console.log(event.currentTarget)
 			}
     },
 }
@@ -83,93 +68,71 @@
   <style>
       span {
           font-weight: bold;
-          font-size: 1.25rem;
+          font-size: 18px;
           color: #344A53;
       }
   
       #info {
-          margin-top: 10px;
-          margin-bottom: 20px;
-          height: 50px;
           display: flex;
           align-items: center;
           justify-content: space-between;
+          overflow: visible;
       }
-  
       #accountinfo {
           margin-left: 2rem;
       }	
       #moloo {
-          line-height: 40px;
-          font-size: 1.5rem;
-          height: 40px;
-          width: 40px;
+          line-height: 46px;
+          font-size: 24px;
+          height: 46px;
+          width: 46px;
           color: white;
-          /* align-items: center; */
+          transform: translateY(-4px);
           text-align: center;
-          /* margin: 32px 0px; */
-          /* justify-content: center; */
           background-color:#344A53;
           border-radius: 50%;
           margin-right: 2rem;
           cursor:help;
       }
 
-      body {
-        /* margin: 0; */
-      }
+     
       .dv {
         box-sizing: border-box;
       }
-      .black-bg {
-        width: 90%;
-        height: 100%;
-        /* background: rgba(0,0,0,0.5); */
-        position: fixed;
-        padding: 20px;
-				text-align: right;
-				/* margin-right: 0px; */
-        /* display: flex;
-        flex-direction: row; */
-      }
-      
-
-      .white-bg {
-        /* width: 50%; */
-        background: white;
-        /* border-radius: 8px; */
-        /* padding: 20px; */
-				width: 100px;
-				height: 100px;
-      }
-
-			.flexmodal {
-				/* width: 100%; */
-        height: 100px;
-				/* padding-right: 8rem; */
-				display: inline-flex;
-				/* text-align: right; */
-        /* margin: 0px auto; */
-        /* margin-right: 6rem; */
+      .tooltip-bg-black {
+        width: 100%;
+        height: 45px;
+        /* background: rgba(0, 0, 0, 0.6); */
         position: absolute;
-        right: 0rem;
-        
-			}
-			.modalbody {
-				width: 450px;
-				height: 50px;
+        display: flex;
+        justify-content: flex-end;
+
+      }
+
+      .tooltip-bg-white {
+        width: 520px;
+        height: 45px;
+        /* background-color: aqua; */
+        display: flex;
+      }
+
+			.tooptip-body {
+				width: 360px;
+				height: 28px;
         color: #f8f8f8;
 				background-color: #97AFBA;
         /* opacity: 0.9; */
         font-weight: bold;
-				border-radius: 10px;
-				transform: translateY(-28px);
+        font-size: 14px;
+				border-radius: 4px;
+				transform: translateY(-5px);
         text-align: center;
         box-sizing: content-box;
         padding: 10px;
+        line-height: 14px;
 			}
 
-			.modaltail {
+			.tooltip-tail {
 				/* padding-top: 20px; */
 				width: 0;
 				height: 0;
@@ -178,6 +141,6 @@
 				border-left: 20px solid #97AFBA;
         /* opacity: 0.9; */
 				border-right: 10px solid transparent;
-        transform: translateY(-4px);
+        transform: translateY(8px);
 			}
   </style>
