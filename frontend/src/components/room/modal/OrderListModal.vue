@@ -168,8 +168,8 @@ export default {
 
 .price {
   width: 80px; /* 고정된 너비 부여 */
-  margin-top: 10px;
   color: #00a7d0;
+  text-align: center;
 }
 
 .menu-info {
@@ -193,7 +193,7 @@ export default {
   font-size: 18px;
   display: flex;
   margin-bottom: 20px;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-between;
 }
 
@@ -230,5 +230,23 @@ export default {
 
   font-weight: bold;
   font-size: 18px;
+}
+
+@media screen and (max-width: 768px) {
+  .modal-content{
+    width: 80%; /* 작은 화면에 맞게 모달 너비 조정 */
+    margin: 50px auto; /* 모달 위치 조정 */
+  }
+
+  .modal-title{
+    font-size: 16px;
+  }
+  .name, .menu-name, .price{
+    font-size: 14px;
+  }
+  .modal-footer{
+    font-size: 16px;
+  }
+  
 }
 </style>

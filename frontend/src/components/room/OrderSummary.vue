@@ -74,8 +74,8 @@ export default {
       this.isOrderModalOpen = false;
     },
     toggleOrderSummary() {
-      console.log("주문내역확인하자~");
-      console.log("받은 데이터", this.orderList.value);
+      // console.log("주문내역확인하자~");
+      // console.log("받은 데이터", this.orderList.value);
       this.$emit("toggle-order-summary");
     },
     getOrderOptions(options) {
@@ -95,10 +95,10 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  height: 170px;
-  max-height: 170px;
+  height: 180px;
+  max-height: 180px;
   /* width: 60%; */
-  margin: 10px 0px 0px 20px;
+  margin: 10px 10px 0px 10px;
   /* position: fixed; */
   /* bottom: 0; */
 }
@@ -163,7 +163,7 @@ export default {
   font-size: 18px;
 }
 .btn-delete {
-  width: 80px;
+  width: 60px;
   cursor: pointer;
   border: none;
   padding: 5px;
@@ -176,5 +176,14 @@ export default {
 }
 p {
   font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .order-name, .order-price{
+    font-size: 16px;
+  }
+  .order-options, .btn-delete{
+    font-size: 14px;
+  }
 }
 </style>

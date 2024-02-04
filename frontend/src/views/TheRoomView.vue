@@ -63,7 +63,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "",
+  last_order_time: "18:00",
   created_time: "",
   shop_id: "",
   creator: {
@@ -108,7 +108,7 @@ onMounted(() => {
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000);
   code.value = route.params.code;
-  console.log("현재 방 코드: ", code.value);
+  // console.log("현재 방 코드: ", code.value);
   getPartyInfo();
 });
 
@@ -121,15 +121,15 @@ const getPartyInfo = () => {
     code.value,
 
     ({ data }) => {
-      console.log(data);
+      // console.log(data);
       partyInfo.value.id = data.id;
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
       partyInfo.value.classroom = data.classroom;
-      partyInfo.value.last_order_time = data.last_order_time;
+      // partyInfo.value.last_order_time = data.last_order_time;
       partyInfo.value.created_time = data.created_time;
       partyInfo.value.shop_id = data.shop_id;
-      console.log(partyInfo);
+      // console.log(partyInfo);
     },
     (error) => {
       console.log(error);
@@ -183,7 +183,7 @@ const openOrderListModal = () => {
     code.value, //partyCode 전달
     (response) => {
       orderList.value = response.data;
-      console.log("주문 현황 불러오기: ", orderList.value);
+      // console.log("주문 현황 불러오기: ", orderList.value);
     },
     (error) => {
       console.error("주문 현황 조회 실패: ", error);
@@ -224,12 +224,6 @@ header {
   justify-content: space-between;
   align-items: center;
 }
-/* 화면 폭이 768px 미만일 때 */
-@media screen and (max-width: 768px) {
-  header {
-    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
-  }
-}
 .timeline {
   display: flex;
   /* font-size: 30px; */
@@ -237,7 +231,7 @@ header {
   font-weight: bold;
 }
 .time {
-  width: 130px;
+  width: auto;
   margin-left: 10px;
 }
 .center-content {
@@ -271,5 +265,24 @@ button {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
   height: auto;
+}
+
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  header {
+    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+  .body-container {
+    flex-direction: column; 
+  }
+  .right-panel {
+    margin-left: 0; 
+    margin-top: 20px; 
+  }
+
+  .btn-curorder{
+    font-size: 16px;
+  }
+
 }
 </style>

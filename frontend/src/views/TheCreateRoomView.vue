@@ -159,33 +159,33 @@ const form = ref({
 })
 
 //여기부터 상혁이가 작성--------------------
-const shops = ref({
-  id: "",
-  name: "",
-  image: "",
-});
+// const shops = ref({
+//   id: "",
+//   name: "",
+//   image: "",
+// });
 
-onMounted(() => {
-  console.log("시작");
-  getShopList();
-});
+// onMounted(() => {
+  // console.log("시작");
+  // getShopList();
+// });
 
-const getShopList = (param) => {
-  //API 호출
-  getShops(
-    param,
+// const getShopList = (param) => {
+//   //API 호출
+//   getShops(
+//     param,
 
-    ({ data }) => {
-      console.log("가져온 데이터: ", data);
-      shops.value.id = data.id;
-      shops.value.name = data.name;
-      shops.value.image = data.image;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
+//     ({ data }) => {
+//       console.log("가져온 데이터: ", data);
+//       shops.value.id = data.id;
+//       shops.value.name = data.name;
+//       shops.value.image = data.image;
+//     },
+//     (error) => {
+//       console.log(error);
+//     }
+//   );
+// };
 // const shops = ref({
 //   id: "",
 //   name: "",
