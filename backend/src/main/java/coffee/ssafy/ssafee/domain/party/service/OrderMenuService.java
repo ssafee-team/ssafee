@@ -39,10 +39,11 @@ public class OrderMenuService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         Menu menuReference = entityManager.getReference(Menu.class, orderMenuRequest.menuId());
 
-        Participant participant = Participant.builder()
-                .name(orderMenuRequest.participantName())
-                .party(party)
-                .build();
+        Participant participant = participantRepository.findByPartyIdAndName(party.getId(), orderMenuRequest.participantName())
+                .orElseGet(() -> Participant.builder()
+                        .name(orderMenuRequest.participantName())
+                        .party(party)
+                        .build());
         participantRepository.save(participant);
 
         OrderMenu orderMenu = OrderMenu.builder()

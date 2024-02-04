@@ -35,7 +35,7 @@ public class ManagerController {
 
     @GetMapping("/me")
     @Operation(security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<ManagerResponse> getManager(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken) {
+    public ResponseEntity<ManagerResponse> getManager(@RequestHeader(HttpHeaders.AUTHORIZATION) @Parameter(hidden = true) String bearerToken) {
         return ResponseEntity.ok().body(managerService.findManager(bearerToken));
     }
 

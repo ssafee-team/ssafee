@@ -5,8 +5,10 @@ import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,9 @@ public class PartyController {
 
     @PostMapping
     @Operation(security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> createParty(@RequestBody PartyRequest partyRequest) {
-        String accessCode = partyService.createParty(partyRequest);
+    public ResponseEntity<Void> createParty(@RequestHeader(HttpHeaders.AUTHORIZATION) @Parameter(hidden = true) String bearerToken,
+                                            @RequestBody PartyRequest partyRequest) {
+        String accessCode = partyService.createParty(bearerToken, partyRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode);
         return ResponseEntity.created(location).build();
     }
