@@ -5,6 +5,8 @@ import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.MenuMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.MenuRepository;
 import jakarta.persistence.EntityManager;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,15 +24,13 @@ public class MenuService {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final MenuMapper menuMapper;
     private final MenuRepository menuRepository;
+    private final MenuMapper menuMapper;
 
     public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
-        List<Menu> menus = menuRepository.findByShopIdAndMenuCategoryId(shopId, menuCategoryId);
-
-        return menus.stream()
-                .map(menuMapper::toDto).
-                collect(Collectors.toList());
+        return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
+                .map(menuMapper::toDto)
+                .toList();
     }
 
     public Long createMenu(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
@@ -42,15 +41,14 @@ public class MenuService {
         return menu.getId();
     }
 
-    public void updateMenu(Long menuId, MenuRequest menuRequest) {
-        menuRepository.findById(menuId).ifPresent(menu -> {
-            menuMapper.updateMenu(menu, menuRequest);
-            menuRepository.save(menu);
-        });
+    public void updateMenu(Long shopId, Long menuCategoryId, Long menuId, MenuRequest menuRequest) {
+        menuRepository.findByShopIdAndId(shopId, menuId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
+                .update(menuRequest);
     }
 
-    public void deleteMenu(Long menuId) {
-        menuRepository.deleteById(menuId);
+    public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {
+        menuRepository.deleteByShopIdAndId(shopId, menuId);
     }
 
 }

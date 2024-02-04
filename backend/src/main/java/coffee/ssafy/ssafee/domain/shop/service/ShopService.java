@@ -27,12 +27,15 @@ public class ShopService {
     }
 
     public List<ShopResponse> findShops() {
-        return shopMapper.toDtoList(shopRepository.findAll());
+        return shopRepository.findAll().stream()
+                .map(shopMapper::toDto)
+                .toList();
     }
 
     public void updateShop(Long id, ShopRequest shopRequest) {
-        shopMapper.updateFromDto(shopRequest, shopRepository.findById(id)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
+        shopRepository.findById(id)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
+                .update(shopRequest);
     }
 
 }

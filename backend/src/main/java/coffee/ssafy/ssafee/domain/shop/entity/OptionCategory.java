@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "option_categories")
@@ -44,13 +45,16 @@ public class OptionCategory {
     @OneToMany(mappedBy = "optionCategory")
     private List<Option> options;
 
+    @ManyToMany(mappedBy = "optionCategories", fetch = FetchType.LAZY)
+    private Set<Menu> menus;
+
     // Shop 엔티티에 대한 참조 추가
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false)
     @Setter
     private Shop shop;
 
-    public void updateOptionCategory(OptionCategoryRequest optionCategoryRequest) {
+    public void update(OptionCategoryRequest optionCategoryRequest) {
         this.name = optionCategoryRequest.name();
         this.required = optionCategoryRequest.required();
         this.maxCount = optionCategoryRequest.maxCount();

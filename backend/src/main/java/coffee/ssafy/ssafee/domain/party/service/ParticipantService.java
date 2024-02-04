@@ -23,7 +23,9 @@ public class ParticipantService {
 
     public List<ParticipantResponse> findParticipantsByAccessCode(String accessCode) {
         Long partyId = partyService.findPartyIdByAccessCode(accessCode);
-        return participantMapper.toDtoList(participantRepository.findByPartyId(partyId));
+        return participantRepository.findByPartyId(partyId).stream()
+                .map(participantMapper::toDto)
+                .toList();
     }
 
     public void updateParticipantByAccessCodeAndId(String accessCode, Long id, ParticipantUpdateRequest participantUpdateRequest) {

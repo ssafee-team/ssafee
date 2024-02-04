@@ -10,13 +10,13 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface OptionCategoryMapper {
 
-    OptionCategoryResponse optionCategoryToOptionCategoryDto(OptionCategory optionCategory);
+    OptionCategoryResponse toDto(OptionCategory optionCategory);
 
     OptionCategory toEntity(OptionCategoryRequest optionCategoryRequest);
 
     @AfterMapping
-    default void updateFromDto(OptionCategoryRequest optionCategoryRequest, @MappingTarget OptionCategory optionCategory) {
-        optionCategory.updateOptionCategory(optionCategoryRequest);
+    default void update(@MappingTarget OptionCategory optionCategory, OptionCategoryRequest optionCategoryRequest) {
+        optionCategory.update(optionCategoryRequest);
     }
 
 }

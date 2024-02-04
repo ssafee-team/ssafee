@@ -10,13 +10,13 @@ import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.user.entity.User;
-import coffee.ssafy.ssafee.jwt.JwtTokenProvider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +31,6 @@ public class PartyService {
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
     private final PartyMapper partyMapper;
-    private final JwtTokenProvider jwtTokenProvider;
 
     private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -45,13 +44,10 @@ public class PartyService {
         return stringBuilder.toString();
     }
 
-    public String createParty(String bearerToken, PartyRequest partyRequest) {
-        String accessToken = jwtTokenProvider.bearerTokenToAccessToken(bearerToken);
-        String userId = jwtTokenProvider.parseAccessToken(accessToken).id();
-        User userReference = entityManager.getReference(User.class, userId);
-
+    public String createParty(Long userId, PartyRequest partyRequest) {
         String accessCode = generateAccessCode();
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
+        User userReference = entityManager.getReference(User.class, userId);
 
         Party party = partyMapper.toEntity(partyRequest);
         party.prepareCreation(accessCode, shopReference, userReference, partyRequest.creator());
@@ -59,8 +55,13 @@ public class PartyService {
         return accessCode;
     }
 
-    public List<PartyResponse> findPartiesToday() {
-        return partyRepository.findAllByCreatedTimeToday().stream()
+    public List<PartyResponse> findParties(LocalDate startDate, LocalDate endDate) {
+        LocalDate today = LocalDate.now();
+        if (startDate == null || endDate == null) {
+            startDate = today;
+            endDate = today;
+        }
+        return partyRepository.findAllByCreatedTimeBetween(startDate, endDate).stream()
                 .map(partyMapper::toDto)
                 .toList();
     }

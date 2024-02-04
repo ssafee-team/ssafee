@@ -5,6 +5,8 @@ import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.Option;
 import coffee.ssafy.ssafee.domain.shop.entity.OptionCategory;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.OptionMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.OptionRepository;
 import jakarta.persistence.EntityManager;
@@ -26,9 +28,8 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;
 
-    public List<OptionResponse> getOptionsByCategory(Long optionCategoryId) {
-        List<Option> options = optionRepository.findByOptionCategoryId(optionCategoryId);
-        return options.stream()
+    public List<OptionResponse> getOptionsByCategory(Long shopId, Long optionCategoryId) {
+        return optionRepository.findAllByShopIdAndOptionCategoryId(shopId, optionCategoryId).stream()
                 .map(optionMapper::optionToOptionResponse)
                 .collect(Collectors.toList());
     }
@@ -41,15 +42,14 @@ public class OptionService {
         return option.getId();
     }
 
-    public void updateOption(Long optionId, OptionRequest optionRequest) {
-        optionRepository.findById(optionId).ifPresent(option -> {
-            optionMapper.updateFromDto(optionRequest, option);
-            optionRepository.save(option);
-        });
+    public void updateOption(Long shopId, Long optionCategoryId, Long optionId, OptionRequest optionRequest) {
+        optionRepository.findByShopIdAndId(shopId, optionId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_OPTION_CATEGORY))
+                .update(optionRequest);
     }
 
-    public void deleteOption(Long optionCategoryId) {
-        optionRepository.deleteById(optionCategoryId);
+    public void deleteOption(Long shopId, Long optionCategoryId, Long optionId) {
+        optionRepository.deleteByShopIdAndId(shopId, optionId);
     }
 
 }

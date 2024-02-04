@@ -12,11 +12,10 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     Optional<Party> findByAccessCode(String accessCode);
 
-    default List<Party> findAllByCreatedTimeToday() {
-        LocalDate today = LocalDate.now();
-        return findAllByCreatedTimeBetween(today.atStartOfDay(), today.plusDays(1).atStartOfDay());
+    default List<Party> findAllByCreatedTimeBetween(LocalDate startDate, LocalDate endDate) {
+        return findAllByCreatedTimeBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
     }
 
-    List<Party> findAllByCreatedTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<Party> findAllByCreatedTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
 
 }

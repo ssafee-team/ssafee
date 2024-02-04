@@ -46,7 +46,7 @@ public class Option {
     @Setter
     private Shop shop;
 
-    public void updateOption(OptionRequest optionRequest) {
+    public void update(OptionRequest optionRequest) {
         this.name = optionRequest.name();
         this.price = optionRequest.price();
     }

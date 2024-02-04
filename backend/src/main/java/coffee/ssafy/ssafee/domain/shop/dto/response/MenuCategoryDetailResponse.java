@@ -9,6 +9,6 @@ import java.util.List;
 public record MenuCategoryDetailResponse(
         Long id,
         String name,
-        List<MenuResponse> menus
+        List<MenuDetailResponse> menus
 ) {
 }
