@@ -18,7 +18,7 @@
       <div class="center-content">
         <button class="btn-roomlist" @click="goMain">방목록</button>
         <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
-        <button class="btn-create" @click="goCreate">방만들기</button>
+        
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
@@ -66,7 +66,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "20:00",
+  last_order_time: "24:00",
   created_time: "",
   shop_id: "",
   creator: {
@@ -260,7 +260,7 @@ header {
   /* font-size: 30px; */
   /* flex-grow: 1; */
   font-weight: bold;
-  justify-content: space-between;
+  justify-content: center;
   
 }
 
@@ -310,7 +310,7 @@ button {
     margin-top: 20px; 
   }
 
-  .btn-curorder{
+  .btn-curorder, .btn-roomlist{
     font-size: 16px;
   }
 

@@ -35,7 +35,7 @@
       @click="selectCategory(index)"
       :class="{ selected: selectedCategory === index }"
     >
-      {{ category }}
+      {{ category.name }}
     </div>
   </div>
 
@@ -287,7 +287,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: auto;
-  height: 450px;
+  height: 500px;
 }
 
 .menu-items::-webkit-scrollbar {
@@ -317,10 +317,13 @@ export default {
 }
 
 .black-bg {
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
   /* background: rgba(0, 0, 0, 0.6); */
+  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   z-index: 9999;
   /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
@@ -339,6 +342,7 @@ export default {
   position: relative;
   z-index: 10000;
   border: none;
+  
 }
 .close {
   width: 120px;
