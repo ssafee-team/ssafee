@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class MenuCategoryController {
 
     // 2. 메뉴 카테고리 생성
     @PostMapping
-    @Operation(summary = "메뉴 카테고리 생성")
+    @Operation(summary = "메뉴 카테고리 생성", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> createMenuCategory(
             @PathVariable("shop_id") Long shopId,
             @RequestBody MenuCategoryRequest menuCategoryRequest) {
@@ -39,7 +40,7 @@ public class MenuCategoryController {
 
     // 3. 메뉴 카테고리 수정
     @PatchMapping("/{mc_id}")
-    @Operation(summary = "메뉴 카테고리 수정")
+    @Operation(summary = "메뉴 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateMenuCategory(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId,
@@ -50,7 +51,7 @@ public class MenuCategoryController {
 
     // 4. 메뉴 카테고리 삭제
     @DeleteMapping("/{mc_id}")
-    @Operation(summary = "메뉴 카테고리 삭제")
+    @Operation(summary = "메뉴 카테고리 삭제", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> deleteMenuCategory(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId) {

@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/shops/{shop_id}")
+@RequestMapping("/api/v1/shops/{shop_id}/menu-categories/{mc_id}/menus")
 @RequiredArgsConstructor
 public class MenuController {
 
@@ -22,7 +23,7 @@ public class MenuController {
 
     // 1. (카테고리별) 메뉴 조회
     // shopId 와 menuCategoryId를 가지고 해당 menuCategoryId에 해당하는 메뉴들을 출력
-    @GetMapping("/menu-categories/{mc_id}/menus")
+    @GetMapping
     @Operation(summary = "메뉴 조회")
     public ResponseEntity<List<MenuResponse>> getMenusByCategory(
             @PathVariable("shop_id") Long shopId,
@@ -32,8 +33,8 @@ public class MenuController {
 
 
     // 2. 메뉴 생성
-    @PostMapping("/menu-categories/{mc_id}/menus")
-    @Operation(summary = "메뉴 생성")
+    @PostMapping
+    @Operation(summary = "메뉴 생성", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> createMenu(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId,
@@ -44,8 +45,8 @@ public class MenuController {
     }
 
     // 3. 메뉴 수정
-    @PatchMapping("/menu-categories/{mc_id}/menus/{menu_id}")
-    @Operation(summary = "메뉴 수정")
+    @PatchMapping("/{menu_id}")
+    @Operation(summary = "메뉴 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateMenu(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId,
@@ -56,8 +57,8 @@ public class MenuController {
     }
 
     // 4. 메뉴 삭제
-    @DeleteMapping("/menu-categories/{mc_id}/menus/{menu_id}")
-    @Operation(summary = "메뉴 삭제")
+    @DeleteMapping("/{menu_id}")
+    @Operation(summary = "메뉴 삭제", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> deleteMenu(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("mc_id") Long menuCategoryId,

@@ -18,11 +18,11 @@ public class SwaggerConfig {
                         .description("SSAFEE API 명세서")
                         .version("v1.0.0"))
                 .components(new Components()
-                        .addSecuritySchemes("bearer-jwt",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        .addSecuritySchemes("access-token", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .in(SecurityScheme.In.HEADER)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 
 }

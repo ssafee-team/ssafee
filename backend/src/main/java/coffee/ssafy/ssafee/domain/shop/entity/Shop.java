@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.domain.manager.entity.Manager;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -46,5 +47,8 @@ public class Shop {
 
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<MenuCategory> menuCategories;
+
+    @OneToOne(mappedBy = "shop", fetch = FetchType.LAZY)
+    private Manager manager;
 
 }

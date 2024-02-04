@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class OptionCategoryController {
 
     // 2. 옵션 카테고리 생성
     @PostMapping("/{oc_id}")
-    @Operation(summary = "옵션 카테고리 생성")
+    @Operation(summary = "옵션 카테고리 생성", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> createOptionCategory(
             @PathVariable("shop_id") Long shopId,
             @RequestBody OptionCategoryRequest optionCategoryRequest) {
@@ -42,7 +43,7 @@ public class OptionCategoryController {
 
     // 3. 옵션 카테고리 수정
     @PatchMapping("/{oc_id}")
-    @Operation(summary = "옵션 카테고리 수정")
+    @Operation(summary = "옵션 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateOptionCategory(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("oc_id") Long optionCategoryId,
@@ -53,7 +54,7 @@ public class OptionCategoryController {
 
     // 4. 옵션 카테고리 삭제
     @DeleteMapping("/{oc_id}")
-    @Operation(summary = "옵션 카테고리 삭제")
+    @Operation(summary = "옵션 카테고리 삭제", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> deleteOptionCategory(
             @PathVariable("shop_id") Long shopId,
             @PathVariable("oc_id") Long optionCategoryId) {

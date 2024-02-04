@@ -37,7 +37,7 @@ public class JwtTokenProvider {
     public JwtClaimInfo parseAccessToken(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
         return JwtClaimInfo.builder()
-                .id(claims.get(CLAIMS_ID, Long.class))
+                .id(claims.get(CLAIMS_ID, String.class))
                 .role(claims.get(CLAIMS_ROLE, String.class))
                 .build();
     }
