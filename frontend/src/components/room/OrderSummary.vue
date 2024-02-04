@@ -14,7 +14,7 @@
     <ul v-show="orderList.length > 0" class="list">
       <li v-for="(order, index) in limitedOrderList" :key="index" class="order-list">
         <div class="order-name">{{ order.name }}</div>
-        <div class="order-options">옵션: {{ getOrderOptions(order.options) }}</div>
+        <div class="order-options">옵션: {{ getOrderOptions(order.option_names) }}</div>
         <div class="order-price">{{ order.price }}</div>
         <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
@@ -102,7 +102,8 @@ export default {
   height: 180px;
   max-height: 300px;
   width: 65%;
-  margin: 10px 10px 0px 10px;
+  margin: 0px 10px 0px 10px;
+  
   position: absolute;
   bottom: 0;
   transition: height 0.3s ease; /* transition 효과 추가 */

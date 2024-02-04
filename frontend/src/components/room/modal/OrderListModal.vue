@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" @click="closeModal">
+  <div class="modal">
     <div class="modal-content">
       <div class="modal-title">
         <div>전체 주문 현황</div>
