@@ -3,7 +3,6 @@ package coffee.ssafy.ssafee.domain.party.entity;
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
-import coffee.ssafy.ssafee.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

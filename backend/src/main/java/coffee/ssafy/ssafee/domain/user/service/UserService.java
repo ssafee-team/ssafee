@@ -1,6 +1,5 @@
 package coffee.ssafy.ssafee.domain.user.service;
 
-import coffee.ssafy.ssafee.domain.user.dto.TokensInfo;
 import coffee.ssafy.ssafee.domain.user.entity.User;
 import coffee.ssafy.ssafee.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

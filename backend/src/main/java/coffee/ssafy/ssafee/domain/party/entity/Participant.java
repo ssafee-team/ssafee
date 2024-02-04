@@ -1,6 +1,5 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
-import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

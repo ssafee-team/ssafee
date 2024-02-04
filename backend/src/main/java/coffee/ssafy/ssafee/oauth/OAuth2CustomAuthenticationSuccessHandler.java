@@ -21,7 +21,7 @@ public class OAuth2CustomAuthenticationSuccessHandler extends SimpleUrlAuthentic
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         OAuth2UserImpl oAuth2User = (OAuth2UserImpl) authentication.getPrincipal();
         String accessToken = jwtTokenProvider.issueAccessToken(JwtClaimInfo.builder()
-                .id(oAuth2User.getId())
+                .id(String.valueOf(oAuth2User.getId()))
                 .role(oAuth2User.getAuthorities().get(0).getAuthority())
                 .build());
 
