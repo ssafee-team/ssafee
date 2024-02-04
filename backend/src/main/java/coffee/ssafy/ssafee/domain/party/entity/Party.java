@@ -3,7 +3,6 @@ package coffee.ssafy.ssafee.domain.party.entity;
 import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.party.dto.request.CreatorRequest;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
-import coffee.ssafy.ssafee.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -50,10 +49,6 @@ public class Party extends BaseTimeEntity {
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
-
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Creator creator;
 
@@ -63,10 +58,14 @@ public class Party extends BaseTimeEntity {
     @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
     private List<OrderMenu> orderMenus;
 
-    public void prepareCreation(String accessCode, Shop shop, User user, CreatorRequest creatorRequest) {
+
+    // @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    // @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    // private User user;
+
+    public void prepareCreation(String accessCode, Shop shop, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
         this.shop = shop;
-        this.user = user;
         this.creator = Creator.builder()
                 .name(creatorRequest.name())
                 .email(creatorRequest.email())

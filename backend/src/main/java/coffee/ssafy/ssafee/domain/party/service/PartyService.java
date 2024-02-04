@@ -9,8 +9,6 @@ import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
-import coffee.ssafy.ssafee.domain.user.entity.User;
-import coffee.ssafy.ssafee.jwt.JwtTokenProvider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import java.util.Random;
 public class PartyService {
 
     private static final int ACCESS_CODE_LENGTH = 10;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -45,16 +42,12 @@ public class PartyService {
     }
 
     @Transactional
-    public String createParty(String bearerToken, PartyRequest partyRequest) {
-        String accessToken = bearerTokenToAccessToken(bearerToken);
-        String userId = jwtTokenProvider.parseAccessToken(accessToken).id();
-        User userReference = entityManager.getReference(User.class, userId);
-
+    public String createParty(PartyRequest partyRequest) {
         String accessCode = generateAccessCode();
         Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
 
         Party party = partyMapper.toEntity(partyRequest);
-        party.prepareCreation(accessCode, shopReference, userReference, partyRequest.creator());
+        party.prepareCreation(accessCode, shopReference, partyRequest.creator());
         partyRepository.save(party);
         return accessCode;
     }
@@ -68,10 +61,6 @@ public class PartyService {
     public PartyDetailResponse findPartyByAccessCode(String accessCode) {
         return partyMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
-    }
-
-    private String bearerTokenToAccessToken(String bearerToken) {
-        return bearerToken.substring(7);
     }
 
 }
