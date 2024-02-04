@@ -6,7 +6,7 @@
 
         <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
-      <div class="center-content">
+      <div class="center-title">
         <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
@@ -16,7 +16,9 @@
     </header>
     <body>
       <div class="center-content">
+        <button class="btn-roomlist" @click="goMain">방목록</button>
         <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
+        <button class="btn-create" @click="goCreate">방만들기</button>
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
@@ -51,11 +53,12 @@ import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
 import { getParty, getOrderList } from "@/api/party";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 // const roomCode = ref("");
 
 const route = useRoute();
+const router = useRouter();
 const code = ref(""); //파티 코드
 
 const partyInfo = ref({
@@ -63,7 +66,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "18:00",
+  last_order_time: "20:00",
   created_time: "",
   shop_id: "",
   creator: {
@@ -200,6 +203,14 @@ const closeOrderModal = () => {
 // };
 
 // 마감시간 시 After 창으로 이동하는 코드
+
+const goMain = () => {
+  router.push({ name: "main" });
+};
+
+const goCreate = () => {
+  router.push({ name: "CreateRoomView" });
+};
 </script>
 
 <style scoped>
@@ -225,6 +236,7 @@ header {
   align-items: center;
 }
 .timeline {
+  width: auto;
   display: flex;
   /* font-size: 30px; */
   margin: 20px;
@@ -234,11 +246,22 @@ header {
   width: auto;
   margin-left: 10px;
 }
+
+.center-title{
+  text-align: center;
+  font-weight: bold;
+  margin: 20px;
+  
+}
+
 .center-content {
+  display: flex;
   text-align: center;
   /* font-size: 30px; */
-  flex-grow: 1;
+  /* flex-grow: 1; */
   font-weight: bold;
+  justify-content: space-between;
+  
 }
 
 button {
@@ -251,6 +274,13 @@ button {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.btn-roomlist, .btn-create{
+  color: #344a53;
+}
+
+
+
 .body-container {
   display: flex;
   /* margin-top: 25px; */
