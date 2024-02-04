@@ -36,7 +36,7 @@ public class OrderMenuController {
     @Operation(summary = "주문 메뉴 삭제")
     public ResponseEntity<Void> deleteOrderMenu(@PathVariable("access_code") String accessCode, @PathVariable Long id) {
         orderMenuService.deleteOrderMenuByAccessCodeAndId(accessCode, id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

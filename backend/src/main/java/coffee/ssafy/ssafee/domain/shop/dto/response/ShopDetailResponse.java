@@ -13,6 +13,6 @@ public record ShopDetailResponse(
         String phone,
         String image,
         Boolean enabledAutoOrder,
-        List<MenuCategoryResponse> menuCategories
+        List<MenuCategoryDetailResponse> menuCategories
 ) {
 }

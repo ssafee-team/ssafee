@@ -9,14 +9,15 @@ import coffee.ssafy.ssafee.domain.shop.mapper.MenuMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.MenuRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MenuService {
 
@@ -25,7 +26,6 @@ public class MenuService {
     private final MenuMapper menuMapper;
     private final MenuRepository menuRepository;
 
-    @Transactional
     public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         List<Menu> menus = menuRepository.findByShopIdAndMenuCategoryId(shopId, menuCategoryId);
 
@@ -34,7 +34,6 @@ public class MenuService {
                 collect(Collectors.toList());
     }
 
-    @Transactional
     public Long createMenu(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
         Menu menu = menuMapper.toEntity(menuRequest);
         menu.setMenuCategory(entityManager.getReference(MenuCategory.class, menuCategoryId));
@@ -43,7 +42,6 @@ public class MenuService {
         return menu.getId();
     }
 
-    @Transactional
     public void updateMenu(Long menuId, MenuRequest menuRequest) {
         menuRepository.findById(menuId).ifPresent(menu -> {
             menuMapper.updateMenu(menu, menuRequest);
@@ -51,7 +49,6 @@ public class MenuService {
         });
     }
 
-    @Transactional
     public void deleteMenu(Long menuId) {
         menuRepository.deleteById(menuId);
     }

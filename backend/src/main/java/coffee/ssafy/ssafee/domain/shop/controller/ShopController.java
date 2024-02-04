@@ -29,7 +29,7 @@ public class ShopController {
         return ResponseEntity.ok().body(shopService.findShopById(id));
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     @Operation(security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateShop(@PathVariable Long id, @RequestBody ShopRequest shopRequest) {
         shopService.updateShop(id, shopRequest);

@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,7 +22,7 @@ public class MenuCategoryController {
     // 1. 메뉴 카테고리 조회
     @GetMapping
     @Operation(summary = "메뉴 카테고리 조회")
-    public ResponseEntity<List<String>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
+    public ResponseEntity<List<MenuCategoryResponse>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
         return ResponseEntity.ok().body(menuCategoryService.findMenuCategories(shopId));
     }
 
@@ -39,7 +40,7 @@ public class MenuCategoryController {
     }
 
     // 3. 메뉴 카테고리 수정
-    @PatchMapping("/{mc_id}")
+    @PutMapping("/{mc_id}")
     @Operation(summary = "메뉴 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateMenuCategory(
             @PathVariable("shop_id") Long shopId,

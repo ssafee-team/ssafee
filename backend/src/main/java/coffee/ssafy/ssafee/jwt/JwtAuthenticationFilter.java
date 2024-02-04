@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            String accessToken = bearerToken.substring(7);
+            String accessToken = jwtTokenProvider.bearerTokenToAccessToken(bearerToken);
             JwtClaimInfo jwtClaimsInfo = jwtTokenProvider.parseAccessToken(accessToken);
             List<GrantedAuthority> authorities = Collections.singletonList(jwtClaimsInfo::role);
             Authentication authentication = new UsernamePasswordAuthenticationToken(jwtClaimsInfo.id(), null, authorities);

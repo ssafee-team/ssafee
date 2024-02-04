@@ -37,7 +37,7 @@ public class OptionController {
         return ResponseEntity.created(location).build();
     }
 
-    @PatchMapping("/{option_id}")
+    @PutMapping("/{option_id}")
     @Operation(summary = "옵션 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateOption(
             @PathVariable("shop_id") Long shopId,

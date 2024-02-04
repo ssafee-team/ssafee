@@ -21,16 +21,17 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PartyService {
 
     private static final int ACCESS_CODE_LENGTH = 10;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @PersistenceContext
     private final EntityManager entityManager;
     private final PartyRepository partyRepository;
     private final PartyMapper partyMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private static String generateAccessCode() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -44,9 +45,8 @@ public class PartyService {
         return stringBuilder.toString();
     }
 
-    @Transactional
     public String createParty(String bearerToken, PartyRequest partyRequest) {
-        String accessToken = bearerTokenToAccessToken(bearerToken);
+        String accessToken = jwtTokenProvider.bearerTokenToAccessToken(bearerToken);
         String userId = jwtTokenProvider.parseAccessToken(accessToken).id();
         User userReference = entityManager.getReference(User.class, userId);
 
@@ -70,8 +70,10 @@ public class PartyService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
     }
 
-    private String bearerTokenToAccessToken(String bearerToken) {
-        return bearerToken.substring(7);
+    public Long findPartyIdByAccessCode(String accessCode) {
+        return partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
+                .getId();
     }
 
 }

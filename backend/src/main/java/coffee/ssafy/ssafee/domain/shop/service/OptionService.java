@@ -9,14 +9,15 @@ import coffee.ssafy.ssafee.domain.shop.mapper.OptionMapper;
 import coffee.ssafy.ssafee.domain.shop.repository.OptionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OptionService {
 
@@ -25,7 +26,6 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;
 
-    @Transactional
     public List<OptionResponse> getOptionsByCategory(Long optionCategoryId) {
         List<Option> options = optionRepository.findByOptionCategoryId(optionCategoryId);
         return options.stream()
@@ -33,7 +33,6 @@ public class OptionService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public Long createOption(Long shopId, Long optionCategoryId, OptionRequest optionRequest) {
         Option option = optionMapper.toEntity(optionRequest);
         option.setOptionCategory(entityManager.getReference(OptionCategory.class, optionCategoryId));
@@ -42,7 +41,6 @@ public class OptionService {
         return option.getId();
     }
 
-    @Transactional
     public void updateOption(Long optionId, OptionRequest optionRequest) {
         optionRepository.findById(optionId).ifPresent(option -> {
             optionMapper.updateFromDto(optionRequest, option);
@@ -50,8 +48,8 @@ public class OptionService {
         });
     }
 
-    @Transactional
     public void deleteOption(Long optionCategoryId) {
         optionRepository.deleteById(optionCategoryId);
     }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ShopService {
 
@@ -29,7 +30,6 @@ public class ShopService {
         return shopMapper.toDtoList(shopRepository.findAll());
     }
 
-    @Transactional
     public void updateShop(Long id, ShopRequest shopRequest) {
         shopMapper.updateFromDto(shopRequest, shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));

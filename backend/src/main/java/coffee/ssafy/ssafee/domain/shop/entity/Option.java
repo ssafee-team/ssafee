@@ -50,4 +50,5 @@ public class Option {
         this.name = optionRequest.name();
         this.price = optionRequest.price();
     }
+
 }
