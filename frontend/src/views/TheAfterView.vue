@@ -1,14 +1,15 @@
 <template>
   <main>
-    <header>
+    <!-- <header :style="{ height: headerHeight }"> -->
+    <header :style="{ height: 72 }">
       <div class="timeline">
         <div class="time">마감시간</div>
         <!-- last_order_time -->
         <!-- <div>11:30</div> -->
-        <div class="time">{{ deadLine }}</div>
+        <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
       <div class="center-content">
-        <div>컴포즈커피 (광주수완점)</div>
+        <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
         <div class="time">잔여시간</div>
@@ -38,7 +39,7 @@
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
         </div>
         <div class="right-panel">
-          <div>채팅창</div>
+          <!-- <div>채팅창</div> -->
           <chat />
           <!-- 오른쪽 컨텐츠 (6:4 중 4 부분) -->
           <!-- 추가적인 내용이 들어갈 수 있습니다. -->
@@ -60,6 +61,7 @@
   import Chat from "@/components/room/chat/Chat.vue";
   import { useRoute } from 'vue-router';
   import { getCreator, getOrderList } from '@/api/after.js'
+  import { getParty } from "@/api/party";
 
   const route = useRoute();
  
@@ -85,11 +87,25 @@
   const ordersMenuSorted = ref([])
   const menuSet = new Set();
   const nameSet = new Set();
-  const access_code = ref("");
   
+  const partyInfo = ref({
+  id: "",
+  name: "",
+  generation: "",
+  classroom: "",
+  last_order_time: "",
+  created_time: "",
+  shop_id: "",
+  creator: {
+    id: "",
+    name: "",
+    email: "",
+    bank: "",
+    account: "",
+  },
+});
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
-    console.log(access_code.value)
     // console.log(route.params.access_code);
     getCreator(route.params.access_code, 
     (res) => {
@@ -218,12 +234,36 @@
     updateRemainingTime(); //페이지 로드시 남은시간 계산
     // 1초마다 남은시간 갱신
     setInterval(updateRemainingTime, 1000);
+    getPartyInfo();
   });
 
   onUnmounted(() => {
     window.removeEventListener("resize", updateHeaderHeight);
+    
   });
 
+
+  const getPartyInfo = () => {
+    // console.log('파티피플')
+  getParty(
+    route.params.access_code,
+
+    ({ data }) => {
+      console.log(data);
+      partyInfo.value.id = data.id;
+      partyInfo.value.name = data.name;
+      partyInfo.value.generation = data.generation;
+      partyInfo.value.classroom = data.classroom;
+      partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.created_time = data.created_time;
+      partyInfo.value.shop_id = data.shop_id;
+      // console.log('파티정보:',partyInfo);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 // 남은시간 갱신하는 함수 호출
   const updateRemainingTime = () => {
     const now = new Date(); //현재시간 변수
@@ -251,36 +291,41 @@
 
 <style scoped>
 body {
-  margin: 0;
-  padding: 0;
+  /* margin: 20px; */
+  /* padding: 20px; */
   font-family: "Arial", sans-serif;
 }
 main {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  /* height: 100vh; */
+  height: auto;
+  overflow-x: hidden;
 }
 
 header {
   background-color: #344a53;
   color: #e9fcff;
-  padding: 10px;
-  height: 77px;
+  /* padding: 10px; */
+  min-height: 70px;
   display: flex;
+  font-size: 24px;
   justify-content: space-between;
   align-items: center;
 }
 .timeline {
   display: flex;
-  font-size: 30px;
+  font-size: 24px;
   margin: 20px;
+  font-weight: bold;
 }
 .time {
   margin-right: 10px;
 }
 .center-content {
   text-align: center;
-  font-size: 40px;
+  /* font-size: 40px; */
+  font-size: 24px;
   flex-grow: 1;
   font-weight: bold;
 }
@@ -303,18 +348,20 @@ button {
 }
 .body-container {
   display: flex;
-  flex: 6;
-  margin-top: 25px;
+  /* flex: 6; */
+  /* margin-top: 25px; */
 }
 .left-panel {
   flex: 7; /* 6:4 비율로 나누기 위한 설정 */
-  height: 75vh;
-  border: 5px solid #ccc;
+  /* height: 75vh; */
+  height: auto;
+  
+  /* border: 5px solid #ccc; */
 }
-
 .right-panel {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
-  border: 5px solid #ccc;
+  /* border: 5px solid #ccc; */
+  height: auto;
 }
 </style>

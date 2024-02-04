@@ -8,6 +8,7 @@ public record CreatorRequest(
         String name,
         String email,
         String bank,
-        String account
+        String account,
+        String webhookUrl
 ) {
 }

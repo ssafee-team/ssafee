@@ -8,5 +8,6 @@ import java.util.List;
 public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Long> {
 
     List<MenuCategory> findAllByShopId(Long shopId);
+
     void deleteById(Long menuCategoryId);
 }

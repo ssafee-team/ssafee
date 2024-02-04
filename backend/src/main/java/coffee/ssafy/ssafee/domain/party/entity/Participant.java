@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Participant extends BaseTimeEntity {
+public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,19 +26,12 @@ public class Participant extends BaseTimeEntity {
     private String name;
 
     @Column(nullable = false)
-    private Boolean isCreator;
-
-    @Column(nullable = false)
     @ColumnDefault("false")
     private Boolean isCarrier;
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private Boolean payed;
-
-    @Column(nullable = false)
-    @ColumnDefault("false")
-    private Boolean payConfirmed;
+    private Boolean paid;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "party_id", nullable = false, updatable = false)
