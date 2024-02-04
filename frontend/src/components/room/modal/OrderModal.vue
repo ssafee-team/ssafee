@@ -1,5 +1,6 @@
 <template>
-  <div class="modal">
+  <div class="modal" @click="closeModal">
+    
     <div class="modal-content">
       <div class="modal-title">주문하기</div>
       <hr />
@@ -99,7 +100,7 @@ export default {
   border-radius: 5px;
   padding: 20px;
   margin-top: 20px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   text-align: center;
   color: white;
   border: none;
