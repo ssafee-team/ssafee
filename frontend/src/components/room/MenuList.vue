@@ -107,11 +107,11 @@ export default {
 
   computed: {
     selectedDrinks() {
-      console.log(this.categories[this.selectedCategory], "선택");
+      // console.log(this.categories[this.selectedCategory], "선택");
       return this.drinks[this.selectedCategory] || [];
     },
     selectedDrink() {
-      console.log(this.selectedDrinks[this.selectedDrinkIndex].name, "음료선택");
+      // console.log(this.selectedDrinks[this.selectedDrinkIndex].name, "음료선택");
       return this.selectedDrinks[this.selectedDrinkIndex] || {};
     },
   },
@@ -121,7 +121,7 @@ export default {
       //프록시 객체의 data 속성을 이용해 접근
       //받은 데이터를 categories에 세팅
       this.categories = response.data;
-      console.log("카테고리 출력", this.categories);
+      // console.log("카테고리 출력", this.categories);
     },
     handleFail(error) {
       console.error(error);
@@ -148,7 +148,7 @@ export default {
       });
 
       this.drinks[this.selectedCategory] = menuData;
-      console.log("메뉴 가져왔니?", this.drinks);
+      // console.log("메뉴 가져왔니?", this.drinks);
     },
 
     setSelectedDrinkIndex(index) {
@@ -156,7 +156,7 @@ export default {
 
       const selectedDrink = this.selectedDrinks[index];
       const menuId = selectedDrink.id;
-      console.log("선택한메뉴아이디확인", menuId);
+      // console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
       } else {
@@ -202,7 +202,7 @@ export default {
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price);
-      console.log("현재", total);
+      // console.log("현재", total);
 
       //선택한 옵션들의 가격을 합산
       // 선택한 옵션들의 가격을 합산
@@ -242,10 +242,10 @@ export default {
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
 
-      console.log("주문하기 버튼 클릭!");
+      // console.log("주문하기 버튼 클릭!");
 
-      console.log(order);
-      console.log("전체 주문 목록", this.orderList);
+      // console.log(order);
+      // console.log("전체 주문 목록", this.orderList);
       //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
       this.$emit("order-placed", order);
 
@@ -255,7 +255,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .menu-categories {
   display: flex;
   flex-wrap: wrap;
@@ -298,10 +298,11 @@ export default {
   text-align: center;
   box-sizing: border-box;
   padding: 10px;
+  font-size: 16px;
 }
 
 .drink-item img {
-  border: 1px solid #344a53;
+  /* border: 1px solid #344a53; */
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 15px;
   cursor: pointer;
@@ -309,10 +310,12 @@ export default {
   height: 120px;
   margin-bottom: 10px;
 }
+
 .price {
   margin-top: 10px;
   color: #00a7d0;
 }
+
 .black-bg {
   width: 100%;
   height: 100%;
@@ -411,5 +414,52 @@ p {
   display: flex;
   margin-bottom: 20px;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) { /* 모바일일 경우 스타일 조정 */
+  .drink-item img {
+    width: 80px;  /*작은 화면에 맞게 이미지 너비 조정  */
+    height: 80px; /* 이미지 높이 조정  */
+  }
+
+  .drink-item {
+    font-size: 12px;
+  }
+
+  .menu-categories > div {
+    font-size: 14px; /* 작은 화면에 맞게 메뉴 카테고리 텍스트 크기 조정 */
+    font-weight: bold;
+  }
+
+  .white-bg {
+    width: 80%; /* 작은 화면에 맞게 모달 너비 조정 */
+    margin: 50px auto; /* 모달 위치 조정 */
+  }
+
+  .modal-title {
+    font-size: 16px; /* 작은 화면에 맞게 모달 제목 텍스트 크기 조정 */
+  }
+
+  .modal-content {
+    max-height: 300px; /* 작은 화면에 맞게 모달 내용 영역 최대 높이 조정 */
+  }
+
+  .modal-content p {
+    font-size: 16px;
+  }
+
+  .modal-btn {
+    padding: 5px; /* 작은 화면에 맞게 모달 버튼 간격 조정 */
+  }
+
+  .close,
+  .addOrder {
+    width: 100px; /* 작은 화면에 맞게 모달 버튼 너비 조정 */
+    font-size: 14px; /* 작은 화면에 맞게 모달 버튼 텍스트 크기 조정 */
+  }
+
+  .row{
+    font-size: 14px;
+  }
 }
 </style>

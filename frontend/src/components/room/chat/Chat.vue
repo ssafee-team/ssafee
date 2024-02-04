@@ -180,4 +180,17 @@ textarea::placeholder {
   border-radius: 10px;
   border: 1px solid white;
 }
+
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  .cur-date, .chat-messages{
+    font-size: 16px;
+  }
+  .message, .chat-input > textarea, .chat-input > button{
+    font-size: 14px;
+  }
+
+  
+
+}
 </style>
