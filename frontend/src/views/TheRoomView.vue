@@ -173,7 +173,7 @@ const updateRemainingTime = () => {
     // window.location.href = 'http://localhost:8083/After/' + code.value
     console.log(code.value);
     setTimeout(() => {
-      window.location.href = `http://localhost:8083/After/${code.value}`;
+      window.location.href = `http://${window.location.host}/After/${code.value}`;
     }, 100);
   }
 };
