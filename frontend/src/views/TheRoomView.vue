@@ -255,12 +255,12 @@ header {
 }
 
 .center-content {
-  display: flex;
-  text-align: center;
+  /* display: flex; */
+  /* text-align: center; */
   /* font-size: 30px; */
   /* flex-grow: 1; */
   font-weight: bold;
-  justify-content: center;
+  /* justify-content: center; */
   
 }
 

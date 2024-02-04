@@ -13,7 +13,7 @@
           <div class="choice">
             <div class="row" v-for="option in optionCategory.options" :key="option.id">
               <label>
-                <input type="checkbox" :value="option.name" v-model="selectedOptions" />
+                <input type="checkbox" :value="option.id" v-model="selectedOptions" />
                 {{ option.name }}
               </label>
               <div>+ {{ option.price }}원</div>
@@ -128,6 +128,8 @@ export default {
     },
 
     selectCategory(index) {
+      // 다른 카테고리가 선택될 때 optionCategoriesMap을 초기화
+      this.optionCategoriesMap = {};
       //카테고리 선택시 실행
       this.selectedCategory = index;
       // shopId와 mcId를 기반으로 카테고리 선택 시 메뉴 데이터 가져오기
@@ -159,6 +161,7 @@ export default {
       // console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
+        // console.log(this.optionCategories,"dd");
       } else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
         selectedDrink.option_categories.forEach((optionCategory) => {
@@ -195,16 +198,19 @@ export default {
       }
     },
     closeModal() {
-      this.openModal = false;
-      //모달 닫힐 시 선택한 옵션 초기화
+      // 모달 닫힐 때 선택한 옵션 및 카테고리 초기화
       this.selectedOptions = [];
+      this.optionCategories = [];
+      this.options = [];
+      this.openModal = false;
+
     },
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price);
       // console.log("현재", total);
 
-      //선택한 옵션들의 가격을 합산
+      
       // 선택한 옵션들의 가격을 합산
       for (const optionCategory of this.optionCategories) {
         for (const option of optionCategory.options) {
@@ -226,8 +232,11 @@ export default {
         return {
           option_category_id: optionCategory.id,
           option_ids: optionCategory.options
-            .filter((option) => this.selectedOptions.includes(option.name))
+            .filter((option) => this.selectedOptions.includes(option.id))
             .map((option) => option.id),
+          option_names: optionCategory.options
+            .filter((option) => this.selectedOptions.includes(option.id))
+            .map((option) => option.name),
         };
       });
 
@@ -235,13 +244,17 @@ export default {
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        options: this.selectedOptions, //선택한 옵션  명
+        // options: this.selectedOptions, //선택한 옵션  명  
+        option_names: selectedOptionCategories.reduce((acc, category) => {
+          return acc.concat(category.option_names);
+        }, []), //선택한 옵션 명 
         menuId: selectedDrinkId, //선택한 메뉴 ID
         option_categories: selectedOptionCategories, // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
 
+      // console.log(order.option_names);
       // console.log("주문하기 버튼 클릭!");
 
       // console.log(order);
