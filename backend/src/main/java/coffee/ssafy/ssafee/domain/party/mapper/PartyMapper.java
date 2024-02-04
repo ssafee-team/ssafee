@@ -14,14 +14,20 @@ import java.time.LocalTime;
 @Mapper(componentModel = "spring")
 public interface PartyMapper {
 
-    @Mapping(source = "shop.id", target = "shopId")
+    @Mapping(target = "shopId", source = "shop.id")
     PartyResponse toDto(Party party);
 
-    @Mapping(source = "shop.id", target = "shopId")
+    @Mapping(target = "shopId", source = "shop.id")
+    @Mapping(target = "userId", source = "user.id")
     PartyDetailResponse toDetailDto(Party party);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creator", ignore = true)
+    @Mapping(target = "accessCode", ignore = true)
+    @Mapping(target = "shop", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "participants", ignore = true)
+    @Mapping(target = "orderMenus", ignore = true)
     Party toEntity(PartyRequest partyRequest);
 
     default LocalDateTime map(LocalTime localTime) {

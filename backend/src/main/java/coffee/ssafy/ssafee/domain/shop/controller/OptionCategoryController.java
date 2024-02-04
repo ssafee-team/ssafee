@@ -42,7 +42,7 @@ public class OptionCategoryController {
     }
 
     // 3. 옵션 카테고리 수정
-    @PatchMapping("/{oc_id}")
+    @PutMapping("/{oc_id}")
     @Operation(summary = "옵션 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateOptionCategory(
             @PathVariable("shop_id") Long shopId,

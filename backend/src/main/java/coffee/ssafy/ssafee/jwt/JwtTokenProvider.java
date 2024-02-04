@@ -22,6 +22,14 @@ public class JwtTokenProvider {
     private static final String CLAIMS_ROLE = "role";
     private final JwtProps jwtProps;
 
+    public String bearerTokenToAccessToken(String bearerToken) {
+        return bearerToken.substring(7);
+    }
+
+    public String accessTokenToBearerToken(String accessToken) {
+        return "Bearer " + accessToken;
+    }
+
     public String issueAccessToken(JwtClaimInfo jwtClaimsInfo) {
         Claims claims = Jwts.claims()
                 .add(CLAIMS_ID, jwtClaimsInfo.id())

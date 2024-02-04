@@ -32,11 +32,11 @@ public class ManagerService {
                 .id(managerLoginRequest.id())
                 .role("ROLE_MANAGER")
                 .build());
-        return accessTokenToBearerToken(accessToken);
+        return jwtTokenProvider.accessTokenToBearerToken(accessToken);
     }
 
     public void updateManager(String bearerToken, ManagerUpdateRequest managerUpdateRequest) {
-        String accessToken = bearerTokenToAccessToken(bearerToken);
+        String accessToken = jwtTokenProvider.bearerTokenToAccessToken(bearerToken);
         String id = jwtTokenProvider.parseAccessToken(accessToken).id();
         managerRepository.save(Manager.builder()
                 .id(id)
@@ -45,19 +45,11 @@ public class ManagerService {
     }
 
     public ManagerResponse findManager(String bearerToken) {
-        String accessToken = bearerTokenToAccessToken(bearerToken);
+        String accessToken = jwtTokenProvider.bearerTokenToAccessToken(bearerToken);
         String id = jwtTokenProvider.parseAccessToken(accessToken).id();
         return managerRepository.findById(id)
                 .map(managerMapper::toDto)
                 .orElseThrow(() -> new ManagerException(ManagerErrorCode.NOT_FOUND_MANAGER));
-    }
-
-    private String bearerTokenToAccessToken(String bearerToken) {
-        return bearerToken.substring(7);
-    }
-
-    private String accessTokenToBearerToken(String accessToken) {
-        return "Bearer " + accessToken;
     }
 
 }

@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.party.entity;
 
+import coffee.ssafy.ssafee.domain.party.dto.request.ParticipantUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -38,5 +39,10 @@ public class Participant {
 
     @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)
     private List<OrderMenu> orderMenus;
+
+    public void update(ParticipantUpdateRequest participantUpdateRequest) {
+        this.isCarrier = participantUpdateRequest.isCarrier();
+        this.paid = participantUpdateRequest.paid();
+    }
 
 }

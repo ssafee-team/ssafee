@@ -22,8 +22,6 @@ public record PartyResponse(
         @JsonFormat(pattern = LOCAL_DATETIME_PATTERN)
         @Schema(implementation = String.class, example = LOCAL_DATETIME_EXAMPLE)
         LocalDateTime createdTime,
-        Long shopId,
-
-        Long userId
+        Long shopId
 ) {
 }

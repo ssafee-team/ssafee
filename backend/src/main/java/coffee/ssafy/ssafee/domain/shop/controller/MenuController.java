@@ -45,7 +45,7 @@ public class MenuController {
     }
 
     // 3. 메뉴 수정
-    @PatchMapping("/{menu_id}")
+    @PutMapping("/{menu_id}")
     @Operation(summary = "메뉴 수정", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateMenu(
             @PathVariable("shop_id") Long shopId,

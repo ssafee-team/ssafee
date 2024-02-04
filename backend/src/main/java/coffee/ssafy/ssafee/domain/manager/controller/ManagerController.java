@@ -25,7 +25,7 @@ public class ManagerController {
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, bearerToken).build();
     }
 
-    @PatchMapping("/me")
+    @PutMapping("/me")
     @Operation(security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> updateManager(@RequestHeader(HttpHeaders.AUTHORIZATION) @Parameter(hidden = true) String bearerToken,
                                               @RequestBody ManagerUpdateRequest managerUpdateRequest) {
