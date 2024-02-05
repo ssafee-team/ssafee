@@ -65,7 +65,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "24:00",
+  last_order_time: "",
   created_time: "",
   shop_id: "",
   creator: {
@@ -128,7 +128,7 @@ const getPartyInfo = () => {
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
       partyInfo.value.classroom = data.classroom;
-      // partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.last_order_time = data.last_order_time;
       partyInfo.value.created_time = data.created_time;
       partyInfo.value.shop_id = data.shop_id;
       // console.log(partyInfo);
@@ -170,9 +170,12 @@ const updateRemainingTime = () => {
     //go("/after")화면으로
     remainingTime.value = "마감";
     // window.location.href = 'http://localhost:8083/After/' + code.value
-    console.log(code.value);
+    console.log(window.location.href);
+    // console.log(code.value);
     setTimeout(() => {
-      window.location.href = `http://${window.location.host}/After/${code.value}`;
+      // window.location.href = 'http://localhost:8083/After/' + code.value;
+      window.location.href = 'https://ssafy.coffee/After/' + code.value;
+      
     }, 100);
   }
 };

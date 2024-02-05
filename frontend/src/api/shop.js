@@ -7,7 +7,7 @@ const url = "/api/v1/shops";
 
 function getShops(param, success, fail) {
   local.get(`${url}`, { param }).then(success).catch(fail);
-  console.log("가져올게욧");
+  // console.log("가져올게욧");
 }
 
 // function getShops(param, success, fail) {

@@ -51,7 +51,7 @@ export default {
   computed: {},
   methods: {
     onMoloo(event) {
-      console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account);
+      // console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account);
       this.isOpened = true;
       event.target.innerText = "!";
     },
