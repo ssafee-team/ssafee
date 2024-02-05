@@ -66,7 +66,10 @@ public class Menu {
         this.name = menuRequest.name();
         this.description = menuRequest.description();
         this.price = menuRequest.price();
-        this.image = menuRequest.image();
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 
 }
