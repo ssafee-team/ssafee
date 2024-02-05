@@ -66,7 +66,7 @@ pipeline {
 
         stage('Cleanup Dangling') {
             steps {
-                sh 'docker image prune'
+                sh 'docker image prune -f'
             }
         }
     }
