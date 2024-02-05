@@ -18,8 +18,8 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api/v1": {
-        target: "http://localhost:80/", //http://localhost:80/api/v1/shops
-        // target: "https://ssafy.coffee/",
+        //target: "http://localhost:80/", //http://localhost:80/api/v1/shops
+        target: "https://ssafy.coffee/",
       },
     },
     historyApiFallback: true,

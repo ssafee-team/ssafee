@@ -226,7 +226,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { getShops } from "@/api/shop";
 import { createParty } from "@/api/party";
 
-const headerHeight = ref("100px"); // 예시로 100px를 기본값으로 설정
+const headerHeight = ref("72px"); // 예시로 100px를 기본값으로 설정
 
 const form = ref({
   roomTitle: "",
