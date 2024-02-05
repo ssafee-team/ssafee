@@ -14,6 +14,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class MenuService {
     private final EntityManager entityManager;
     private final MenuRepository menuRepository;
     private final MenuMapper menuMapper;
+    private final S3Service s3Service;
 
     public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
@@ -45,6 +47,12 @@ public class MenuService {
         menuRepository.findByShopIdAndId(shopId, menuId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
                 .update(menuRequest);
+    }
+
+    public void updateMenuImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
+        menuRepository.findByShopIdAndId(shopId, menuId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
+                .updateImage(s3Service.putImage("menus/" + menuId, file));
     }
 
     public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {

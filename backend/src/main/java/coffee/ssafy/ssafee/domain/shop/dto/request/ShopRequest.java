@@ -8,7 +8,6 @@ public record ShopRequest(
         String name,
         String address,
         String phone,
-        String image,
         Boolean enabledAutoOrder
 ) {
 }

@@ -10,6 +10,7 @@ import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ShopMapper shopMapper;
+    private final S3Service s3Service;
 
     public ShopDetailResponse findShopById(Long id) {
         return shopMapper.toDetailDto(shopRepository.findById(id)
@@ -36,6 +38,12 @@ public class ShopService {
         shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
                 .update(shopRequest);
+    }
+
+    public void updateShopImage(Long id, MultipartFile file) {
+        shopRepository.findById(id)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
+                .updateImage(s3Service.putImage("shops/" + id + "/", file));
     }
 
 }

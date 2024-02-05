@@ -3,14 +3,18 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.List;
@@ -51,6 +55,21 @@ public class MenuController {
                                            @RequestBody MenuRequest menuRequest) {
         managerService.validate(principal, shopId);
         menuService.updateMenu(shopId, menuCategoryId, menuId, menuRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/{menu_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "메뉴 이미지 수정", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> updateMenuImage(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                @PathVariable("shop_id") Long shopId,
+                                                @PathVariable("mc_id") Long menuCategoryId,
+                                                @PathVariable("menu_id") Long menuId,
+                                                @RequestParam("image") MultipartFile file) {
+        managerService.validate(principal, shopId);
+        if (file.isEmpty()) {
+            throw new ShopException(ShopErrorCode.File_IS_EMPTY);
+        }
+        menuService.updateMenuImage(shopId, menuCategoryId, menuId, file);
         return ResponseEntity.noContent().build();
     }
 
