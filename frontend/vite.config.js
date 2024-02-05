@@ -25,6 +25,17 @@ export default defineConfig({
     hot: true,
   },
 
+  // devServer에 프록시 설정 추가
+  // devServer: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "https://ssafy.coffee",
+  //       changeOrigin: true,
+  //       pathRewrite: { "^/api": "" },
+  //     },
+  //   },
+  // },
+
   // server: {
   //   proxy: {
   //     "/server": {

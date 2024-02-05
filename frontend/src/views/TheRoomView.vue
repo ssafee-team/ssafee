@@ -18,7 +18,6 @@
       <div class="center-content">
         <button class="btn-roomlist" @click="goMain">방목록</button>
         <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
-        
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
@@ -247,11 +246,10 @@ header {
   margin-left: 10px;
 }
 
-.center-title{
+.center-title {
   text-align: center;
   font-weight: bold;
   margin: 20px;
-  
 }
 
 .center-content {
@@ -261,7 +259,6 @@ header {
   /* flex-grow: 1; */
   font-weight: bold;
   /* justify-content: center; */
-  
 }
 
 button {
@@ -275,11 +272,10 @@ button {
   cursor: pointer;
 }
 
-.btn-roomlist, .btn-create{
+.btn-roomlist,
+.btn-create {
   color: #344a53;
 }
-
-
 
 .body-container {
   display: flex;
@@ -303,16 +299,16 @@ button {
     font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
   }
   .body-container {
-    flex-direction: column; 
+    flex-direction: column;
   }
   .right-panel {
-    margin-left: 0; 
-    margin-top: 20px; 
+    margin-left: 0;
+    margin-top: 20px;
   }
 
-  .btn-curorder, .btn-roomlist{
+  .btn-curorder,
+  .btn-roomlist {
     font-size: 16px;
   }
-
 }
 </style>

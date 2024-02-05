@@ -51,7 +51,7 @@ export default {
     limitedOrderList() {
       if (this.orderSummaryVisible) {
         return this.orderList;
-      }else{
+      } else {
         // 최대 2개까지의 주문만 보여주기
         return this.orderList.slice(0, 2);
       }
@@ -80,7 +80,7 @@ export default {
     toggleOrderSummary() {
       this.orderSummaryVisible = !this.orderSummaryVisible;
       this.$emit("toggle-order-summary");
-      this.$el.classList.toggle('expanded'); // expanded 클래스 토글
+      this.$el.classList.toggle("expanded"); // expanded 클래스 토글
     },
     getOrderOptions(options) {
       // options 배열에는 각 옵션의 문자열이 들어있음
@@ -103,11 +103,13 @@ export default {
   max-height: 300px;
   width: 65%;
   margin: 0px 10px 0px 10px;
-  
-  position: absolute;
+  /* position: relative; */
+  /* position: absolute; */
+  position: fixed;
   bottom: 0;
+
   transition: height 0.3s ease; /* transition 효과 추가 */
-  overflow: hidden; /* 추가 */
+  /* overflow: hidden; 추가 */
 }
 
 .expanded {
@@ -136,11 +138,10 @@ export default {
   border: none;
 }
 
-.total-price{
-  margin-left: 20px; 
+.total-price {
+  margin-left: 20px;
   color: #00a7d0;
   width: 100px;
-  
 }
 
 .btn-toggle {
@@ -161,7 +162,7 @@ export default {
   overflow-y: auto;
 }
 .list::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 .order-list {
   display: flex;
@@ -203,17 +204,19 @@ p {
 }
 
 @media screen and (max-width: 768px) {
-  .order{
+  .order {
     width: 100%;
     /* height: 100px; */
     max-height: 400px;
     margin: 0;
     position: relative;
   }
-  .order-name, .order-price{
+  .order-name,
+  .order-price {
     font-size: 16px;
   }
-  .order-options, .btn-delete{
+  .order-options,
+  .btn-delete {
     font-size: 14px;
   }
 }

@@ -158,10 +158,10 @@ export default {
 
       const selectedDrink = this.selectedDrinks[index];
       const menuId = selectedDrink.id;
-      // console.log("선택한메뉴아이디확인", menuId);
+      console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
-        // console.log(this.optionCategories,"dd");
+        console.log(this.optionCategories, "dd");
       } else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
         selectedDrink.option_categories.forEach((optionCategory) => {
@@ -183,7 +183,6 @@ export default {
     handleOptionCategorySuccess(response) {
       // 모달이 열릴 때마다 옵션 카테고리 데이터 업데이트
       this.optionCategories = response.data;
-
       if (this.optionCategories) {
         this.options = this.optionCategories[0].options;
       }
@@ -203,18 +202,15 @@ export default {
       this.optionCategories = [];
       this.options = [];
       this.openModal = false;
-
     },
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price);
-      // console.log("현재", total);
 
-      
       // 선택한 옵션들의 가격을 합산
       for (const optionCategory of this.optionCategories) {
         for (const option of optionCategory.options) {
-          if (this.selectedOptions.includes(option.name)) {
+          if (this.selectedOptions.includes(option.id)) {
             total += option.price;
           }
         }
@@ -244,10 +240,10 @@ export default {
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        // options: this.selectedOptions, //선택한 옵션  명  
+        // options: this.selectedOptions, //선택한 옵션  명
         option_names: selectedOptionCategories.reduce((acc, category) => {
           return acc.concat(category.option_names);
-        }, []), //선택한 옵션 명 
+        }, []), //선택한 옵션 명
         menuId: selectedDrinkId, //선택한 메뉴 ID
         option_categories: selectedOptionCategories, // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
@@ -355,7 +351,6 @@ export default {
   position: relative;
   z-index: 10000;
   border: none;
-  
 }
 .close {
   width: 120px;
@@ -433,9 +428,10 @@ p {
   justify-content: space-between;
 }
 
-@media screen and (max-width: 768px) { /* 모바일일 경우 스타일 조정 */
+@media screen and (max-width: 768px) {
+  /* 모바일일 경우 스타일 조정 */
   .drink-item img {
-    width: 80px;  /*작은 화면에 맞게 이미지 너비 조정  */
+    width: 80px; /*작은 화면에 맞게 이미지 너비 조정  */
     height: 80px; /* 이미지 높이 조정  */
   }
 
@@ -475,7 +471,7 @@ p {
     font-size: 14px; /* 작은 화면에 맞게 모달 버튼 텍스트 크기 조정 */
   }
 
-  .row{
+  .row {
     font-size: 14px;
   }
 }
