@@ -11,7 +11,7 @@
 						<div style="background-color: red; width: 10%; height: 40px;">dd</div>
 					</div> -->
 					<div style="  width: 100%; height: 30px; display: flex; transform: translateY(-5px);">
-						<div style=" width: 80%; line-height: 30px; text-align: left; padding-left: 10px;">{{ isInit? this.orders[selectedStudentNo].studentName: this.ordersCopied[selectedStudentNo].studentName }} 님의 주문내역</div>
+						<div style="font-size: 20px; width: 80%; line-height: 30px; text-align: left; padding-left: 10px;">{{ isInit? this.orders[selectedStudentNo].studentName: this.ordersCopied[selectedStudentNo].studentName }} 님의 주문내역</div>
 						<div style=" width: 20%;  text-align: right; padding-right: 10px;">
 							<button @click="closeModal()" style=" background-color: #EB4E5A; color:white; width: 25px; height: 25px; border-radius: 8px; font-weight: bold; font-size: 16px; border: 0px;">X</button>
 						</div>
@@ -24,20 +24,21 @@
 					<div 
 					v-for="(selectedOrder, index) in selectedOrders"
 						:key="index"
-						style="width: 95%; height: 60px; display: flex; margin: 5px 0px;">
+						style="width: 95%; height: auto;  min-height: 60px; display: flex; flex-direction: row; margin: 5px 0px;">
 						<div style="width: 75%;">
-							<div style="height: 30px; text-align: left; line-height: 30px;">
+							<div style="font-size: 18px; height: 30px; text-align: left; line-height: 30px;">
 								<!-- {{ this.orders[selectedStudentNo].menuName }} 1잔 -->
 								{{ selectedOrder.menuName }} 1잔
 							</div>
-							<div style="height: 30px; text-align: left; line-height: 30px;">
-								<div style="display: flex; flex-direction: row;" v-if="selectedOrder.menuOptions.length >=3">
+							<div style="height:auto;  min-height: 30px; text-align: left; line-height: 30px;">
+								<!-- <div style="display: flex; flex-direction: row;" v-if="selectedOrder.menuOptions.length >=3"> -->
+								<div style="padding: 4px; display: flex; flex-direction: row; flex-wrap: wrap;" v-if="selectedOrder.menuOptions.length >=3">
 									<div v-for="(option, idx) in selectedOrder.menuOptions.slice(2)" :key="idx">
 										{{ option.name }} &nbsp; &nbsp;
 									</div>
 								</div>
 								<div v-if="selectedOrder.menuOptions.length <=2">
-									<div>
+									<div style="padding: 4px;">
 										기본옵션
 									</div>
 								</div>
@@ -73,7 +74,7 @@
 		</div> -->
 			<div v-if="!isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;">학급</div>
-				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer; ">이름 ▼</div>
+				<div id="name-click" @click="sortByName" style="width: 25%; cursor: pointer;">이름 ▼</div>
 				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">메뉴 ▼</div>
 				<div id="price-click" @click="sortByPrice" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액 ▼</div>
 			</div>
@@ -86,7 +87,7 @@
 
 			<div v-if="isSortedByMenu" class="orderheader">
 				<div style="width: 10%; border-box; padding-left: 0.5rem;"></div>
-				<div @click="sortByMenu" style="width: 25%; cursor: pointer; ">메뉴〓</div>
+				<div @click="sortByMenu" style="width: 25%; cursor: pointer; ">메뉴 〓</div>
 				<!-- <div @click="sortByName(this.isSortedByName)" style="width: 25%; cursor: grab; ">이름 ▼</div> -->
 				<div @click="sortByMenu" style="width: 50%; box-sizing: border-box; padding-left: 7rem; text-align: left; cursor: pointer;">옵션</div>
 				<div @click="sortByMenu" style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer;">금액</div>
@@ -98,11 +99,14 @@
 					v-for="(order, index) in (isInit?orders:ordersCopied)"
 					:key="index"
 					@click="selectStudent(index)"
-					:class="{ordermenu: true, isSelected: selectedStudentNo == index}"
+					:class="{ordermenu: true, isSelected: selectedStudentNo == index, isCarrier: this.carriersArr.includes( order.studentName) ?true:false}"
 					>
 					<!-- {{ order.classNo }} {{ order.studentName }} {{ order.menuName }} {{ order.menuPrice }}-->
 					<div class="classno">{{ order.classNo }}</div>
-					<div class="studentname">{{ order.studentName }}</div>
+					<div v-if="this.carriersArr.includes(order.studentName) && this.payers.includes( order.studentName)" class="studentname">{{ order.studentName }}🛵💰</div>
+					<div v-if=" this.carriersArr.includes(order.studentName) && !this.payers.includes( order.studentName)" class="studentname">{{ order.studentName }} 🛵</div>
+					<div v-if=" !this.carriersArr.includes(order.studentName) && this.payers.includes( order.studentName)" class="studentname">{{ order.studentName }} 💰</div>
+					<div v-if=" !this.carriersArr.includes(order.studentName) && !this.payers.includes( order.studentName)" class="studentname">{{ order.studentName }}</div>
 					<div class="menuname">{{ order.menuName }}</div>
 					<div class="menuprice">{{ order.menuPrice }}</div>
 				</div>
@@ -117,24 +121,31 @@
 				>
 				<div class="classno">{{ order.classNo }}</div>
 				<div class="studentname">{{ order.menuName }} X {{ order.menuCount }}</div>
-				<div class="menuname" style="">
+				<div class="menuname">
 				<!-- <div class="menuname" style="background-color: bisque;"> -->
 					<div class="baker" v-for="(option, indexOpt) in order.options" 
 					:key="indexOpt">
-					<div style="display: flex; flex-direction: row; height: ;">
-						<div style="display: flex; flex-direction: row;" v-if="option.length>=3">
+					<div style="display: flex; flex-direction: row;">
+						<div style="display: flex; flex-direction: column;" v-if="option.length>=3">
 						<!-- <div style="background-color: mediumseagreen; display: flex; flex-direction: row;" v-if="option.length>=3"> -->
-							<div style="height: 20px; color: #344A53;" v-for="(a,b) in option.slice(2)" 
+							<div class="option-list" style=" display: inline-block; height: auto;  min-height: 20px; color: #344A53;" v-for="(a,b) in option.slice(2)" 
 							:key="b">
-								{{ a.name }}
+							{{ a.name }}
 							</div>
 					</div>
 
-					<div style=""  v-if="option.length<=2">
+					<div style="display: flex; flex-direction: column;"  v-if="option.length<=2">
 					<!-- <div style="background-color: red;"  v-if="option.length<=2"> -->
-						기본옵션 &nbsp
+						<div class="option-list" style=" display: inline-block; height: auto;  min-height: 20px; color: #344A53;">
+							기본옵션 &nbsp
+						</div>
 					</div>
-					= {{ option[1] }}개
+
+
+					<div style="align-items: center; padding-left: 10px; font-weight: bold;">
+						= {{ option[1] }}개
+					</div>
+					
 				</div>	
 					</div>	
 				</div>
@@ -168,6 +179,10 @@ export default {
         orders: Array,
 		ordersMenuSorted: Array,
 		nameSet: Set,
+		carriers: Array,
+		participants: Array,
+		carriersArr: Array,
+		payers: Array,
       },
 
 	data () {
@@ -259,6 +274,8 @@ export default {
 		},
 
 		sortByName(event) {
+			console.log('참여자:',this.participants)
+			console.log('배달부:',this.carriers)
 			document.querySelector("#price-click").innerText = "금액 ▼"
 			// console.log(this.isInit)
 			this.isInit = false
@@ -270,6 +287,7 @@ export default {
 				console.log("이름기준 정렬데이터를 호출합니다")
 				// this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
 				this.ordersCopied = this.orders.toSorted((a, b) => a.studentName.localeCompare(b.studentName));
+				this.ordersCopied = this.ordersCopied.filter((order) => this.carriersArr.includes(order.studentName)).concat(this.ordersCopied.filter(order=> !this.carriersArr.includes(order.studentName)));
 				// this.ordersCopied = this.orders.toSorted((a, b) => a.studentName.localeCompare(b.studentName));
 			} else {
 				this.isSortedByName = false
@@ -303,6 +321,8 @@ export default {
 				console.log("가격기준 정렬데이터를 호출합니다")
 				// this.orders.sort((a, b) => b.menuPrice - a.menuPrice);
 				this.ordersCopied = this.orders.toSorted((a, b) => b.menuPrice - a.menuPrice);
+				console.log("ss:", this.carriersArr)
+				this.ordersCopied = this.ordersCopied.filter((order) => this.carriersArr.includes(order.studentName)).concat(this.ordersCopied.filter(order=> !this.carriersArr.includes(order.studentName)));
 			} else {
 				this.isSortedByPrice = false
 				event.target.innerText = "금액 ▼"
@@ -406,8 +426,9 @@ export default {
 
 	.studentname {
 		width: 25%;
-		display: flex;
+		// display: flex;
 		align-items: center;
+		text-align: center;
 		// border: 1px dashed black;
 		// position: absolute;
 		// left: 20%;
@@ -418,7 +439,7 @@ export default {
 		width: 50%;
 		// border: 1px dashed black;
 		box-sizing: border-box;
-		padding-left: 3rem;
+		padding-left: 64px;
 		text-align: left;
 		// position: absolute;
 		// left: 45%;
@@ -501,13 +522,27 @@ export default {
 	}
 
 	.ordermenu2 > .classno, .studentname, .menuprice {
-		font-size: 24px;
+		font-size: 20px;
     font-weight: bold;
     color: #344A53;
 	}
 	hr {
 		width: 50vw; 
 		margin: 0px;
+	}
+
+	.option-list{
+		width: 250px;
+		
+	}
+
+	.isCarrier {
+		background-color: #344a53;
+	}
+
+	.isCarrier * {
+		// background-color: #344a53;
+		color: white;
 	}
 	@media screen and (max-width: 768px) {
 	.orderheader {
@@ -544,6 +579,11 @@ export default {
 	}
 	.ordermenu2 > .classno, .studentname, .menuprice {
 		font-size: 16px;
+	}
+
+	.option-list{
+		width: 180px;
+		
 	}
 	}
 </style>
