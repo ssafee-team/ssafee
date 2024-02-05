@@ -56,6 +56,10 @@ dependencies {
     implementation('io.openvidu:openvidu-java-client:2.29.0') {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
+
+    // https://developers.cloudflare.com/r2/api/s3/
+    implementation platform('software.amazon.awssdk:bom:2.23.+')
+    implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {

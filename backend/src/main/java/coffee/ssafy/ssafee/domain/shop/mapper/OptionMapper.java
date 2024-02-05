@@ -5,6 +5,7 @@ import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.Option;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface OptionMapper {
@@ -14,8 +15,8 @@ public interface OptionMapper {
     Option toEntity(OptionRequest optionRequest);
 
     @AfterMapping
-    default void updateFromDto(OptionRequest optionRequest, Option option) {
-        option.updateOption(optionRequest);
+    default void update(@MappingTarget Option option, OptionRequest optionRequest) {
+        option.update(optionRequest);
     }
 
 }

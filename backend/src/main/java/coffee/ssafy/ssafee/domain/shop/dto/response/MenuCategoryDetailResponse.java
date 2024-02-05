@@ -1,13 +1,14 @@
-package coffee.ssafy.ssafee.domain.user.dto;
+package coffee.ssafy.ssafee.domain.shop.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
 
-@Builder
+import java.util.List;
+
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record UserInfo(
+public record MenuCategoryDetailResponse(
         Long id,
-        String email
+        String name,
+        List<MenuDetailResponse> menus
 ) {
 }

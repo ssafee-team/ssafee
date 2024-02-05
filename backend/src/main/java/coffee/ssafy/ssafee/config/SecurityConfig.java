@@ -15,12 +15,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import java.util.List;
 
@@ -30,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final SecurityProblemSupport problemSupport;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     private final OAuth2CustomUserService oAuth2CustomUserService;
     private final OAuth2CustomAuthenticationSuccessHandler oAuth2CustomAuthenticationSuccessHandler;
@@ -40,6 +40,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated() // TODO: 인증 비활성화
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
@@ -60,7 +64,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(config -> config
                                 .userService(oAuth2CustomUserService))
                         .successHandler(oAuth2CustomAuthenticationSuccessHandler)
-                        .failureHandler(authenticationFailureHandler()));
+                        .failureHandler(problemSupport));
         return http.build();
     }
 
@@ -69,7 +73,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://ssafy.coffee"));
         configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -77,11 +81,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new SimpleUrlAuthenticationFailureHandler();
     }
 
 }

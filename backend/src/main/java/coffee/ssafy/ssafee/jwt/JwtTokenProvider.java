@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.jwt;
 
-import coffee.ssafy.ssafee.jwt.dto.JwtClaimInfo;
+import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import coffee.ssafy.ssafee.jwt.exception.JwtTokenErrorCode;
 import coffee.ssafy.ssafee.jwt.exception.JwtTokenException;
 import io.jsonwebtoken.Claims;
@@ -8,24 +8,30 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
     private static final String CLAIMS_ID = "id";
+    private static final String CLAIMS_SHOP_ID = "shop_id";
     private static final String CLAIMS_ROLE = "role";
     private final JwtProps jwtProps;
 
-    public String issueAccessToken(JwtClaimInfo jwtClaimsInfo) {
+    public String issueAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, jwtClaimsInfo.id())
-                .add(CLAIMS_ROLE, jwtClaimsInfo.role())
+                .add(CLAIMS_ID, principal.id())
+                .add(CLAIMS_SHOP_ID, principal.shopId())
+                .add(CLAIMS_ROLE, principal.role())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
     }
@@ -34,12 +40,15 @@ public class JwtTokenProvider {
         return issueToken(null, jwtProps.getRefreshExpiration(), jwtProps.getRefreshSecretKey());
     }
 
-    public JwtClaimInfo parseAccessToken(String accessToken) {
+    public Authentication getAuthentication(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
-        return JwtClaimInfo.builder()
-                .id(claims.get(CLAIMS_ID, Long.class))
+        JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
+                .id(claims.get(CLAIMS_ID, String.class))
+                .shopId(claims.get(CLAIMS_SHOP_ID, Long.class))
                 .role(claims.get(CLAIMS_ROLE, String.class))
                 .build();
+        List<GrantedAuthority> authorities = List.of(() -> claims.get(CLAIMS_ROLE, String.class));
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
     public void parseRefreshToken(String refreshToken) {

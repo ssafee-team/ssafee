@@ -6,7 +6,7 @@
 
         <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
-      <div class="center-content">
+      <div class="center-title">
         <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
@@ -16,6 +16,7 @@
     </header>
     <body>
       <div class="center-content">
+        <button class="btn-roomlist" @click="goMain">방목록</button>
         <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
@@ -51,11 +52,12 @@ import MenuList from "@/components/room/MenuList.vue";
 import Chat from "@/components/room/chat/Chat.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
 import { getParty, getOrderList } from "@/api/party";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 // const roomCode = ref("");
 
 const route = useRoute();
+const router = useRouter();
 const code = ref(""); //파티 코드
 
 const partyInfo = ref({
@@ -108,7 +110,7 @@ onMounted(() => {
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000);
   code.value = route.params.code;
-  console.log("현재 방 코드: ", code.value);
+  // console.log("현재 방 코드: ", code.value);
   getPartyInfo();
 });
 
@@ -121,7 +123,7 @@ const getPartyInfo = () => {
     code.value,
 
     ({ data }) => {
-      console.log(data);
+      // console.log(data);
       partyInfo.value.id = data.id;
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
@@ -129,7 +131,7 @@ const getPartyInfo = () => {
       partyInfo.value.last_order_time = data.last_order_time;
       partyInfo.value.created_time = data.created_time;
       partyInfo.value.shop_id = data.shop_id;
-      console.log(partyInfo);
+      // console.log(partyInfo);
     },
     (error) => {
       console.log(error);
@@ -168,9 +170,12 @@ const updateRemainingTime = () => {
     //go("/after")화면으로
     remainingTime.value = "마감";
     // window.location.href = 'http://localhost:8083/After/' + code.value
-    console.log(code.value);
+    console.log(window.location.href);
+    // console.log(code.value);
     setTimeout(() => {
-      window.location.href = `http://localhost:8083/After/${code.value}`;
+      // window.location.href = 'http://localhost:8083/After/' + code.value;
+      window.location.href = 'https://ssafy.coffee/After/' + code.value;
+      
     }, 100);
   }
 };
@@ -183,7 +188,7 @@ const openOrderListModal = () => {
     code.value, //partyCode 전달
     (response) => {
       orderList.value = response.data;
-      console.log("주문 현황 불러오기: ", orderList.value);
+      // console.log("주문 현황 불러오기: ", orderList.value);
     },
     (error) => {
       console.error("주문 현황 조회 실패: ", error);
@@ -200,6 +205,14 @@ const closeOrderModal = () => {
 // };
 
 // 마감시간 시 After 창으로 이동하는 코드
+
+const goMain = () => {
+  router.push({ name: "main" });
+};
+
+const goCreate = () => {
+  router.push({ name: "CreateRoomView" });
+};
 </script>
 
 <style scoped>
@@ -224,27 +237,31 @@ header {
   justify-content: space-between;
   align-items: center;
 }
-/* 화면 폭이 768px 미만일 때 */
-@media screen and (max-width: 768px) {
-  header {
-    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
-  }
-}
 .timeline {
+  width: auto;
   display: flex;
   /* font-size: 30px; */
   margin: 20px;
   font-weight: bold;
 }
 .time {
-  width: 130px;
+  width: auto;
   margin-left: 10px;
 }
-.center-content {
+
+.center-title {
   text-align: center;
-  /* font-size: 30px; */
-  flex-grow: 1;
   font-weight: bold;
+  margin: 20px;
+}
+
+.center-content {
+  /* display: flex; */
+  /* text-align: center; */
+  /* font-size: 30px; */
+  /* flex-grow: 1; */
+  font-weight: bold;
+  /* justify-content: center; */
 }
 
 button {
@@ -257,6 +274,12 @@ button {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.btn-roomlist,
+.btn-create {
+  color: #344a53;
+}
+
 .body-container {
   display: flex;
   /* margin-top: 25px; */
@@ -271,5 +294,24 @@ button {
   flex: 3;
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
   height: auto;
+}
+
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  header {
+    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+  .body-container {
+    flex-direction: column;
+  }
+  .right-panel {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+
+  .btn-curorder,
+  .btn-roomlist {
+    font-size: 16px;
+  }
 }
 </style>

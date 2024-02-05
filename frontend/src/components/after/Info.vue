@@ -1,18 +1,28 @@
 <template>
-	<div>
-		<div class="black-bg" v-if="isOpened==true">
-		<!-- <div class="black-bg"> -->
-			<div class="flexmodal">
-				<div class="modalbody">
-          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
+  <div>
+    <div class="tooltip-bg-black" v-if="isOpened == true">
+      <div class="tooltip-bg-white">
+        <div class="tooptip-body">
+          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br />
           배달 인원은 6잔 당 1명씩 추가됩니다.
         </div>
-				<div class="modaltail"></div>
-			</div>
-		<!-- <div class="black-bg"> -->
-		</div>
+        <div class="tooltip-tail"></div>
+      </div>
+    </div>
+
+    <!-- <div class="black-bg" v-if="isOpened==true"> -->
+    <!-- <div class="black-bg"> -->
+    <!-- <div class="flexmodal"> -->
+    <!-- <div class="tooptip-body">
+          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
+          배달 인원은 6잔 당 1명씩 추가됩니다.
+        </div> -->
+    <!-- <div class="tooltip-tail"></div>
+			</div> -->
+    <!-- <div class="black-bg"> -->
+    <!-- </div> -->
     <div id="info">
-      <div id="accountinfo">
+      <div class="accountinfo">
         <!-- <span>입금계좌:</span>
         <span>농협 302-0051-8244-01</span>
         <span>전상혁</span> -->
@@ -20,164 +30,120 @@
         <span>{{ this.creator.bank }} &nbsp; {{ this.creator.account }} &nbsp;&nbsp;</span>
         <span>{{ this.creator.name }}</span>
       </div>
-    <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
-    <!-- <div @click="onMoloo" @mouseout="offMoloo" id="moloo">?</div> -->
+      <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
     </div>
-	</div>
+  </div>
 </template>
-  
-  <script>
-    import { ref } from 'vue'
-    
-    export default {
-      props: {
-        creator: Object,
-      },
-    // setup () {
-    //     let isVisible = ref(false)
-    //     const onMoloo = function (event) {
-    //         console.log('몰?루')
-    //         console.log(event.currentTarget())
-    //         // isVisible = ref(true)
-    //         // console.log(isVisible)
-    //     }
-    //     return {
-    //         isVisible,
-    //         onMoloo
-    //     }
-    // }
-    data () {
-			return {
-				isOpened: false,
-        isSelected: false,
-			}
-    },
-    computed: {
 
+<script>
+import { ref } from "vue";
+
+export default {
+  props: {
+    creator: Object,
+  },
+  data() {
+    return {
+      isOpened: false,
+      isSelected: false,
+    };
+  },
+  computed: {},
+  methods: {
+    onMoloo(event) {
+      // console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account);
+      this.isOpened = true;
+      event.target.innerText = "!";
     },
-    methods: {
-			onMoloo(event) {
-        console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account)
-				// console.log(event)
-				// console.log("물음표에 들어왔어요")
-				this.isOpened = true
-        event.target.innerText = "!";
-        // <img class="image-thumbnail">
-        
-				// console.log(this.isOpened)
-				// console.log(event.currentTarget)
-			},
-			offMoloo(event) {
-				// console.log(event)
-				// console.log("물음표를 나가요")
-				this.isOpened = false
-        event.target.innerText = "?";
-				// console.log(this.isOpened)
-				// this.isOpened = false
-				// console.log(event.currentTarget)
-			}
+    offMoloo(event) {
+      this.isOpened = false;
+      event.target.innerText = "?";
     },
+  },
+};
+</script>
+
+<style>
+span {
+  font-weight: bold;
+  font-size: 18px;
+  color: #344a53;
 }
-  </script>
-  
-  <style>
-      span {
-          font-weight: bold;
-          font-size: 1.25rem;
-          color: #344A53;
-      }
-  
-      #info {
-          margin-top: 10px;
-          margin-bottom: 20px;
-          height: 50px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-      }
-  
-      #accountinfo {
-          margin-left: 2rem;
-      }	
-      #moloo {
-          line-height: 40px;
-          font-size: 1.5rem;
-          height: 40px;
-          width: 40px;
-          color: white;
-          /* align-items: center; */
-          text-align: center;
-          /* margin: 32px 0px; */
-          /* justify-content: center; */
-          background-color:#344A53;
-          border-radius: 50%;
-          margin-right: 2rem;
-          cursor:help;
-      }
 
-      body {
-        /* margin: 0; */
-      }
-      .dv {
-        box-sizing: border-box;
-      }
-      .black-bg {
-        width: 90%;
-        height: 100%;
-        /* background: rgba(0,0,0,0.5); */
-        position: fixed;
-        padding: 20px;
-				text-align: right;
-				/* margin-right: 0px; */
-        /* display: flex;
-        flex-direction: row; */
-      }
-      
+#info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: visible;
+}
+.accountinfo {
+  /* font-size: 16px; */
+  margin-left: 2rem;
+}
+#moloo {
+  line-height: 46px;
+  font-size: 24px;
+  height: 46px;
+  width: 46px;
+  color: white;
+  transform: translateY(-4px);
+  text-align: center;
+  background-color: #344a53;
+  border-radius: 50%;
+  margin-right: 2rem;
+  cursor: help;
+}
 
-      .white-bg {
-        /* width: 50%; */
-        background: white;
-        /* border-radius: 8px; */
-        /* padding: 20px; */
-				width: 100px;
-				height: 100px;
-      }
+.dv {
+  box-sizing: border-box;
+}
+.tooltip-bg-black {
+  width: 100%;
+  height: 45px;
+  /* background: rgba(0, 0, 0, 0.6); */
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+}
 
-			.flexmodal {
-				/* width: 100%; */
-        height: 100px;
-				/* padding-right: 8rem; */
-				display: inline-flex;
-				/* text-align: right; */
-        /* margin: 0px auto; */
-        /* margin-right: 6rem; */
-        position: absolute;
-        right: 0rem;
-        
-			}
-			.modalbody {
-				width: 450px;
-				height: 50px;
-        color: #f8f8f8;
-				background-color: #97AFBA;
-        /* opacity: 0.9; */
-        font-weight: bold;
-				border-radius: 10px;
-				transform: translateY(-28px);
-        text-align: center;
-        box-sizing: content-box;
-        padding: 10px;
-			}
+.tooltip-bg-white {
+  width: 520px;
+  height: 45px;
+  /* background-color: aqua; */
+  display: flex;
+}
 
-			.modaltail {
-				/* padding-top: 20px; */
-				width: 0;
-				height: 0;
-				border-top: 10px solid transparent;
-				border-bottom: 10px solid transparent;
-				border-left: 20px solid #97AFBA;
-        /* opacity: 0.9; */
-				border-right: 10px solid transparent;
-        transform: translateY(-4px);
-			}
-  </style>
+.tooptip-body {
+  width: 360px;
+  height: 28px;
+  color: #f8f8f8;
+  background-color: #97afba;
+  /* opacity: 0.9; */
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 4px;
+  transform: translateY(-5px);
+  text-align: center;
+  box-sizing: content-box;
+  padding: 10px;
+  line-height: 14px;
+}
+
+.tooltip-tail {
+  /* padding-top: 20px; */
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 20px solid #97afba;
+  /* opacity: 0.9; */
+  border-right: 10px solid transparent;
+  transform: translateY(8px);
+}
+
+@media screen and (max-width: 768px) {
+  .accountinfo span {
+    font-size: 14px;
+  }
+}
+</style>

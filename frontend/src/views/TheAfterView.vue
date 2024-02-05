@@ -8,19 +8,15 @@
         <!-- <div>11:30</div> -->
         <div class="time">{{ partyInfo.last_order_time }}</div>
       </div>
-      <div class="center-content">
+      <div class="center-title">
         <div>{{ partyInfo.name }}</div>
       </div>
       <div class="timeline">
         <div class="time">잔여시간</div>
-        <!-- <div style="color: red">32:18</div> -->
         <div style="color: red" class="time">{{ remainingTime }}</div>
       </div>
     </header>
-    <body>
-      <!-- <div class="center-content" style="margin-top: 25px">
-        <button @click="checkOrderStatus">현재 주문현황 확인하기</button>
-      </div> -->
+    <body>      
       <Info 
         :creator="creator"
       />
@@ -31,6 +27,10 @@
             :orders="orders"
             :name-set="nameSet"
             :orders-menu-sorted="ordersMenuSorted"
+            :carriers="carriers"
+            :participants="participants"
+            :carriers-arr="carriersArr"
+            :payers="payers"
           />
           <!-- <div>메뉴가 들어갈 부분</div> -->
           <!-- <MenuList/> -->
@@ -60,12 +60,12 @@
   import OrderList from '@/components/after/OrderList.vue';
   import Chat from "@/components/room/chat/Chat.vue";
   import { useRoute } from 'vue-router';
-  import { getCreator, getOrderList } from '@/api/after.js'
+  import { getCreator, getOrderList, getParticipants } from '@/api/after.js'
   import { getParty } from "@/api/party";
 
   const route = useRoute();
- 
-  const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
+  const access_code = ref("");
+  // const deadLine = ref("11:30"); //마감시간 백에서 받아오고 임의 설정
   const remainingTime = ref(""); //남은시간
 
   // 헤더 높이를 저장하는 변수
@@ -104,10 +104,17 @@
     account: "",
   },
 });
+
+  const participants = ref([]);
+  const carriers = ref([]);
+  const carriersArr = ref([]);
+  const payers = ref([]);
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
-    // console.log(route.params.access_code);
-    getCreator(route.params.access_code, 
+    // console.log(window.location.host)
+    access_code.value = route.params.access_code;
+    // console.log(access_code.value)
+    getCreator(access_code.value, 
     (res) => {
       creator.value.id = res.data.creator.id;
       creator.value.name = res.data.creator.name;
@@ -117,15 +124,37 @@
     (error)=>{
       console.log(error)
     });
-    
-
-    getOrderList(route.params.access_code, 
+  
+    getParticipants(access_code.value,
     (res) => {
+      res.data.forEach(p=>{
+        participants.value.push({
+          id: p.id, 
+          name: p.name, 
+          is_carrier: p.is_carrier, 
+          paid: p.paid
+        })
+      }
+      )
+      // console.log(participants.value)
       // console.log(res.data)
-      
-      // console.log(res.data)
-      res.data.forEach(elem => {
-        // console.log('주문자:', elem.participant_name)        
+      // participants.value.forEach(p=>console.log('p:',p.is_carrier))
+      carriers.value = participants.value.filter((participant) => participant.is_carrier)
+      carriers.value.forEach(carriers=>carriersArr.value.push(carriers.name))
+      // let pp = res.data.filter((participant) => participant.is_carrier===true)
+      // console.log("carriers:"", carriers)
+
+      participants.value.filter(participant => participant.paid).forEach(x=>payers.value.push(x.name))
+      // console.log("payers:", payers.value)
+    },
+    (error) => {
+      console.log(error)
+    }
+    )
+    // getOrderList(route.params.access_code, 
+    getOrderList(access_code.value, 
+    (res) => {
+      res.data.forEach(elem => { 
         nameSet.add(elem.participant_name);
         menuSet.add(elem.chosen_menu.name);
 
@@ -138,10 +167,7 @@
           })      
         })
 
-        // console.log("정렬 전 옵션",options)
-        // console.log("정렬된옵션:", options)
         options.sort((a,b) => a.id - b.id)
-        // console.log("정렬 전 옵션", options)
         let itCat = ''
         options.forEach((opt) => {itCat += (opt.id + '_')})
         itCat = itCat === "" ? "0" : itCat.substring(0,itCat.length-1)
@@ -161,6 +187,10 @@
         
       });
 
+      // return arr.filter((x) => x === 1).concat(arr.filter((x) => x !== 1));
+      // orders2.value = orders.value.filter((order=> carriersArr.value.includes(order)).concat(orders.value.filter((order=> !carriersArr.value.includes(order)))))
+      orders.value = orders.value.filter((order) => carriersArr.value.includes(order.studentName)).concat(orders.value.filter(order=> !carriersArr.value.includes(order.studentName)));
+      // console.log(orders)
       // 반복문 이후
       // console.log("개발시작")
       menuSet.forEach(menu => {
@@ -174,9 +204,6 @@
         let sumMenuPrice = 0;
         sortedByMenu.forEach((order)=>{
           sumMenuPrice += order.menuPrice
-          // console.log(order.menuPrice)
-          // console.log('우우웅:',order.menuOptions[0])
-          // console.log
           // order.menuOptions[0] 번이 없으면 추가 있으면 위치를 찾아 count += 1
           if (!optionsSet.has(order.menuOptions[0])) {
             optionsSet.add(order.menuOptions[0])
@@ -184,21 +211,8 @@
             // console.log(optionsSet)
           } else {
             let idx = optionsTemp.findIndex(elem => elem[0] === order.menuOptions[0])
-            // console.log("idx:",idx)
             optionsTemp[idx][1] += 1
           }
-          
-          // order.menuOptions.forEach((option)=>{
-          //   console.log("옵션이름:", option.name)
-          //   if (!temp1.includes(option.name)) {
-          //     temp1.push(option.name)
-          //     optionsTemp.push(option)
-          //   } else {
-          //     console.log('부힛 부히힛:',temp1.indexOf(option.name))
-          //   }
-          //   optionsTemp.push(option)
-          // })
-
         })
         optionsTemp.sort((a,b)=>a[0].localeCompare(b[0]))
         // console.log('adfasdzcxv',optionsTemp[0])
@@ -214,20 +228,10 @@
         )
 
       });
-      // console.log("orders:", orders.value)
-      // console.log("메뉴기준정렬",ordersMenuSorted.value)
-
-      // console.log(orders.value)
-      // console.log(nameSet);
-      // console.log(menuSet);
-      // console.log(optionsSet);
     }, 
     (error) => {
       console.log(error)
     });
-
-
-
 
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
@@ -246,10 +250,10 @@
   const getPartyInfo = () => {
     // console.log('파티피플')
   getParty(
-    route.params.access_code,
+    access_code.value,
 
     ({ data }) => {
-      console.log(data);
+      // console.log(data);
       partyInfo.value.id = data.id;
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
@@ -268,8 +272,9 @@
   const updateRemainingTime = () => {
     const now = new Date(); //현재시간 변수
     const deadlineTimne = new Date();
-    const [hours, minutes] = deadLine.value.split(":").map(Number);
-
+    
+    // const [hours, minutes] = deadLine.value.split(":").map(Number);
+    const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
     deadlineTimne.setHours(hours, minutes, 0);
 
     //마감시간에서 현재시간 차이를 저장
@@ -280,8 +285,10 @@
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
-    } else {
+      remainingTime.value = `${hours < 10 ? "0" + hours : hours} : ${
+      minutes < 10 ? "0" + minutes : minutes
+    } : ${seconds < 10 ? "0" + seconds : seconds}`;
+    } else if (diff <= 0) {
       remainingTime.value = "마감";
     }
   };
@@ -291,14 +298,11 @@
 
 <style scoped>
 body {
-  /* margin: 20px; */
-  /* padding: 20px; */
   font-family: "Arial", sans-serif;
 }
 main {
   display: flex;
   flex-direction: column;
-  /* height: 100vh; */
   height: auto;
   overflow-x: hidden;
 }
@@ -306,7 +310,6 @@ main {
 header {
   background-color: #344a53;
   color: #e9fcff;
-  /* padding: 10px; */
   min-height: 70px;
   display: flex;
   font-size: 24px;
@@ -315,18 +318,18 @@ header {
 }
 .timeline {
   display: flex;
-  font-size: 24px;
+  /* font-size: 24px; */
   margin: 20px;
   font-weight: bold;
 }
 .time {
+  width: auto;
   margin-right: 10px;
 }
-.center-content {
+.center-title {
   text-align: center;
-  /* font-size: 40px; */
-  font-size: 24px;
-  flex-grow: 1;
+  /* font-size: 24px; */
+  /* flex-grow: 1; */
   font-weight: bold;
 }
 .order-status {
@@ -341,7 +344,7 @@ button {
   background-color: white;
   border: none;
   color: #00a7d0;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: bold;
   text-decoration: underline;
   cursor: pointer;
@@ -363,5 +366,24 @@ button {
   margin-left: 20px; /* 왼쪽과 오른쪽 패널 간격 설정 */
   /* border: 5px solid #ccc; */
   height: auto;
+}
+
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  header {
+    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+  .body-container {
+    flex-direction: column; 
+  }
+  .right-panel {
+    margin-left: 0; 
+    margin-top: 20px; 
+  }
+
+  .btn-curorder{
+    font-size: 16px;
+  }
+
 }
 </style>

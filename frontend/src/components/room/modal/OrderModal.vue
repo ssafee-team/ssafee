@@ -69,7 +69,7 @@ export default {
       this.closeModal();
     },
     handleOrderSuccess(response) {
-      console.log("주문 성공: ", response);
+      // console.log("주문 성공: ", response);
       window.location.reload();
     },
     handleOrderFail(error) {
@@ -93,13 +93,13 @@ export default {
 }
 
 .modal-content {
-  width: 40%;
+  width: 30%;
   height: 200px;
   background: #344a53;
   border-radius: 5px;
   padding: 20px;
   margin-top: 20px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   text-align: center;
   color: white;
   border: none;
@@ -151,7 +151,24 @@ input {
   font-weight: bold;
   border-radius: 5px;
   padding: 10px 15px;
-  font-weight: bold;
   font-size: 18px;
+}
+
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 80%;
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+  input {
+    font-size: 14px;
+  }
+  .close,
+  .confirm {
+    width: 100px;
+    font-size: 14px;
+  }
 }
 </style>

@@ -41,7 +41,7 @@ public class MenuCategory {
     @OneToMany(mappedBy = "menuCategory")
     private List<Menu> Menus;
 
-    public void updateMenuCategory(MenuCategoryRequest menuCategoryRequest) {
+    public void update(MenuCategoryRequest menuCategoryRequest) {
         this.name = menuCategoryRequest.name();
     }
 

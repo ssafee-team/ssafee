@@ -18,12 +18,24 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api/v1": {
-        target: "http://localhost:80/", //http://localhost:80/api/v1/shops
+        // target: "http://localhost:80/", //http://localhost:80/api/v1/shops
+        target: "https://ssafy.coffee/",
       },
     },
     historyApiFallback: true,
     hot: true,
   },
+
+  // devServer에 프록시 설정 추가
+  // devServer: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "https://ssafy.coffee",
+  //       changeOrigin: true,
+  //       pathRewrite: { "^/api": "" },
+  //     },
+  //   },
+  // },
 
   // server: {
   //   proxy: {

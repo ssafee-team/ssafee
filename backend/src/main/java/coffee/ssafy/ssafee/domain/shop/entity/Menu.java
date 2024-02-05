@@ -8,7 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "menus")
@@ -60,13 +60,16 @@ public class Menu {
             joinColumns = @JoinColumn(name = "menu_id"),
             inverseJoinColumns = @JoinColumn(name = "option_category_id")
     )
-    private List<OptionCategory> optionCategories;
+    private Set<OptionCategory> optionCategories;
 
-    public void updateMenu(MenuRequest menuRequest) {
+    public void update(MenuRequest menuRequest) {
         this.name = menuRequest.name();
         this.description = menuRequest.description();
         this.price = menuRequest.price();
-        this.image = menuRequest.image();
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 
 }

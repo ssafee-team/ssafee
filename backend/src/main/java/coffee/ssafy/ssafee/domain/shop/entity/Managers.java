@@ -1,6 +1,5 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
-import coffee.ssafy.ssafee.domain.party.entity.Party;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +23,5 @@ public class Managers {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
-
-
 
 }

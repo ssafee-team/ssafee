@@ -3,46 +3,42 @@ package coffee.ssafy.ssafee.domain.party.service;
 import coffee.ssafy.ssafee.domain.party.dto.request.OrderMenuRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.OrderMenuResponse;
 import coffee.ssafy.ssafee.domain.party.entity.*;
-import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
-import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.OrderMenuMapper;
 import coffee.ssafy.ssafee.domain.party.repository.OrderMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
-import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.Option;
 import coffee.ssafy.ssafee.domain.shop.entity.OptionCategory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class OrderMenuService {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final PartyRepository partyRepository;
+    private final PartyService partyService;
     private final ParticipantRepository participantRepository;
     private final OrderMenuRepository orderMenuRepository;
     private final OrderMenuMapper orderMenuMapper;
 
-    @Transactional
     public Long createOrderMenu(String accessCode, OrderMenuRequest orderMenuRequest) {
-        Party party = partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+        Party party = entityManager.getReference(Party.class, partyId);
         Menu menuReference = entityManager.getReference(Menu.class, orderMenuRequest.menuId());
 
-        Participant participant = Participant.builder()
-                .name(orderMenuRequest.participantName())
-                .party(party)
-                .build();
+        Participant participant = participantRepository.findByPartyIdAndName(partyId, orderMenuRequest.participantName())
+                .orElseGet(() -> Participant.builder()
+                        .name(orderMenuRequest.participantName())
+                        .party(party)
+                        .build());
         participantRepository.save(participant);
 
         OrderMenu orderMenu = OrderMenu.builder()
@@ -66,22 +62,19 @@ public class OrderMenuService {
                 })
                 .toList());
         orderMenuRepository.save(orderMenu);
-
         return orderMenu.getId();
     }
 
     public List<OrderMenuResponse> findOrderMenusByAccessCode(String accessCode) {
-        return orderMenuMapper.toDtoList(partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
-                .getOrderMenus());
+        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+        return orderMenuRepository.findAllByPartyId(partyId).stream()
+                .map(orderMenuMapper::toDto)
+                .toList();
     }
 
-    @Transactional
-    public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long id) {
-        Long partyId = partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
-                .getId();
-        orderMenuRepository.deleteByPartyIdAndId(partyId, id);
+    public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long orderMenuId) {
+        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+        orderMenuRepository.deleteByPartyIdAndId(partyId, orderMenuId);
     }
 
 }

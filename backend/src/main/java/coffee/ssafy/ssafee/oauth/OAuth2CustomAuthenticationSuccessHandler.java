@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.oauth;
 
 import coffee.ssafy.ssafee.jwt.JwtTokenProvider;
-import coffee.ssafy.ssafee.jwt.dto.JwtClaimInfo;
+import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class OAuth2CustomAuthenticationSuccessHandler extends SimpleUrlAuthentic
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         OAuth2UserImpl oAuth2User = (OAuth2UserImpl) authentication.getPrincipal();
-        String accessToken = jwtTokenProvider.issueAccessToken(JwtClaimInfo.builder()
-                .id(oAuth2User.getId())
+        String accessToken = jwtTokenProvider.issueAccessToken(JwtPrincipalInfo.builder()
+                .id(String.valueOf(oAuth2User.getId()))
                 .role(oAuth2User.getAuthorities().get(0).getAuthority())
                 .build());
 

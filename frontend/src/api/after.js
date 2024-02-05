@@ -13,26 +13,22 @@ const local = localAxios();
 const url = `/api/v1/parties/`;
 
 async function getCreator(param, success, fail) {
-    // console.log("params:", param);
-    await local.get(`${url}/${param}`
-    )
-    .then(
-        success
-    )
-    .catch(
-        fail
-    );
+  // console.log("params:", param);
+  await local.get(`${url}/${param}`).then(success).catch(fail);
 }
 
 async function getOrderList(param, success, fail) {
-    await local.get(`${url}/${param}/order-menus`
+  await local.get(`${url}/${param}/order-menus`).then(success).catch(fail);
+}
+
+function getParticipants(param, success, fail) {
+    local.get(`${url}/${param}/participants`
     )
     .then(
         success
-    )
-    .catch(
+    ).catch(
         fail
-    );
+    )
 }
 
-export { getCreator, getOrderList };
+export { getCreator, getOrderList, getParticipants };

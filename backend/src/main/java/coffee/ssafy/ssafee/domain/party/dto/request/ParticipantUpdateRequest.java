@@ -1,13 +1,11 @@
-package coffee.ssafy.ssafee.jwt.dto;
+package coffee.ssafy.ssafee.domain.party.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
 
-@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record JwtClaimInfo(
-        Long id,
-        String role
+public record ParticipantUpdateRequest(
+        Boolean isCarrier,
+        Boolean paid
 ) {
 }

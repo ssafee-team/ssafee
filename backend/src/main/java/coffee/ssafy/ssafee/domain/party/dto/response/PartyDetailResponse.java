@@ -20,8 +20,10 @@ public record PartyDetailResponse(
         @Schema(implementation = String.class, example = LOCAL_TIME_HH_MM_EXAMPLE)
         LocalTime lastOrderTime,
         @JsonFormat(pattern = LOCAL_DATETIME_PATTERN)
-        @Schema(implementation = String.class, example = LOCAL_DATETIME_EXAMPLE) LocalDateTime createdTime,
+        @Schema(implementation = String.class, example = LOCAL_DATETIME_EXAMPLE)
+        LocalDateTime createdTime,
         Long shopId,
+        Long userId,
         CreatorResponse creator
 ) {
 }

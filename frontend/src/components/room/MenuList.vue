@@ -13,7 +13,7 @@
           <div class="choice">
             <div class="row" v-for="option in optionCategory.options" :key="option.id">
               <label>
-                <input type="checkbox" :value="option.name" v-model="selectedOptions" />
+                <input type="checkbox" :value="option.id" v-model="selectedOptions" />
                 {{ option.name }}
               </label>
               <div>+ {{ option.price }}원</div>
@@ -35,7 +35,7 @@
       @click="selectCategory(index)"
       :class="{ selected: selectedCategory === index }"
     >
-      {{ category }}
+      {{ category.name }}
     </div>
   </div>
 
@@ -107,11 +107,11 @@ export default {
 
   computed: {
     selectedDrinks() {
-      console.log(this.categories[this.selectedCategory], "선택");
+      // console.log(this.categories[this.selectedCategory], "선택");
       return this.drinks[this.selectedCategory] || [];
     },
     selectedDrink() {
-      console.log(this.selectedDrinks[this.selectedDrinkIndex].name, "음료선택");
+      // console.log(this.selectedDrinks[this.selectedDrinkIndex].name, "음료선택");
       return this.selectedDrinks[this.selectedDrinkIndex] || {};
     },
   },
@@ -121,13 +121,15 @@ export default {
       //프록시 객체의 data 속성을 이용해 접근
       //받은 데이터를 categories에 세팅
       this.categories = response.data;
-      console.log("카테고리 출력", this.categories);
+      // console.log("카테고리 출력", this.categories);
     },
     handleFail(error) {
       console.error(error);
     },
 
     selectCategory(index) {
+      // 다른 카테고리가 선택될 때 optionCategoriesMap을 초기화
+      this.optionCategoriesMap = {};
       //카테고리 선택시 실행
       this.selectedCategory = index;
       // shopId와 mcId를 기반으로 카테고리 선택 시 메뉴 데이터 가져오기
@@ -148,7 +150,7 @@ export default {
       });
 
       this.drinks[this.selectedCategory] = menuData;
-      console.log("메뉴 가져왔니?", this.drinks);
+      // console.log("메뉴 가져왔니?", this.drinks);
     },
 
     setSelectedDrinkIndex(index) {
@@ -156,9 +158,10 @@ export default {
 
       const selectedDrink = this.selectedDrinks[index];
       const menuId = selectedDrink.id;
-      console.log("선택한메뉴아이디확인", menuId);
+      // console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
+        // console.log(this.optionCategories, "dd");
       } else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
         selectedDrink.option_categories.forEach((optionCategory) => {
@@ -180,7 +183,6 @@ export default {
     handleOptionCategorySuccess(response) {
       // 모달이 열릴 때마다 옵션 카테고리 데이터 업데이트
       this.optionCategories = response.data;
-
       if (this.optionCategories) {
         this.options = this.optionCategories[0].options;
       }
@@ -195,20 +197,20 @@ export default {
       }
     },
     closeModal() {
-      this.openModal = false;
-      //모달 닫힐 시 선택한 옵션 초기화
+      // 모달 닫힐 때 선택한 옵션 및 카테고리 초기화
       this.selectedOptions = [];
+      this.optionCategories = [];
+      this.options = [];
+      this.openModal = false;
     },
 
     calculateTotalPrice() {
       let total = parseFloat(this.selectedDrink.price);
-      console.log("현재", total);
 
-      //선택한 옵션들의 가격을 합산
       // 선택한 옵션들의 가격을 합산
       for (const optionCategory of this.optionCategories) {
         for (const option of optionCategory.options) {
-          if (this.selectedOptions.includes(option.name)) {
+          if (this.selectedOptions.includes(option.id)) {
             total += option.price;
           }
         }
@@ -226,8 +228,11 @@ export default {
         return {
           option_category_id: optionCategory.id,
           option_ids: optionCategory.options
-            .filter((option) => this.selectedOptions.includes(option.name))
+            .filter((option) => this.selectedOptions.includes(option.id))
             .map((option) => option.id),
+          option_names: optionCategory.options
+            .filter((option) => this.selectedOptions.includes(option.id))
+            .map((option) => option.name),
         };
       });
 
@@ -235,17 +240,21 @@ export default {
       const order = {
         name: this.selectedDrink.name,
         price: this.calculateTotalPrice(),
-        options: this.selectedOptions, //선택한 옵션  명
+        // options: this.selectedOptions, //선택한 옵션  명
+        option_names: selectedOptionCategories.reduce((acc, category) => {
+          return acc.concat(category.option_names);
+        }, []), //선택한 옵션 명
         menuId: selectedDrinkId, //선택한 메뉴 ID
         option_categories: selectedOptionCategories, // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
       //주문 정보를 orderList에 추가
       this.orderList.push(order);
 
-      console.log("주문하기 버튼 클릭!");
+      // console.log(order.option_names);
+      // console.log("주문하기 버튼 클릭!");
 
-      console.log(order);
-      console.log("전체 주문 목록", this.orderList);
+      // console.log(order);
+      // console.log("전체 주문 목록", this.orderList);
       //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
       this.$emit("order-placed", order);
 
@@ -255,7 +264,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .menu-categories {
   display: flex;
   flex-wrap: wrap;
@@ -287,7 +296,7 @@ export default {
   margin-top: 20px;
   flex-wrap: wrap;
   overflow-y: auto;
-  height: 450px;
+  height: 500px;
 }
 
 .menu-items::-webkit-scrollbar {
@@ -298,10 +307,11 @@ export default {
   text-align: center;
   box-sizing: border-box;
   padding: 10px;
+  font-size: 16px;
 }
 
 .drink-item img {
-  border: 1px solid #344a53;
+  /* border: 1px solid #344a53; */
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 15px;
   cursor: pointer;
@@ -309,15 +319,20 @@ export default {
   height: 120px;
   margin-bottom: 10px;
 }
+
 .price {
   margin-top: 10px;
   color: #00a7d0;
 }
+
 .black-bg {
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
   /* background: rgba(0, 0, 0, 0.6); */
+  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   z-index: 9999;
   /* 모달 창을 제외한 모든 요소는 모달 창 뒤로 위치*/
@@ -411,5 +426,53 @@ p {
   display: flex;
   margin-bottom: 20px;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+  /* 모바일일 경우 스타일 조정 */
+  .drink-item img {
+    width: 80px; /*작은 화면에 맞게 이미지 너비 조정  */
+    height: 80px; /* 이미지 높이 조정  */
+  }
+
+  .drink-item {
+    font-size: 12px;
+  }
+
+  .menu-categories > div {
+    font-size: 14px; /* 작은 화면에 맞게 메뉴 카테고리 텍스트 크기 조정 */
+    font-weight: bold;
+  }
+
+  .white-bg {
+    width: 80%; /* 작은 화면에 맞게 모달 너비 조정 */
+    margin: 50px auto; /* 모달 위치 조정 */
+  }
+
+  .modal-title {
+    font-size: 16px; /* 작은 화면에 맞게 모달 제목 텍스트 크기 조정 */
+  }
+
+  .modal-content {
+    max-height: 300px; /* 작은 화면에 맞게 모달 내용 영역 최대 높이 조정 */
+  }
+
+  .modal-content p {
+    font-size: 16px;
+  }
+
+  .modal-btn {
+    padding: 5px; /* 작은 화면에 맞게 모달 버튼 간격 조정 */
+  }
+
+  .close,
+  .addOrder {
+    width: 100px; /* 작은 화면에 맞게 모달 버튼 너비 조정 */
+    font-size: 14px; /* 작은 화면에 맞게 모달 버튼 텍스트 크기 조정 */
+  }
+
+  .row {
+    font-size: 14px;
+  }
 }
 </style>

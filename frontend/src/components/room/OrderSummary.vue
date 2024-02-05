@@ -3,7 +3,7 @@
     <div class="title">
       <div style="display: flex">
         <p style="margin-left: 20px">전체주문금액 :</p>
-        <p class="total-price" style="margin-left: 20px; color: #00a7d0">{{ totalPrice }}원</p>
+        <p class="total-price">{{ totalPrice }}원</p>
         <button class="btn-order" @click="openOrderModal">주문하기</button>
       </div>
       <button class="btn-toggle" @click="toggleOrderSummary">
@@ -14,7 +14,7 @@
     <ul v-show="orderList.length > 0" class="list">
       <li v-for="(order, index) in limitedOrderList" :key="index" class="order-list">
         <div class="order-name">{{ order.name }}</div>
-        <div class="order-options">옵션: {{ getOrderOptions(order.options) }}</div>
+        <div class="order-options">옵션: {{ getOrderOptions(order.option_names) }}</div>
         <div class="order-price">{{ order.price }}</div>
         <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
@@ -37,7 +37,6 @@ export default {
 
   props: {
     orderList: Array,
-    orderSummaryVisible: Boolean,
     code: {
       required: true,
     },
@@ -45,12 +44,17 @@ export default {
   data() {
     return {
       isOrderModalOpen: false,
+      orderSummaryVisible: false,
     };
   },
   computed: {
     limitedOrderList() {
-      // 최대 2개까지의 주문만 보여주기
-      return this.orderList.slice(0, 2);
+      if (this.orderSummaryVisible) {
+        return this.orderList;
+      } else {
+        // 최대 2개까지의 주문만 보여주기
+        return this.orderList.slice(0, 2);
+      }
     },
     totalPrice() {
       return this.orderList
@@ -74,9 +78,9 @@ export default {
       this.isOrderModalOpen = false;
     },
     toggleOrderSummary() {
-      console.log("주문내역확인하자~");
-      console.log("받은 데이터", this.orderList.value);
+      this.orderSummaryVisible = !this.orderSummaryVisible;
       this.$emit("toggle-order-summary");
+      this.$el.classList.toggle("expanded"); // expanded 클래스 토글
     },
     getOrderOptions(options) {
       // options 배열에는 각 옵션의 문자열이 들어있음
@@ -95,14 +99,22 @@ export default {
   background-color: #344a53;
   color: white;
   border-radius: 10px 10px 0px 0px;
-  height: 170px;
-  max-height: 170px;
-  /* width: 60%; */
-  margin: 10px 0px 0px 20px;
-  /* position: fixed; */
-  /* bottom: 0; */
+  height: 180px;
+  max-height: 300px;
+  width: 65%;
+  margin: 0px 10px 0px 10px;
+  /* position: relative; */
+  /* position: absolute; */
+  position: fixed;
+  bottom: 0;
+
+  transition: height 0.3s ease; /* transition 효과 추가 */
+  /* overflow: hidden; 추가 */
 }
 
+.expanded {
+  height: 400px; /* 토글 시 높이를 자동으로 조정하도록 설정 */
+}
 .title {
   display: flex;
   justify-content: space-between;
@@ -116,7 +128,7 @@ export default {
 .btn-order {
   cursor: pointer;
   height: auto;
-  margin-left: 20px;
+  /* margin-left: 20px; */
   background-color: #00a5e7;
   color: white;
   font-weight: bold;
@@ -124,6 +136,12 @@ export default {
   margin-top: 10px;
   font-size: 14px;
   border: none;
+}
+
+.total-price {
+  margin-left: 20px;
+  color: #00a7d0;
+  width: 100px;
 }
 
 .btn-toggle {
@@ -140,10 +158,15 @@ export default {
   margin-top: 5px;
   height: auto;
   padding: 15px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.list::-webkit-scrollbar {
+  display: none;
 }
 .order-list {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   margin-bottom: 5px;
   height: auto;
 }
@@ -156,14 +179,16 @@ export default {
 }
 .order-options {
   color: #969696;
-  font-size: 16px;
+  font-size: 14px;
 }
 .order-price {
   color: #00a7d0;
   font-size: 18px;
+  font-weight: bold;
 }
 .btn-delete {
-  width: 80px;
+  width: 60px;
+  height: 30px;
   cursor: pointer;
   border: none;
   padding: 5px;
@@ -176,5 +201,23 @@ export default {
 }
 p {
   font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  .order {
+    width: 100%;
+    /* height: 100px; */
+    max-height: 400px;
+    margin: 0;
+    position: relative;
+  }
+  .order-name,
+  .order-price {
+    font-size: 16px;
+  }
+  .order-options,
+  .btn-delete {
+    font-size: 14px;
+  }
 }
 </style>
