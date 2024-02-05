@@ -40,7 +40,7 @@ services:
     environment:
       - TZ=Asia/Seoul
       - SERVER_PORT=3001
-      - SERVER_FALLBACK_PAGE=index.html
+      - SERVER_FALLBACK_PAGE=./public/index.html
 
   backend:
     container_name: backend
