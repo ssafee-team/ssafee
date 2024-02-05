@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
+import coffee.ssafy.ssafee.domain.party.service.SocketIoService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PartyController {
 
     private final PartyService partyService;
+    private final SocketIoService socketIoService;
 
     @PostMapping
     @Operation(summary = "파티 생성", security = @SecurityRequirement(name = "access-token"))
@@ -44,6 +46,16 @@ public class PartyController {
     @Operation(summary = "파티 조회")
     public ResponseEntity<PartyDetailResponse> getParty(@PathVariable("access_code") String accessCode) {
         return ResponseEntity.ok().body(partyService.findPartyByAccessCode(accessCode));
+    }
+
+    @PostMapping("/{access_code}/order")
+    @Operation(summary = "주문 요청 생성")
+    public ResponseEntity<Void> createOrder(@PathVariable("access_code") String accessCode) {
+        // 총무가 "주문요청" 버튼 클릭
+        // 사장님 화면에 주문요청 생성 (알림 발송) (수락/거절)
+        Long partyId = partyService.createOrder(accessCode);
+        socketIoService.sendOrderNotification(partyId);
+        return ResponseEntity.ok().build();
     }
 
 }

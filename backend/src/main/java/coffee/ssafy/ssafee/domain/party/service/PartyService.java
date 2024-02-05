@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -75,6 +76,22 @@ public class PartyService {
         return partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
                 .getId();
+    }
+
+    public Long createOrder(String accessCode) {
+        // 검증
+        // 1. 유효한 엑세스 코드인가?
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+
+        // 2. 마감시간 전인가 후인가?
+        LocalDateTime lastOrderTime = party.getLastOrderTime();
+        LocalDateTime now = LocalDateTime.now();
+        if (lastOrderTime.isAfter(now)) {
+            party.updateLastOrderTime(now);
+        }
+        partyRepository.save(party);
+        return party.getId();
     }
 
 }

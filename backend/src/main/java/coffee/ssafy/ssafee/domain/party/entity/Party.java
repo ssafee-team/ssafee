@@ -76,4 +76,8 @@ public class Party extends BaseTimeEntity {
                 .build();
     }
 
+    public void updateLastOrderTime(LocalDateTime now) {
+        this.lastOrderTime = now;
+    }
+
 }
