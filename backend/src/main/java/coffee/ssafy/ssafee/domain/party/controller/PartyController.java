@@ -48,14 +48,4 @@ public class PartyController {
         return ResponseEntity.ok().body(partyService.findPartyByAccessCode(accessCode));
     }
 
-    @PostMapping("/{access_code}/order")
-    @Operation(summary = "주문 요청 생성")
-    public ResponseEntity<Void> createOrder(@PathVariable("access_code") String accessCode) {
-        // 총무가 "주문요청" 버튼 클릭
-        // 사장님 화면에 주문요청 생성 (알림 발송) (수락/거절)
-        Long partyId = partyService.createOrder(accessCode);
-        socketIoService.sendOrderNotification(partyId);
-        return ResponseEntity.ok().build();
-    }
-
 }
