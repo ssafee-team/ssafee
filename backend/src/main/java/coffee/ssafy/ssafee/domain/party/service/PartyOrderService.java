@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OrderService {
+public class PartyOrderService {
 
     private final PartyRepository partyRepository;
 

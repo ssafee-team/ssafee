@@ -9,6 +9,8 @@ import coffee.ssafy.ssafee.domain.party.entity.OrderMenuOptionCategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface OrderMenuMapper {
 

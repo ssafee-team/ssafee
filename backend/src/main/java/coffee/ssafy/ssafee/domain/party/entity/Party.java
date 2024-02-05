@@ -63,6 +63,9 @@ public class Party extends BaseTimeEntity {
     @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
     private List<OrderMenu> orderMenus;
 
+    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
+    private Order order;
+
     public void prepareCreation(String accessCode, Shop shop, User user, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
         this.shop = shop;
