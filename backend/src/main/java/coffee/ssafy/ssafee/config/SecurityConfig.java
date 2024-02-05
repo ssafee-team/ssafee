@@ -40,6 +40,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
@@ -69,7 +72,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://ssafy.coffee"));
         configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
