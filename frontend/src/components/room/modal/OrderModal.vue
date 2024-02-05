@@ -1,6 +1,5 @@
 <template>
   <div class="modal">
-    
     <div class="modal-content">
       <div class="modal-title">주문하기</div>
       <hr />
@@ -152,26 +151,24 @@ input {
   font-weight: bold;
   border-radius: 5px;
   padding: 10px 15px;
-  font-weight: bold;
   font-size: 18px;
 }
 
 @media screen and (max-width: 768px) {
-
-  .modal-content{
+  .modal-content {
     width: 80%;
   }
 
-  .modal-title{
+  .modal-title {
     font-size: 16px;
   }
-  input{
+  input {
     font-size: 14px;
   }
-  .close, .confirm{
+  .close,
+  .confirm {
     width: 100px;
     font-size: 14px;
   }
-
 }
 </style>
