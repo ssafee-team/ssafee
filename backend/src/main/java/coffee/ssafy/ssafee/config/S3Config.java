@@ -15,7 +15,7 @@ public record S3Config(
         String accessKeyId,
         String secretAccessKey,
         String bucket,
-        URI endpoint,
+        String endpoint,
         String publicAccessDomain
 ) {
 
@@ -25,7 +25,7 @@ public record S3Config(
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
                 .region(Region.of("apac"))
-                .endpointOverride(endpoint)
+                .endpointOverride(URI.create(endpoint))
                 .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
                 .build();
     }
