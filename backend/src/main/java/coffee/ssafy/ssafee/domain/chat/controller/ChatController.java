@@ -1,63 +1,35 @@
 package coffee.ssafy.ssafee.domain.chat.controller;
 
-import io.openvidu.java.client.*;
-import jakarta.annotation.PostConstruct;
+import coffee.ssafy.ssafee.domain.chat.dto.request.ChatRequest;
+import coffee.ssafy.ssafee.domain.chat.dto.response.ChatResponse;
+import coffee.ssafy.ssafee.domain.chat.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 
-// @RestController
-@RequestMapping("/api/v1/parties/{access_code}/openvidu")
+@RestController
+@RequestMapping("/api/v1/parties/{access_code}/chats")
 @RequiredArgsConstructor
 public class ChatController {
-    @Value("${OPENVIDU_URL}")
-    private String OPENVIDU_URL;
 
-    @Value("${OPENVIDU_SECRET}")
-    private String OPENVIDU_SECRET;
+    private final ChatService chatService;
 
-    private OpenVidu openvidu;
-//    private SessionProperties properties = new SessionProperties.Builder().build();
-//    private Session session = openvidu.createSession(properties);
-
-    @PostConstruct
-    public void init() {
-        this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+    @PostMapping
+    @Operation(summary = "채팅 생성")
+    public ResponseEntity<Void> createChat(@PathVariable("access_code") String accessCode,
+                                           @RequestBody ChatRequest chatRequest) {
+        chatService.createChat(accessCode, chatRequest);
+        return ResponseEntity.noContent().build();
     }
 
-    /**
-     * @param params The Session properties
-     * @return The Session ID
-     */
-    @PostMapping("/api/sessions")
-    public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
-        SessionProperties properties = SessionProperties.fromJson(params).build();
-        Session session = openvidu.createSession(properties);
-        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+    @GetMapping
+    @Operation(summary = "채팅 기록 조회")
+    public ResponseEntity<List<ChatResponse>> getChats(@PathVariable("access_code") String accessCode) {
+        return ResponseEntity.ok().body(chatService.getChats(accessCode));
     }
-
-    @PostMapping("/api/sessions/{sessionId}/connections")
-    public ResponseEntity<String> createConnectdion(@PathVariable("sessionId") String sessionId, @RequestBody(required = false) Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
-        Session session = openvidu.getActiveSession(sessionId);
-
-        if (session == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-        Connection connection = session.createConnection(properties);
-        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
-
-
-    }
-
 
 }
