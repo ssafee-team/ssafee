@@ -534,8 +534,8 @@ function onSuccess(response) {
   const locationPath = response.headers.location;
   const parts = locationPath.split("/"); // '/'를 기준으로 문자열을 분할
   const roomcode = parts[parts.length - 1];
-  // window.location.href = 'http://localhost:8083/room/' + roomcode;
-  window.location.href = "https://ssafy.coffee/room/" + roomcode;
+  window.location.href = 'http://localhost:8083/room/' + roomcode;
+  // window.location.href = "https://ssafy.coffee/room/" + roomcode;
 }
 
 // 실패 콜백 함수를 정의합니다.
@@ -604,6 +604,8 @@ label {
   font-size: 20px;
   margin-right: 10px;
   width: 180px;
+  font-weight: bold;
+  color: #344a53;
 }
 
 input {
@@ -611,9 +613,11 @@ input {
   height: 40px;
   padding: 8px;
   font-size: 18px;
-  border: 1px solid #ccc;
+  border: 0.5px solid #f5f5f5;
   border-radius: 4px;
   box-sizing: border-box;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  
 }
 
 /* header {
