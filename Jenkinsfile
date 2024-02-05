@@ -2,16 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Build Backend') {
-            steps {
-                dir('backend') {
-                    withGradle {
-                        sh './gradlew bootJar'
-                    }
-                }
-            }
-        }
-
         stage('Build Frontend') {
             environment {
                 NO_COLOR = 'true'
@@ -21,6 +11,16 @@ pipeline {
                     nodejs(nodeJSInstallationName: 'node-20.11.0') {
                         sh 'npm install'
                         sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    withGradle {
+                        sh './gradlew bootJar'
                     }
                 }
             }
@@ -36,26 +36,31 @@ pipeline {
             }
         }
 
-        stage('Deploy Backend') {
+        stage('Deploy Develop') {
             when {
-                branch 'master'
+                branch 'develop'
             }
             steps {
-                sh 'docker compose -p ssafee build backend'
+                sh 'docker compose -p ssafee build frontend-dev backend-dev'
+                    sh 'docker compose -p ssafee up -d frontend-dev'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
                     writeFile file: '.env', text: readFile(dotenv)
-                    sh 'docker compose -p ssafee up -d backend'
+                    sh 'docker compose -p ssafee up -d backend-dev'
                 }
             }
         }
 
-        stage('Deploy Frontend') {
+        stage('Deploy Master') {
             when {
                 branch 'master'
             }
             steps {
-                sh 'docker compose -p ssafee build frontend'
+                sh 'docker compose -p ssafee build frontend backend'
                 sh 'docker compose -p ssafee up -d frontend'
+                withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
+                    writeFile file: '.env', text: readFile(dotenv)
+                    sh 'docker compose -p ssafee up -d backend'
+                }
             }
         }
 

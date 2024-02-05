@@ -1,2 +1,2 @@
-FROM nginx:alpine
-COPY dist /usr/share/nginx/html
+FROM joseluisq/static-web-server:2
+COPY dist /public
