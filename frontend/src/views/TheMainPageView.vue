@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <span>현재 개설된 방</span>
+    
+    <header :style="{ height: headerHeight }">
+    <p class="bannarname">현재 개설된 방</p>
+    </header>
     <div class="link-container">
           <!-- <RouterLink :to="'/room/' + room.access_code" v-for="room in rooms" :key="room.access_code"> -->
       <!-- <RouterLink :to="'/room/' + 'Gqe3GwHFoK'"> -->
@@ -87,12 +90,15 @@ function getParties() {
 onMounted(() => {
   getParties();
 });
+
+const headerHeight = ref('100px'); // 예시로 100px를 기본값으로 설정
+
   </script>
   
   
   <style scoped>
   
-  header {
+  /* header {
     background-color: #344a53;
     color: #e9fcff;
     padding: 10px;
@@ -100,7 +106,7 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+  } */
   #app > span {
     font-size: 30px;
     background-color: black;
@@ -145,12 +151,39 @@ onMounted(() => {
   }
   
   .plusbutton:hover {
-    background-color: blue; /* 버튼에 마우스를 올렸을 때 배경색 변경 */
+    background-color: black; /* 버튼에 마우스를 올렸을 때 배경색 변경 */
+    color: white
   }
   
   .link-container a {
     text-decoration: none; /* 밑줄 제거 */
   }
+
+  
+header {
+  background-color: #344a53;
+  color: #e9fcff;
+  min-height: 70px;
+  display: flex;
+  font-size: 24px;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  header {
+    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+}
+.bannarname {
+  display: flex;
+  /* font-size: 30px; */
+  margin: 20px;
+  font-weight: bold;
+    display: flex; 
+    justify-content: center;
+    width: 100%;
+}
   
   </style>
   
