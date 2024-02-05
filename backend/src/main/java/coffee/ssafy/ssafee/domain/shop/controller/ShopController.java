@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;

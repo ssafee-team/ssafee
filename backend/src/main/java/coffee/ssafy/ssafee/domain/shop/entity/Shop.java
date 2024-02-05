@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
-import coffee.ssafy.ssafee.domain.manager.entity.Manager;
+import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

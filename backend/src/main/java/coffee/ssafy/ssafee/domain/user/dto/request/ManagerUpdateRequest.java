@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.manager.dto.request;
+package coffee.ssafy.ssafee.domain.user.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.manager.exception;
+package coffee.ssafy.ssafee.domain.user.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

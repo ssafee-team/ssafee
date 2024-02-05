@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.manager.entity;
+package coffee.ssafy.ssafee.domain.user.entity;
 
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import jakarta.persistence.*;

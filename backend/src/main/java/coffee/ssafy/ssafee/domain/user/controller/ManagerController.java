@@ -1,9 +1,9 @@
-package coffee.ssafy.ssafee.domain.manager.controller;
+package coffee.ssafy.ssafee.domain.user.controller;
 
-import coffee.ssafy.ssafee.domain.manager.dto.request.ManagerLoginRequest;
-import coffee.ssafy.ssafee.domain.manager.dto.request.ManagerUpdateRequest;
-import coffee.ssafy.ssafee.domain.manager.dto.response.ManagerResponse;
-import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
+import coffee.ssafy.ssafee.domain.user.dto.request.ManagerLoginRequest;
+import coffee.ssafy.ssafee.domain.user.dto.request.ManagerUpdateRequest;
+import coffee.ssafy.ssafee.domain.user.dto.response.ManagerResponse;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
