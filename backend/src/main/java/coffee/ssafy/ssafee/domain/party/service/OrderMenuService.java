@@ -67,7 +67,9 @@ public class OrderMenuService {
 
     public List<OrderMenuResponse> findOrderMenusByAccessCode(String accessCode) {
         Long partyId = partyService.findPartyIdByAccessCode(accessCode);
-        return orderMenuMapper.toDtoList(orderMenuRepository.findAllByPartyId(partyId));
+        return orderMenuRepository.findAllByPartyId(partyId).stream()
+                .map(orderMenuMapper::toDto)
+                .toList();
     }
 
     public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long orderMenuId) {

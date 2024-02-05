@@ -1,12 +1,15 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
+import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -18,45 +21,43 @@ import java.util.List;
 public class MenuCategoryController {
 
     private final MenuCategoryService menuCategoryService;
+    private final ManagerService managerService;
 
-    // 1. 메뉴 카테고리 조회
     @GetMapping
-    @Operation(summary = "메뉴 카테고리 조회")
+    @Operation(summary = "메뉴 카테고리 목록 조회")
     public ResponseEntity<List<MenuCategoryResponse>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
         return ResponseEntity.ok().body(menuCategoryService.findMenuCategories(shopId));
     }
 
-    // 2. 메뉴 카테고리 생성
     @PostMapping
     @Operation(summary = "메뉴 카테고리 생성", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> createMenuCategory(
-            @PathVariable("shop_id") Long shopId,
-            @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        // Service 계층에 DTO를 전달하여 DB에 저장하고 결과를 반환
-        // 생성된 MenuCategoryResponse 객체를 이용해 ResponseEntity 생성
-        Long menuCategoryId = menuCategoryService.createMenuCategories(shopId, menuCategoryRequest);
+    public ResponseEntity<Void> createMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                   @PathVariable("shop_id") Long shopId,
+                                                   @RequestBody MenuCategoryRequest menuCategoryRequest) {
+        managerService.validate(principal, shopId);
+        Long menuCategoryId = menuCategoryService.createMenuCategory(shopId, menuCategoryRequest);
         URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId);
         return ResponseEntity.created(location).build();
     }
 
-    // 3. 메뉴 카테고리 수정
     @PutMapping("/{mc_id}")
     @Operation(summary = "메뉴 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> updateMenuCategory(
-            @PathVariable("shop_id") Long shopId,
-            @PathVariable("mc_id") Long menuCategoryId,
-            @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        menuCategoryService.updateMenuCategory(menuCategoryId, menuCategoryRequest);
+    public ResponseEntity<Void> updateMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                   @PathVariable("shop_id") Long shopId,
+                                                   @PathVariable("mc_id") Long menuCategoryId,
+                                                   @RequestBody MenuCategoryRequest menuCategoryRequest) {
+        managerService.validate(principal, shopId);
+        menuCategoryService.updateMenuCategory(shopId, menuCategoryId, menuCategoryRequest);
         return ResponseEntity.noContent().build();
     }
 
-    // 4. 메뉴 카테고리 삭제
     @DeleteMapping("/{mc_id}")
     @Operation(summary = "메뉴 카테고리 삭제", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> deleteMenuCategory(
-            @PathVariable("shop_id") Long shopId,
-            @PathVariable("mc_id") Long menuCategoryId) {
-        menuCategoryService.deleteMenuCategory(menuCategoryId);
+    public ResponseEntity<Void> deleteMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                   @PathVariable("shop_id") Long shopId,
+                                                   @PathVariable("mc_id") Long menuCategoryId) {
+        managerService.validate(principal, shopId);
+        menuCategoryService.deleteMenuCategory(shopId, menuCategoryId);
         return ResponseEntity.ok().build();
     }
 

@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
 import coffee.ssafy.ssafee.domain.manager.entity.Manager;
+import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@Setter // for ShopMapper.updateFromDto
 public class Shop {
 
     @Id
@@ -50,5 +50,13 @@ public class Shop {
 
     @OneToOne(mappedBy = "shop", fetch = FetchType.LAZY)
     private Manager manager;
+
+    public void update(ShopRequest shopRequest) {
+        this.name = shopRequest.name();
+        this.address = shopRequest.address();
+        this.phone = shopRequest.phone();
+        this.image = shopRequest.image();
+        this.enabledAutoOrder = shopRequest.enabledAutoOrder();
+    }
 
 }

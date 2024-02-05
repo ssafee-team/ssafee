@@ -15,8 +15,8 @@ public interface MenuMapper {
     Menu toEntity(MenuRequest menuRequest);
 
     @AfterMapping
-    default void updateMenu(@MappingTarget Menu menu, MenuRequest menuRequest) {
-        menu.updateMenu(menuRequest);
+    default void update(@MappingTarget Menu menu, MenuRequest menuRequest) {
+        menu.update(menuRequest);
     }
 
 }

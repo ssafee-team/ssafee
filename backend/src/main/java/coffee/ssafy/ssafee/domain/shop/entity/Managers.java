@@ -24,5 +24,4 @@ public class Managers {
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
 
-
 }

@@ -19,7 +19,7 @@ public class OrderMenuController {
     private final OrderMenuService orderMenuService;
 
     @PostMapping
-    @Operation(summary = "주문 넣기")
+    @Operation(summary = "주문 메뉴 생성")
     public ResponseEntity<Void> createOrder(@PathVariable("access_code") String accessCode, @RequestBody OrderMenuRequest orderMenuRequest) {
         Long id = orderMenuService.createOrderMenu(accessCode, orderMenuRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode + "/order-menus/" + id);
