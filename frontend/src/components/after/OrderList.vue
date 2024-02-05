@@ -378,8 +378,8 @@ export default {
     },
 
     sortByName(event) {
-      console.log("참여자:", this.participants);
-      console.log("배달부:", this.carriers);
+      // console.log("참여자:", this.participants);
+      // console.log("배달부:", this.carriers);
       document.querySelector("#price-click").innerText = "금액 ▼";
       // console.log(this.isInit)
       this.isInit = false;
