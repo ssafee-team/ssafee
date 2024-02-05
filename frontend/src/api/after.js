@@ -10,7 +10,8 @@ import { localAxios } from "@/util/http-commons";
 const local = localAxios();
 
 // const url = "/api/v1/";
-const url = `/api/v1/parties/`;
+// const url = `/api/v1/parties/`;
+const url = "/api/v1/parties";
 
 async function getCreator(param, success, fail) {
   // console.log("params:", param);
