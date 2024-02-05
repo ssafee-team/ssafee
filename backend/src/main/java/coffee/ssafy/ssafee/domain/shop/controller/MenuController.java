@@ -2,7 +2,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
@@ -29,8 +29,8 @@ public class MenuController {
 
     @GetMapping
     @Operation(summary = "메뉴 목록 조회")
-    public ResponseEntity<List<MenuResponse>> getMenusByCategory(@PathVariable("shop_id") Long shopId,
-                                                                 @PathVariable("mc_id") Long menuCategoryId) {
+    public ResponseEntity<List<MenuDetailResponse>> getMenusByCategory(@PathVariable("shop_id") Long shopId,
+                                                                       @PathVariable("mc_id") Long menuCategoryId) {
         return ResponseEntity.ok().body(menuService.getMenusByCategory(shopId, menuCategoryId));
     }
 

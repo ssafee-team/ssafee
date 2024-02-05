@@ -2,7 +2,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 
 import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,8 +25,8 @@ public class OptionCategoryController {
 
     @GetMapping
     @Operation(summary = "옵션 카테고리 목록 조회")
-    public ResponseEntity<List<OptionCategoryResponse>> getOptionCategories(@PathVariable("shop_id") Long shopId,
-                                                                            @RequestParam(value = "menu_id", required = false) Long menuId) {
+    public ResponseEntity<List<OptionCategoryDetailResponse>> getOptionCategories(@PathVariable("shop_id") Long shopId,
+                                                                                  @RequestParam(value = "menu_id", required = false) Long menuId) {
         return ResponseEntity.ok().body(optionCategoryService.getOptionCategories(shopId, menuId));
     }
 

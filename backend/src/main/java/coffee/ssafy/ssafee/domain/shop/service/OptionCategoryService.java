@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.OptionCategory;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
@@ -27,11 +27,11 @@ public class OptionCategoryService {
     private final OptionCategoryRepository optionCategoryRepository;
     private final OptionCategoryMapper optionCategoryMapper;
 
-    public List<OptionCategoryResponse> getOptionCategories(Long shopId, Long menuId) {
+    public List<OptionCategoryDetailResponse> getOptionCategories(Long shopId, Long menuId) {
         return Optional.ofNullable(menuId)
                 .map(id -> optionCategoryRepository.findAllByShopIdAndMenuId(shopId, id))
                 .orElseGet(() -> optionCategoryRepository.findAllByShopId(shopId)).stream()
-                .map(optionCategoryMapper::toDto)
+                .map(optionCategoryMapper::toDetailDto)
                 .toList();
     }
 
