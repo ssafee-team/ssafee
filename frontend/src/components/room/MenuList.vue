@@ -158,10 +158,10 @@ export default {
 
       const selectedDrink = this.selectedDrinks[index];
       const menuId = selectedDrink.id;
-      console.log("선택한메뉴아이디확인", menuId);
+      // console.log("선택한메뉴아이디확인", menuId);
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId];
-        console.log(this.optionCategories, "dd");
+        // console.log(this.optionCategories, "dd");
       } else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
         selectedDrink.option_categories.forEach((optionCategory) => {

@@ -28,13 +28,8 @@
         </div>
         <div
           id="bb"
-          style="
-            width: 100%;
-            height: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          "
+          class="modal-content"
+
         >
           <!-- <p>{{ this.orders.filter((order) => order.studentName ===  this.orders[selectedStudentNo].studentName) }}</p>	 -->
           <div
@@ -57,7 +52,7 @@
               <div class="options">
                 <!-- <div style="display: flex; flex-direction: row;" v-if="selectedOrder.menuOptions.length >=3"> -->
                 <div
-                  style="padding: 4px; display: flex; flex-direction: row; flex-wrap: wrap"
+                  style="padding: 4px; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center;"
                   v-if="selectedOrder.menuOptions.length >= 3"
                 >
                   <div v-for="(option, idx) in selectedOrder.menuOptions.slice(2)" :key="idx">
@@ -69,7 +64,7 @@
                 </div>
               </div>
             </div>
-            <div
+            <div class="menu-price"
               style="width: 25%; height; text-align: right; line-height: 60px; padding-right: 0px; font-size: 18px;"
             >
               <!-- {{ this.orders[selectedStudentNo].menuPrice }} 원 -->
@@ -78,17 +73,11 @@
           </div>
         </div>
         <div
-          style="
-            width: 100%;
-            height: 40px;
-            padding-top: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          "
+          
         >
-          <div style="width: 95%; height: 100%; display: flex; justify-content: right; gap: 10px">
+          <div class="modal-footer">
             <div
+              
               style="
                 line-height: 100%;
                 color: white;
@@ -143,8 +132,8 @@
           style="
             width: 50%;
             box-sizing: border-box;
-            padding-left: 7rem;
-            text-align: left;
+            /* padding-left: 7rem; */
+            text-align: center;
             cursor: pointer;
           "
         >
@@ -153,7 +142,7 @@
         <div
           id="price-click"
           @click="sortByPrice"
-          style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer"
+          style="width: 15%; box-sizing: border-box; cursor: pointer"
         >
           금액 ▼
         </div>
@@ -174,7 +163,7 @@
           style="
             width: 50%;
             box-sizing: border-box;
-            padding-left: 7rem;
+            padding-left: 6rem;
             text-align: left;
             cursor: pointer;
           "
@@ -183,7 +172,7 @@
         </div>
         <div
           @click="sortByMenu"
-          style="width: 15%; box-sizing: border-box; padding-right: 2rem; cursor: pointer"
+          style="width: 15%; box-sizing: border-box; cursor: pointer"
         >
           금액
         </div>
@@ -252,7 +241,7 @@
           <div class="menuname">
             <!-- <div class="menuname" style="background-color: bisque;"> -->
             <div class="baker" v-for="(option, indexOpt) in order.options" :key="indexOpt">
-              <div style="display: flex; flex-direction: row">
+              <div style="display: flex; flex-direction: row; margin-top: 5px;">
                 <div style="display: flex; flex-direction: column" v-if="option.length >= 3">
                   <!-- <div style="background-color: mediumseagreen; display: flex; flex-direction: row;" v-if="option.length>=3"> -->
                   <div
@@ -351,7 +340,7 @@ export default {
     selectStudent(index) {
       // this.selectedStudentNo = this.selectedStudentNo === index? -99: index;
       // let menuNames = []
-      console.log(index);
+      // console.log(index);
       if (this.selectedStudentNo === index) {
         this.selectedStudentNo = -99;
         this.selectedOrders = ref([]);
@@ -399,7 +388,7 @@ export default {
         this.isSortedByName = true;
         event.target.innerText = "이름 〓";
 
-        console.log("이름기준 정렬데이터를 호출합니다");
+        // console.log("이름기준 정렬데이터를 호출합니다");
         // this.orders.sort((a, b) => a.studentName.localeCompare(b.studentName));
         this.ordersCopied = this.orders.toSorted((a, b) =>
           a.studentName.localeCompare(b.studentName)
@@ -422,13 +411,13 @@ export default {
       // const nameClick= document.querySelector('#name-click');
       // console.log(nameClick.innerText)
       if (this.isSortedByMenu) {
-        console.log("정렬됨");
+        // console.log("정렬됨");
         this.isSortedByMenu = false;
-        console.log(this.isSortedByMenu);
+        // console.log(this.isSortedByMenu);
       } else {
-        console.log("정렬안됨");
+        // console.log("정렬안됨");
         this.isSortedByMenu = true;
-        console.log(this.isSortedByMenu);
+        // console.log(this.isSortedByMenu);
       }
     },
 
@@ -438,10 +427,10 @@ export default {
       if (!this.isSortedByPrice) {
         this.isSortedByPrice = true;
         event.target.innerText = "금액 〓";
-        console.log("가격기준 정렬데이터를 호출합니다");
+        // console.log("가격기준 정렬데이터를 호출합니다");
         // this.orders.sort((a, b) => b.menuPrice - a.menuPrice);
         this.ordersCopied = this.orders.toSorted((a, b) => b.menuPrice - a.menuPrice);
-        console.log("ss:", this.carriersArr);
+        // console.log("ss:", this.carriersArr);
         this.ordersCopied = this.ordersCopied
           .filter((order) => this.carriersArr.includes(order.studentName))
           .concat(
@@ -489,10 +478,14 @@ export default {
 .orderbox {
   // background-color: purple;
   // flex-grow: 1;
-  height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  z-index: 2;
+  height: 673px;
+  overflow-y: auto;
+  // overflow-x: hidden;
+  // z-index: 2;
+}
+
+.orderbox::-webkit-scrollbar {
+  display: none;
 }
 
 .ordermenu {
@@ -546,7 +539,7 @@ export default {
 
 .studentname {
   width: 25%;
-
+  
   // display: flex;
   align-items: center;
   //   text-align: center;
@@ -558,10 +551,11 @@ export default {
 
 .menuname {
   width: 50%;
+  font-size: 14px;
   // border: 1px dashed black;
   box-sizing: border-box;
-  padding-left: 64px;
-  text-align: left;
+  // padding-left: 64px;
+  text-align: center;
   // position: absolute;
   // left: 45%;
   // flex-grow: 5;
@@ -570,12 +564,12 @@ export default {
 .menuprice {
   width: 15%;
   // border: 1px dashed black;
-  text-align: right;
+  // text-align: right;
   box-sizing: border-box;
-  padding-right: 2rem;
+  // padding-right: 2rem;
 
-  display: flex;
-  justify-content: flex-end;
+  // display: flex;
+  // justify-content: flex-end;
   align-items: center;
   // position: absolute;
   // left: 90%;
@@ -587,46 +581,61 @@ export default {
 }
 
 .black-bg {
-  width: 40%;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  // background: rgba(0,0,0,0.5);
+  /* 컴포넌트가 분리되어 있어서 백그라운드 컬러가 나뉘어짐 */
+  /* background: rgba(0, 0, 0, 0.6); */
+  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
-  left: 20%;
-  // padding: 20px;
-
-  z-index: 3;
-  // transform: translateX(20%);
-  // margin-left: 0;
+  z-index: 9999;
 }
 .white-bg {
-  // width: 650px;
-  width: 130%;
-  // height: 300px;
-  height: auto;
+  width: 40%;
   margin: 80px auto;
   background: #344a53;
-  border-radius: 10px;
-  padding: 10px 0;
-  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 20px;
+  border: 1px solid black;
   text-align: center;
+  /* height: 60%; */
   color: white;
-  z-index: 4;
-  // position: relative;
-  // margin-right: 0;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(-26px);
+  position: relative;
+  z-index: 10000;
+  border: none;
 }
 
 .modal-title {
   padding: 10px;
   margin-left: 5px;
   font-size: 20px;
+  align-items: center;
   font-weight: bold;
   text-align: left;
   justify-content: space-between;
   display: flex;
   position: sticky;
+}
+
+.modal-content {
+  max-height: 400px;
+  overflow-y: auto;
+
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none; 
+}
+.modal-footer{
+  // style="width: 95%; height: 100%; display: flex; justify-content: right; gap: 10px"
+  position: sticky;
+  bottom: 0;
+  padding: 10px;
+  display: flex;
+  justify-content:right;
+
 }
 
 .close {
@@ -648,6 +657,7 @@ export default {
   height: 30px;
   text-align: left;
   margin-top: 10px;
+  margin-left: 10px;
   font-weight: bold;
 }
 
@@ -685,19 +695,19 @@ export default {
 }
 
 .ordermenu2 > .classno,
-.studentname,
+.studentname, 
 .menuprice {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #344a53;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
-hr {
-  width: 50vw;
-  margin: 0px;
-}
+
 
 .option-list {
   width: 250px;
+  font-size: 14px;
 }
 
 .isCarrier {
@@ -730,21 +740,19 @@ hr {
     font-size: 12px;
   }
   .black-bg {
-    left: 2%;
-    width: 96%;
+    
+    width: 100%;
     height: 100%;
   }
   .white-bg {
-    width: 99%;
-    transform: translateY(-26px);
+    width: 80%;
+    
   }
-  hr {
-    width: 90vw;
-  }
+  
   .ordermenu2 > .classno,
   .studentname,
   .menuprice {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .option-list {
@@ -755,6 +763,15 @@ hr {
     font-size: 16px;
   }
 
+  .menu-price {
+    font-size: 14px;
+  }
+
+
+  .modal-footer {
+    font-size: 12px;
+  }
+  
   .menuname,
   .menu-name,
   .menuprice {

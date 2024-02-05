@@ -20,9 +20,9 @@
       </RouterLink>
     </div>
     <div class="link-container">
-      <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }">
-        <button>After</button>
-      </router-link>
+      <!-- <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }"> -->
+        <!-- <button>After</button> -->
+      <!-- </router-link> -->
       <!-- <RouterLink to="After">
       <button > After</button>
     </RouterLink> -->
@@ -46,17 +46,17 @@ const rooms = ref([]);
 function onSuccess(response) {
   // 서버 응답의 data 속성에 접근합니다.
   const responseData = response.data;
-  console.log(response);
+  // console.log(response);
   // 이후 responseData를 사용하여 필요한 처리를 수행합니다.
   // 예: responseData가 배열인 경우, 각 요소를 출력
   if (Array.isArray(responseData)) {
     responseData.forEach((item) => {
       rooms.value.push(item.name);
-      console.log(item.name);
+      // console.log(item.name);
     });
   } else {
     // responseData가 객체 또는 다른 형태인 경우의 처리
-    console.log(responseData);
+    // console.log(responseData);
   }
 }
 
@@ -70,16 +70,17 @@ getPartiesToday(queryParams, onSuccess, onFailure);
 
 //fetch로
 function getParties() {
-  fetch("http://localhost/api/v1/parties")
+  // fetch("http://localhost/api/v1/parties")
+  fetch("https://ssafy.coffee/api/v1/parties")
     .then((response) => {
       // 응답 헤더에서 Location에 접근
       const location = response.headers.get("Location");
-      console.log("Location:", location);
-      console.log(response);
+      // console.log("Location:", location);
+      // console.log(response);
       return response.json(); // 또는 적절한 응답 처리
     })
     .then((data) => {
-      console.log("Received data:", data);
+      // console.log("Received data:", data);
     })
     .catch((error) => {
       console.error("An error occurred:", error);
