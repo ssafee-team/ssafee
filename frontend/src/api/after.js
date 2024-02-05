@@ -21,4 +21,14 @@ async function getOrderList(param, success, fail) {
   await local.get(`${url}/${param}/order-menus`).then(success).catch(fail);
 }
 
-export { getCreator, getOrderList };
+function getParticipants(param, success, fail) {
+    local.get(`${url}/${param}/participants`
+    )
+    .then(
+        success
+    ).catch(
+        fail
+    )
+}
+
+export { getCreator, getOrderList, getParticipants };
