@@ -32,6 +32,7 @@
       </div>
       <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
     </div>
+    
   </div>
 </template>
 
@@ -82,7 +83,8 @@ span {
 }
 #moloo {
   line-height: 46px;
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: bold;
   height: 46px;
   width: 46px;
   color: white;
@@ -98,17 +100,18 @@ span {
   box-sizing: border-box;
 }
 .tooltip-bg-black {
-  width: 100%;
-  height: 45px;
+  width: 80%;
+  /* height: 45px; */
   /* background: rgba(0, 0, 0, 0.6); */
   position: absolute;
   display: flex;
   justify-content: flex-end;
+  right: 0;
 }
 
 .tooltip-bg-white {
-  width: 520px;
-  height: 45px;
+  width: 500px;
+  height: 40px;
   /* background-color: aqua; */
   display: flex;
 }

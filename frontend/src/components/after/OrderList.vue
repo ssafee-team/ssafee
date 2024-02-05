@@ -459,6 +459,7 @@ export default {
   display: flex;
   flex-direction: column;
   // border: 1px solid black;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 0.5rem;
   // flex-grow: 1;
   height: 100%;
@@ -473,6 +474,7 @@ export default {
   font-size: 20px;
   background-color: #97afba;
   border-radius: 0.5rem 0.5rem 0 0;
+  border: 2px solid #97afba;
   // flex-grow: 0;
 }
 .orderbox {
@@ -499,6 +501,9 @@ export default {
   background-color: #f5f5f5;
   margin: 0.25rem;
   position: relative;
+  margin-bottom: 5px;
+  border: 2px solid #f5f5f5;
+  box-shadow: 1px 1px 0px 1px rgb(227, 226, 226);
 }
 
 .summary {
@@ -508,14 +513,18 @@ export default {
   text-align: center;
   font-size: 20px;
   background-color: #f5f5f5;
-  border: 1px solid #344a53;
+  border: 1px solid #f5f5f5;
+  // border: 1px solid #344a53;
+  border-radius: 5px;
   margin: 0.5rem;
   display: flex;
   // flex-grow: 0;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .summary > div {
   width: 33%;
+  font-weight: bold;
 }
 
 .ordermenu > * {
@@ -692,6 +701,9 @@ export default {
   position: relative;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+  margin-bottom: 5px;
+  border: 2px solid #f5f5f5;
+  box-shadow: 1px 1px 0px 1px rgb(227, 226, 226);
 }
 
 .ordermenu2 > .classno,
