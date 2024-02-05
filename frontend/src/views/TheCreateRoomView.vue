@@ -23,7 +23,6 @@
     </div>
   </div>
 
-
   <div class="modal-wrap" v-if="TimeModal">
     <div class="modal-container">
       <p style="font-size: 30px; color: white">입력형식을 확인해주세요(HH:MM)</p>
@@ -33,48 +32,90 @@
     </div>
   </div>
 
-  <header>
-    <div id="coffeeshop">방 생성</div>
+  <header :style="{ height: headerHeight }">
+    <div class="bannarname">방 생성</div>
   </header>
   <div id="empty"></div>
+
+
   <div class="parent">
     <div class="child2">
       <main class="form-container">
         <div class="form-field">
-      <label for="roomTitle">방제목</label>
-      <input type="text" id="roomTitle" v-model="form.roomTitle" maxlength="32"
-      placeholder="방 제목을 입력해주세요">
-    </div>
+          <label for="roomTitle">방제목</label>
+          <div class="input-with-error">
+            <input type="text" id="roomTitle" v-model="form.roomTitle" maxlength="32" placeholder="방 제목을 입력해주세요">
+            <span v-if="formErrors.roomTitle" class="error-message">방 제목을 입력해주세요.</span>
+          </div>
+        </div>
+
+
+  <div class="form-field">
+  <label for="name">이름</label>
+  <div class="input-with-error">
+
+
+    
+  <input type="text" id="name" v-model="form.name" :class="{'error-input': formErrors.name}" maxlength="8" placeholder="김싸피">
+  <span v-if="formErrors.name" class="error-message">이름을 입력해주세요.</span>
+</div>
+</div>
+        <!-- <div class="form-field">
+          <label for="name">이름</label>
+          <div class="input-with-error">
+            <input type="text" id="name" v-model="form.name" maxlength="8" placeholder="김싸피">
+            <span v-if="formErrors.name" class="error-message">이름을 입력해주세요.</span>
+          </div>
+        </div> -->
+
+        <div class="form-field">
+          <label for="class">반</label>
+          <div class="input-with-error">
+            <input type="text" id="class" v-model="form.class" @input="classValidation" placeholder="2">
+            <span v-if="formErrors.class" class="error-message">반을 입력해주세요.</span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="batch">기수</label>
+          <div class="input-with-error">
+            <input type="text" id="batch" v-model="form.batch" @input="batchValidation" placeholder="10">
+            <span v-if="formErrors.batch" class="error-message">기수를 입력해주세요.</span>
+          </div>
+        </div>
+
+
+
+
     <div class="form-field">
-      <label for="name">이름</label>
-      <input type="text" id="name" v-model="form.name" maxlength="8"
-      placeholder="김싸피">
-    </div>
-    <div class="form-field ">
-      <label for="class">반</label>
-      <input type="text" id="class" v-model="form.class" @input="classValidation"
-      placeholder="2">
-    </div>
-    <div class="form-field">
-      <label for="batch">기수</label>
-      <input type="text" id="batch" v-model="form.batch" @input="batchValidation"
-      placeholder="10">
-    </div>
-    <div class="form-field">
-      <label for="deadline">마감시간</label>
-      <input type="text" id="deadline" v-model="form.deadline" @keydown="timeValidation" @input = "formatTime"
-      placeholder="13:00">
-    </div>
-    <div class="form-field">
-      <label for="bankName">은행명</label>
-      <input type="text" id="bankName" v-model="form.bankName" maxlength="32"
-      placeholder="삼성은행">
-    </div>
-    <div class="form-field">
-      <label for="accountNumber">계좌번호</label>
-      <input type="text" id="accountNumber" v-model="form.accountNumber" @input = "bankValidation"
-      placeholder="123-4567-890">
-    </div>
+  <label for="deadline">마감시간</label>
+  <div class="input-with-error">
+  <input type="text" id="deadline" v-model="form.deadline" @keydown="timeValidation" @input="formatTime"
+  placeholder="13:00">
+  <!-- 현재 시간 이후만 입력 가능 에러 메시지 -->
+
+  <span v-if="deadlineError" class="error-message">시간은 현재 시각 이후만 입력 가능합니다.</span>
+  <span v-if="formErrors.deadline" class="error-message">마감 시간을 입력해주세요.</span>
+
+</div>
+</div>
+
+
+<div class="form-field">
+          <label for="bankName">은행명</label>
+          <div class="input-with-error">
+            <input type="text" id="bankName" v-model="form.bankName" maxlength="32" placeholder="은행명을 입력해주세요">
+            <span v-if="formErrors.bankName" class="error-message">은행명을 입력해주세요.</span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="accountNumber">계좌번호</label>
+          <div class="input-with-error">
+            <input type="text" id="accountNumber" v-model="form.accountNumber" placeholder="계좌번호를 입력해주세요">
+            <span v-if="formErrors.accountNumber" class="error-message">계좌번호를 입력해주세요.</span>
+          </div>
+        </div>
     <!-- <div class="form-field">
       <label for="phoneNumber">전화번호</label>
       <input type="text" id="phoneNumber" v-model="form.phoneNumber" maxlength="15"
@@ -83,7 +124,8 @@
       </main>
     </div>
 
-    <div class="child">
+    <div class="child cafe-selection">
+
       <p><label>카페선택</label></p>
       <img
         v-on:click="addPlatform('공차')"
@@ -143,49 +185,111 @@
 </template>
 
 <script setup>
+
+
 import { ref, computed, watch, onMounted } from "vue";
 import { getShops } from "@/api/shop";
 import { createParty } from "@/api/party";
 
+const headerHeight = ref('100px'); // 예시로 100px를 기본값으로 설정
+
+
 const form = ref({
-        roomTitle: '',
-        name: '',
-        class: '',
-        batch: '',
-        deadline: '',
-        bankName: '',
-        accountNumber: '',
-        phoneNumber: ''
-})
+  roomTitle: '',
+  name: '',
+  class: '',
+  batch: '',
+  deadline: '',
+  bankName: '',
+  accountNumber: '',
+  phoneNumber: ''
+});
+
+
+const formErrors = ref({
+  roomTitle: false,
+  name: false,
+  class: false,
+  batch: false,
+  deadline: false,
+  bankName: false,
+  accountNumber: false,
+  phoneNumber: false
+});
+
+
+Object.keys(form.value).forEach((key) => {
+  watch(() => form.value[key], (newValue) => {
+    // 여기서는 단순히 값이 비어있지 않은지 확인합니다.
+    // 필요에 따라 더 복잡한 검증 로직을 추가할 수 있습니다.
+    formErrors.value[key] = !newValue.trim();
+  });
+});
+// 기존에 정의된 함수들...
+
+const submitForm = () => {
+
+  const requiredFields = ['name', 'generation', 'classroom', 'last_order_time', 'creator'];
+  const isAnyFieldEmpty = requiredFields.some(field => 
+    (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '') ||
+    (typeof partyData.value[field] === 'object' && Object.values(partyData.value[field]).some(val => val.trim() === ''))
+  );
+
+  if (isAnyFieldEmpty) {
+    // 필드가 비어있으면 경고 메시지 띄우기
+    EmptyModal.value = true
+  } else {
+    // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
+    modalOpen();
+    createParty(partyData.value, onSuccess, onFailure);
+  }
+
+  let isValid = true;
+  for (const [key, value] of Object.entries(form.value)) {
+    if (!value) {
+      formErrors.value[key] = true;
+      isValid = false;
+    } else {
+      formErrors.value[key] = false;
+    }  }
+
+  if (!isValid) {
+    // alert('빈 항목을 채워주세요.');
+    return;
+  }
+
+  // 유효한 경우, 폼 제출 로직을 여기에 추가합니다.
+  // 예: createParty(...)
+};
 
 //여기부터 상혁이가 작성--------------------
-// const shops = ref({
-//   id: "",
-//   name: "",
-//   image: "",
-// });
+const shops = ref({
+  id: "",
+  name: "",
+  image: "",
+});
 
-// onMounted(() => {
-  // console.log("시작");
-  // getShopList();
-// });
+onMounted(() => {
+  console.log("시작");
+  getShopList();
+});
 
-// const getShopList = (param) => {
-//   //API 호출
-//   getShops(
-//     param,
+const getShopList = (param) => {
+  //API 호출
+  getShops(
+    param,
 
-//     ({ data }) => {
-//       console.log("가져온 데이터: ", data);
-//       shops.value.id = data.id;
-//       shops.value.name = data.name;
-//       shops.value.image = data.image;
-//     },
-//     (error) => {
-//       console.log(error);
-//     }
-//   );
-// };
+    ({ data }) => {
+      console.log("가져온 데이터: ", data);
+      shops.value.id = data.id;
+      shops.value.name = data.name;
+      shops.value.image = data.image;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 // const shops = ref({
 //   id: "",
 //   name: "",
@@ -258,7 +362,8 @@ const partyData = computed(() => ({
        "name": form.value.name,
        "email": "skip",
        "bank": form.value.bankName,
-       "account": form.value.accountNumber
+       "account": form.value.accountNumber,
+       "webhook_url": "skip"
      }
    }));
 
@@ -333,18 +438,18 @@ const timeValidation = (event) => {
   }
 };
 const TimeModal = ref(false)
-const formatTime = () => {
-  // 시간 형식 검증
-  form.value.deadline = form.value.deadline.replace(/[^\d:]/g, '');
+// const formatTime = () => {
+//   // 시간 형식 검증
+//   form.value.deadline = form.value.deadline.replace(/[^\d:]/g, '');
 
-  if (form.value.deadline.length === 5) {
-    const [hours, minutes] = form.value.deadline.split(':');
-    if (parseInt(hours) > 23 || parseInt(minutes) > 59) {
-      TimeModal.value = true
-      form.value.deadline = '';
-    }
-  }
-};
+//   if (form.value.deadline.length === 5) {
+//     const [hours, minutes] = form.value.deadline.split(':');
+//     if (parseInt(hours) > 23 || parseInt(minutes) > 59) {
+//       TimeModal.value = true
+//       form.value.deadline = '';
+//     }
+//   }
+// };
 
 
 function checkName(name)
@@ -374,23 +479,23 @@ function modalOpen() {
   console.log(modalCheck.value)
   console.log(form.value)
 
-  function submitForm() {
-  // 필요한 필드들이 공백인지 확인
-  const requiredFields = ['name', 'generation', 'classroom', 'last_order_time', 'creator'];
-  const isAnyFieldEmpty = requiredFields.some(field => 
-    (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '') ||
-    (typeof partyData.value[field] === 'object' && Object.values(partyData.value[field]).some(val => val.trim() === ''))
-  );
+//   function submitForm() {
+//   // 필요한 필드들이 공백인지 확인
+//   const requiredFields = ['name', 'generation', 'classroom', 'last_order_time', 'creator'];
+//   const isAnyFieldEmpty = requiredFields.some(field => 
+//     (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '') ||
+//     (typeof partyData.value[field] === 'object' && Object.values(partyData.value[field]).some(val => val.trim() === ''))
+//   );
 
-  if (isAnyFieldEmpty) {
-    // 필드가 비어있으면 경고 메시지 띄우기
-    EmptyModal.value = true
-  } else {
-    // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
-    modalOpen();
-    createParty(partyData.value, onSuccess, onFailure);
-  }
-}
+//   if (isAnyFieldEmpty) {
+//     // 필드가 비어있으면 경고 메시지 띄우기
+//     EmptyModal.value = true
+//   } else {
+//     // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
+//     modalOpen();
+//     createParty(partyData.value, onSuccess, onFailure);
+//   }
+// }
 
 
 // 성공 콜백 함수를 정의합니다.
@@ -412,6 +517,28 @@ function onFailure(error) {
 
 // createParty 함수를 호출합니다.
 
+
+
+const deadlineError = ref(false); // 마감시간 에러 상태
+
+// 기존 함수와 변수들...
+
+const formatTime = () => {
+  // 시간 형식 검증 및 현재 시간 이후인지 확인
+  form.value.deadline = form.value.deadline.replace(/[^\d:]/g, '');
+  if (form.value.deadline.length === 5) {
+    const [hours, minutes] = form.value.deadline.split(':');
+    const deadlineDate = new Date();
+    deadlineDate.setHours(hours, minutes);
+    const now = new Date();
+    if (deadlineDate <= now) {
+      deadlineError.value = true;
+      form.value.deadline = '';
+    } else {
+      deadlineError.value = false;
+    }
+  }
+};
 
 </script>
 
@@ -464,13 +591,12 @@ input{
   box-sizing: border-box;
 }
 
-header {
-  /* height: 50px; */
+/* header {
   font-size: 2rem;
   width: 100%;
   background-color: #344a53;
   justify-content: space-between;
-}
+} */
 
 #coffeeshop {
   color: #e9fcff;
@@ -559,4 +685,75 @@ header {
   cursor: pointer; /* 마우스 커서를 포인터로 변경 */
   border-radius: 15px; /* 둥근 모서리를 만들기 위해 테두리 반경 설정 */
 }
+
+
+.error-message {
+  color: red; /* 에러 메시지 색상 */
+  font-size: 14px; /* 에러 메시지 글꼴 크기 */
+  margin-top: 5px; /* 입력 필드와의 여백 */
+}
+
+.input-with-error {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.error-input {
+  border: 1px solid red; /* 오류가 있을 때 빨간색 테두리 적용 */
+}
+
+.cafe-selection {
+  display: block; /* 기본적으로는 보임 */
+}
+
+@media screen and (max-width: 768px) {
+  .parent {
+    flex-direction: column;
+  }
+  
+  .cafe-selection {
+    display: block; /* 화면 크기에 따라 숨김 해제 */
+    order: 3; /* 필요한 경우 순서 조정 */
+  }
+
+  .child2, .child {
+    width: 100%; /* 모바일 화면에서 자식 요소들이 전체 폭을 차지하도록 조정 */
+    order: 1; /* child2를 먼저 나오게 하려면 순서 조정 */
+  }
+  
+  /* 필요에 따라 추가적인 스타일 조정 */
+}
+
+
+
+
+
+header {
+  background-color: #344a53;
+  color: #e9fcff;
+  min-height: 70px;
+  display: flex;
+  font-size: 24px;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 화면 폭이 768px 미만일 때 */
+@media screen and (max-width: 768px) {
+  header {
+    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+}
+
+.bannarname {
+  display: flex;
+  /* font-size: 30px; */
+  margin: 20px;
+  font-weight: bold;
+    display: flex; 
+    justify-content: center;
+    width: 100%;
+}
+
+
 </style>
