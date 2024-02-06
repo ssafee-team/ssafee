@@ -1,14 +1,20 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
+import coffee.ssafy.ssafee.domain.shop.entity.Shop;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
+import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
+import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -16,6 +22,7 @@ import java.time.LocalDateTime;
 public class PartyOrderService {
 
     private final PartyRepository partyRepository;
+    private final ShopRepository shopRepository;
 
     public Long createOrder(String accessCode) {
         // 검증
@@ -26,6 +33,16 @@ public class PartyOrderService {
         // 2. 마감시간 전인가 후인가?
         party.updateRealOrderedTime(LocalDateTime.now());
         partyRepository.save(party);
+
+        // 3. 최소주문금액을 넘었는가?
+        Integer minimumPrice = party.getShop().getMinimumPrice();
+        int total = 0;
+        for(ChoiceMenu menu : party.getChoiceMenus()) {
+            total += menu.getMenu().getPrice();
+        }
+        if (total < minimumPrice) {
+            throw new PartyException(PartyErrorCode.THE_ORDER_AMOUNT_IS_LESS_THAN_THE_MINIMUM_ORDER);
+        }
         return party.getId();
     }
 

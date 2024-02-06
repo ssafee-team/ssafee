@@ -49,7 +49,7 @@ public class ManagerService {
                 .orElseThrow(() -> new ManagerException(ManagerErrorCode.NOT_FOUND_MANAGER));
     }
 
-    public void validate(JwtPrincipalInfo principal, Long shopId) {
+    public void validateShop(JwtPrincipalInfo principal, Long shopId) {
         if (!principal.shopId().equals(shopId)) {
             throw new ManagerException(ManagerErrorCode.UNAUTHORIZED_SHOP);
         }

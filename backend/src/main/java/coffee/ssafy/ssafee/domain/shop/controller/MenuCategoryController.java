@@ -34,7 +34,7 @@ public class MenuCategoryController {
     public ResponseEntity<Void> createMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                    @PathVariable("shop_id") Long shopId,
                                                    @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         Long menuCategoryId = menuCategoryService.createMenuCategory(shopId, menuCategoryRequest);
         URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId);
         return ResponseEntity.created(location).build();
@@ -46,7 +46,7 @@ public class MenuCategoryController {
                                                    @PathVariable("shop_id") Long shopId,
                                                    @PathVariable("mc_id") Long menuCategoryId,
                                                    @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         menuCategoryService.updateMenuCategory(shopId, menuCategoryId, menuCategoryRequest);
         return ResponseEntity.noContent().build();
     }
@@ -56,7 +56,7 @@ public class MenuCategoryController {
     public ResponseEntity<Void> deleteMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                    @PathVariable("shop_id") Long shopId,
                                                    @PathVariable("mc_id") Long menuCategoryId) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         menuCategoryService.deleteMenuCategory(shopId, menuCategoryId);
         return ResponseEntity.ok().build();
     }
