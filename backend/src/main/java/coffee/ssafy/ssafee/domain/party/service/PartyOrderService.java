@@ -46,4 +46,22 @@ public class PartyOrderService {
         return party.getId();
     }
 
+    public Long orderDelivered(String accessCode) {
+        // 검증
+        // 1. 유효한 엑세스 코드인가?
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        // TODO: 배달시작 필드가 null인지 검사
+        party.updateDeliveredTime(LocalDateTime.now());
+        return party.getId();
+    }
+
+    //
+    public void sendMattermostNotification(Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        String webHookUrl = party.getCreator().getWebhookUrl();
+
+    }
+
 }

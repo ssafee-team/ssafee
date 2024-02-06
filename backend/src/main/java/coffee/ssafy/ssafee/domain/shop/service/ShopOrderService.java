@@ -71,7 +71,7 @@ public class ShopOrderService {
         // 2. 유효한 shop_id 인가?
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
-
+        // TODO: Rejected field == null?
         // 3. confirmed_time 을 현재 시간으로 업데이트
         party.updateConfirmedTime(LocalDateTime.now());
         partyRepository.save(party);
@@ -85,7 +85,7 @@ public class ShopOrderService {
         // 2. 유효한 shop_id 인가?
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
-
+        // TODO: confirmed field == null?
         // 3. rejected_time 을 현재 시간으로 업데이트
         party.updateRejectedTime(LocalDateTime.now());
         partyRepository.save(party);
@@ -99,7 +99,7 @@ public class ShopOrderService {
         // 2. 유효한 shop_id 인가?
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
-
+        // TODO: confirmed field == null?
         // 3. made_time 을 현재 시간으로 업데이트
         party.updateMadeTime(LocalDateTime.now());
         partyRepository.save(party);
@@ -113,6 +113,7 @@ public class ShopOrderService {
         // 2. 유효한 shop_id 인가?
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
+        // TODO: made field == null?
     }
 
 }
