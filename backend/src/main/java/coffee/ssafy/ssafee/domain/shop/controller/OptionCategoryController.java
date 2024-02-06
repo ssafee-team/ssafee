@@ -1,9 +1,9 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

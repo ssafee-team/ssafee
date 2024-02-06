@@ -8,16 +8,16 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "order_menus")
+@Table(name = "choice_menus")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class OrderMenu extends BaseTimeEntity {
+public class ChoiceMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_menu_id", nullable = false, updatable = false)
+    @Column(name = "choice_menu_id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -33,7 +33,7 @@ public class OrderMenu extends BaseTimeEntity {
     private Party party;
 
     @Setter
-    @OneToMany(mappedBy = "orderMenu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderMenuOptionCategory> orderMenuOptionCategories;
+    @OneToMany(mappedBy = "choiceMenu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ChoiceMenuOptionCategory> choiceMenuOptionCategories;
 
 }

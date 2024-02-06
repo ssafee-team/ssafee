@@ -7,28 +7,28 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "order_menu_option_categories")
+@Table(name = "choice_menu_option_categories")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class OrderMenuOptionCategory {
+public class ChoiceMenuOptionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_menu_option_category_id", nullable = false, updatable = false)
+    @Column(name = "choice_menu_option_category_id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_menu_id", nullable = false, updatable = false)
-    private OrderMenu orderMenu;
+    @JoinColumn(name = "choice_menu_id", nullable = false, updatable = false)
+    private ChoiceMenu choiceMenu;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "option_category_id", nullable = false, updatable = false)
     private OptionCategory optionCategory;
 
     @Setter
-    @OneToMany(mappedBy = "orderMenuOptionCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderMenuOption> orderMenuOptions;
+    @OneToMany(mappedBy = "choiceMenuOptionCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ChoiceMenuOption> choiceMenuOptions;
 
 }

@@ -11,6 +11,7 @@ public record MenuDetailResponse(
         String name,
         Integer price,
         String image,
+        Boolean soldout,
         List<OptionCategoryDetailResponse> optionCategories
 ) {
 }

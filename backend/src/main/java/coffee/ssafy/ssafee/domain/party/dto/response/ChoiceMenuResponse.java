@@ -1,15 +1,17 @@
 package coffee.ssafy.ssafee.domain.party.dto.response;
 
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryDetailResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record OrderMenuResponse(
+public record ChoiceMenuResponse(
         Long id,
         String participantName,
-        ChosenMenuResponse chosenMenu,
-        List<ChosenOptionCategoryResponse> chosenOptionCategories
+        MenuResponse menu,
+        List<OptionCategoryDetailResponse> optionCategories
 ) {
 }
