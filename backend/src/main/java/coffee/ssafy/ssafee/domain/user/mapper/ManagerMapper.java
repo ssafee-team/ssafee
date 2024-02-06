@@ -1,7 +1,7 @@
-package coffee.ssafy.ssafee.domain.manager.mapper;
+package coffee.ssafy.ssafee.domain.user.mapper;
 
-import coffee.ssafy.ssafee.domain.manager.dto.response.ManagerResponse;
-import coffee.ssafy.ssafee.domain.manager.entity.Manager;
+import coffee.ssafy.ssafee.domain.user.dto.response.ManagerResponse;
+import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

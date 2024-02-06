@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.MenuResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
@@ -14,6 +14,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,10 +27,11 @@ public class MenuService {
     private final EntityManager entityManager;
     private final MenuRepository menuRepository;
     private final MenuMapper menuMapper;
+    private final S3Service s3Service;
 
-    public List<MenuResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
+    public List<MenuDetailResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
-                .map(menuMapper::toDto)
+                .map(menuMapper::toDetailDto)
                 .toList();
     }
 
@@ -45,6 +47,12 @@ public class MenuService {
         menuRepository.findByShopIdAndId(shopId, menuId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
                 .update(menuRequest);
+    }
+
+    public void updateMenuImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
+        menuRepository.findByShopIdAndId(shopId, menuId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
+                .updateImage(s3Service.putImage("menus/" + menuId, file));
     }
 
     public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {

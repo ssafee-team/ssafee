@@ -27,6 +27,10 @@
             :orders="orders"
             :name-set="nameSet"
             :orders-menu-sorted="ordersMenuSorted"
+            :carriers="carriers"
+            :participants="participants"
+            :carriers-arr="carriersArr"
+            :payers="payers"
           />
           <!-- <div>메뉴가 들어갈 부분</div> -->
           <!-- <MenuList/> -->
@@ -56,7 +60,7 @@
   import OrderList from '@/components/after/OrderList.vue';
   import Chat from "@/components/room/chat/Chat.vue";
   import { useRoute } from 'vue-router';
-  import { getCreator, getOrderList } from '@/api/after.js'
+  import { getCreator, getOrderList, getParticipants } from '@/api/after.js'
   import { getParty } from "@/api/party";
 
   const route = useRoute();
@@ -100,10 +104,16 @@
     account: "",
   },
 });
+
+  const participants = ref([]);
+  const carriers = ref([]);
+  const carriersArr = ref([]);
+  const payers = ref([]);
   // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
   onMounted(() => {
-    console.log(window.location.host)
+    // console.log(window.location.host)
     access_code.value = route.params.access_code;
+    // console.log(access_code.value)
     getCreator(access_code.value, 
     (res) => {
       creator.value.id = res.data.creator.id;
@@ -114,8 +124,33 @@
     (error)=>{
       console.log(error)
     });
-    
+  
+    getParticipants(access_code.value,
+    (res) => {
+      res.data.forEach(p=>{
+        participants.value.push({
+          id: p.id, 
+          name: p.name, 
+          is_carrier: p.is_carrier, 
+          paid: p.paid
+        })
+      }
+      )
+      // console.log(participants.value)
+      // console.log(res.data)
+      // participants.value.forEach(p=>console.log('p:',p.is_carrier))
+      carriers.value = participants.value.filter((participant) => participant.is_carrier)
+      carriers.value.forEach(carriers=>carriersArr.value.push(carriers.name))
+      // let pp = res.data.filter((participant) => participant.is_carrier===true)
+      // console.log("carriers:"", carriers)
 
+      participants.value.filter(participant => participant.paid).forEach(x=>payers.value.push(x.name))
+      // console.log("payers:", payers.value)
+    },
+    (error) => {
+      console.log(error)
+    }
+    )
     // getOrderList(route.params.access_code, 
     getOrderList(access_code.value, 
     (res) => {
@@ -152,6 +187,10 @@
         
       });
 
+      // return arr.filter((x) => x === 1).concat(arr.filter((x) => x !== 1));
+      // orders2.value = orders.value.filter((order=> carriersArr.value.includes(order)).concat(orders.value.filter((order=> !carriersArr.value.includes(order)))))
+      orders.value = orders.value.filter((order) => carriersArr.value.includes(order.studentName)).concat(orders.value.filter(order=> !carriersArr.value.includes(order.studentName)));
+      // console.log(orders)
       // 반복문 이후
       // console.log("개발시작")
       menuSet.forEach(menu => {
@@ -194,9 +233,6 @@
       console.log(error)
     });
 
-
-
-
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
     updateRemainingTime(); //페이지 로드시 남은시간 계산
@@ -217,7 +253,7 @@
     access_code.value,
 
     ({ data }) => {
-      console.log(data);
+      // console.log(data);
       partyInfo.value.id = data.id;
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
@@ -249,8 +285,10 @@
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      remainingTime.value = `${hours} : ${minutes} : ${seconds}`;
-    } else {
+      remainingTime.value = `${hours < 10 ? "0" + hours : hours} : ${
+      minutes < 10 ? "0" + minutes : minutes
+    } : ${seconds < 10 ? "0" + seconds : seconds}`;
+    } else if (diff <= 0) {
       remainingTime.value = "마감";
     }
   };

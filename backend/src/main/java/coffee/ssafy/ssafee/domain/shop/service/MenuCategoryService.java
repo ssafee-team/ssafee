@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
@@ -26,9 +26,9 @@ public class MenuCategoryService {
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuCategoryMapper menuCategoryMapper;
 
-    public List<MenuCategoryResponse> findMenuCategories(Long shopId) {
+    public List<MenuCategoryDetailResponse> findMenuCategories(Long shopId) {
         return menuCategoryRepository.findAllByShopId(shopId).stream()
-                .map(menuCategoryMapper::toDto)
+                .map(menuCategoryMapper::toDetailDto)
                 .toList();
     }
 

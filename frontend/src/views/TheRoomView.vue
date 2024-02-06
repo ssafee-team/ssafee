@@ -18,7 +18,6 @@
       <div class="center-content">
         <button class="btn-roomlist" @click="goMain">방목록</button>
         <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
-        
       </div>
       <!-- Body 화면 6:4 비율로 분할 -->
       <div class="body-container">
@@ -66,7 +65,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "24:00",
+  last_order_time: "",
   created_time: "",
   shop_id: "",
   creator: {
@@ -129,7 +128,7 @@ const getPartyInfo = () => {
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
       partyInfo.value.classroom = data.classroom;
-      // partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.last_order_time = data.last_order_time;
       partyInfo.value.created_time = data.created_time;
       partyInfo.value.shop_id = data.shop_id;
       // console.log(partyInfo);
@@ -170,10 +169,10 @@ const updateRemainingTime = () => {
     //마감시간 지난 경우
     //go("/after")화면으로
     remainingTime.value = "마감";
-    // window.location.href = 'http://localhost:8083/After/' + code.value
-    console.log(code.value);
+    console.log(window.location.href);
+    // console.log(code.value);
     setTimeout(() => {
-      window.location.href = `http://${window.location.host}/After/${code.value}`;
+      window.location.href = "/After/" + code.value;
     }, 100);
   }
 };
@@ -247,11 +246,10 @@ header {
   margin-left: 10px;
 }
 
-.center-title{
+.center-title {
   text-align: center;
   font-weight: bold;
   margin: 20px;
-  
 }
 
 .center-content {
@@ -261,7 +259,6 @@ header {
   /* flex-grow: 1; */
   font-weight: bold;
   /* justify-content: center; */
-  
 }
 
 button {
@@ -275,11 +272,10 @@ button {
   cursor: pointer;
 }
 
-.btn-roomlist, .btn-create{
+.btn-roomlist,
+.btn-create {
   color: #344a53;
 }
-
-
 
 .body-container {
   display: flex;
@@ -303,16 +299,16 @@ button {
     font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
   }
   .body-container {
-    flex-direction: column; 
+    flex-direction: column;
   }
   .right-panel {
-    margin-left: 0; 
-    margin-top: 20px; 
+    margin-left: 0;
+    margin-top: 20px;
   }
 
-  .btn-curorder, .btn-roomlist{
+  .btn-curorder,
+  .btn-roomlist {
     font-size: 16px;
   }
-
 }
 </style>

@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
-import coffee.ssafy.ssafee.domain.manager.entity.Manager;
+import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -55,8 +55,11 @@ public class Shop {
         this.name = shopRequest.name();
         this.address = shopRequest.address();
         this.phone = shopRequest.phone();
-        this.image = shopRequest.image();
         this.enabledAutoOrder = shopRequest.enabledAutoOrder();
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 
 }

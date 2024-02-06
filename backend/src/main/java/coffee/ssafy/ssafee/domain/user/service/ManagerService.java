@@ -1,13 +1,13 @@
-package coffee.ssafy.ssafee.domain.manager.service;
+package coffee.ssafy.ssafee.domain.user.service;
 
-import coffee.ssafy.ssafee.domain.manager.dto.request.ManagerLoginRequest;
-import coffee.ssafy.ssafee.domain.manager.dto.request.ManagerUpdateRequest;
-import coffee.ssafy.ssafee.domain.manager.dto.response.ManagerResponse;
-import coffee.ssafy.ssafee.domain.manager.entity.Manager;
-import coffee.ssafy.ssafee.domain.manager.exception.ManagerErrorCode;
-import coffee.ssafy.ssafee.domain.manager.exception.ManagerException;
-import coffee.ssafy.ssafee.domain.manager.mapper.ManagerMapper;
-import coffee.ssafy.ssafee.domain.manager.repository.ManagerRepository;
+import coffee.ssafy.ssafee.domain.user.dto.request.ManagerLoginRequest;
+import coffee.ssafy.ssafee.domain.user.dto.request.ManagerUpdateRequest;
+import coffee.ssafy.ssafee.domain.user.dto.response.ManagerResponse;
+import coffee.ssafy.ssafee.domain.user.entity.Manager;
+import coffee.ssafy.ssafee.domain.user.exception.ManagerErrorCode;
+import coffee.ssafy.ssafee.domain.user.exception.ManagerException;
+import coffee.ssafy.ssafee.domain.user.mapper.ManagerMapper;
+import coffee.ssafy.ssafee.domain.user.repository.ManagerRepository;
 import coffee.ssafy.ssafee.jwt.JwtTokenProvider;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import lombok.RequiredArgsConstructor;

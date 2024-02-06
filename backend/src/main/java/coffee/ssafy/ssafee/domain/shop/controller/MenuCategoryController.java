@@ -1,8 +1,8 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.manager.service.ManagerService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
-import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ public class MenuCategoryController {
 
     @GetMapping
     @Operation(summary = "메뉴 카테고리 목록 조회")
-    public ResponseEntity<List<MenuCategoryResponse>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
+    public ResponseEntity<List<MenuCategoryDetailResponse>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
         return ResponseEntity.ok().body(menuCategoryService.findMenuCategories(shopId));
     }
 

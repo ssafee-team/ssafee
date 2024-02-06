@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.mapper;
 
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
+import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.MenuCategory;
 import org.mapstruct.AfterMapping;
@@ -11,6 +12,8 @@ import org.mapstruct.MappingTarget;
 public interface MenuCategoryMapper {
 
     MenuCategoryResponse toDto(MenuCategory menuCategory);
+
+    MenuCategoryDetailResponse toDetailDto(MenuCategory menuCategory);
 
     MenuCategory toEntity(MenuCategoryRequest menuCategoryRequest);
 

@@ -1,11 +1,10 @@
-package coffee.ssafy.ssafee.domain.manager.dto.request;
+package coffee.ssafy.ssafee.domain.user.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ManagerLoginRequest(
-        String id,
-        String password
+public record ManagerResponse(
+        Long shopId
 ) {
 }
