@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PartyInfoForManagerResponse(
-        Long id,
+        Long partyId,
         String Name,
         Long shopId
 ) {

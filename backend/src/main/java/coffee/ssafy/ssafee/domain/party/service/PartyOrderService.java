@@ -24,11 +24,7 @@ public class PartyOrderService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 마감시간 전인가 후인가?
-        LocalDateTime lastOrderTime = party.getLastOrderTime();
-        LocalDateTime now = LocalDateTime.now();
-        if (lastOrderTime.isAfter(now)) {
-            party.updateLastOrderTime(now);
-        }
+        party.updateRealOrderedTime(LocalDateTime.now());
         partyRepository.save(party);
         return party.getId();
     }

@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailForManagerResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.PartyInfoForManagerResponse;
 import coffee.ssafy.ssafee.domain.shop.service.ShopOrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +28,13 @@ public class ShopOrderController {
         return ResponseEntity.ok().body(shopOrderService.getShopHistories(shopId));
     }
 
-//    @GetMapping("/{order_id}/confirm")
-//    @Operation(summary = "매니저 : 주문기록상세조회")
-//    public ResponseEntity<List<>>
+    @GetMapping("/{party_id}/confirm")
+    @Operation(summary = "매니저 : 주문기록상세조회")
+    public ResponseEntity<List<PartyDetailForManagerResponse>> getShopHistoryDetail(
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("party_id") Long partyId) {
+        return ResponseEntity.ok().body(shopOrderService.getShopHistoriesDetail(shopId, partyId));
+    }
 
 //    @PostMapping("/{order_id}/confirm")
 //    @Operation(summary = "매니저 : 주문확인")

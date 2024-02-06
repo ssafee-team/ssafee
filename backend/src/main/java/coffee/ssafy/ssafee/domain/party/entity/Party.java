@@ -91,8 +91,20 @@ public class Party extends BaseTimeEntity {
                 .build();
     }
 
-    public void updateLastOrderTime(LocalDateTime now) {
+    public void updateConfirmedTime(LocalDateTime now) {
         this.lastOrderTime = now;
+    }
+    public void updateRejectedTime(LocalDateTime now) {
+        this.rejectedTime = now;
+    }
+    public void updateRealOrderedTime(LocalDateTime now) {
+        this.realOrderedTime = now;
+    }
+    public void updateMadeTime(LocalDateTime now) {
+        this.madeTime = now;
+    }
+    public void updateDeliveredTime(LocalDateTime now) {
+        this.deliveredTime = now;
     }
 
 }
