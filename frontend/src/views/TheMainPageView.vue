@@ -21,7 +21,7 @@
     </div>
     <div class="link-container">
       <!-- <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }"> -->
-        <!-- <button>After</button> -->
+      <!-- <button>After</button> -->
       <!-- </router-link> -->
       <!-- <RouterLink to="After">
       <button > After</button>
@@ -70,8 +70,8 @@ getPartiesToday(queryParams, onSuccess, onFailure);
 
 //fetch로
 function getParties() {
-  fetch("http://localhost/api/v1/parties")
-  // fetch("https://ssafy.coffee/api/v1/parties")
+  // fetch("http://localhost/api/v1/parties")
+  fetch("https://ssafy.coffee/api/v1/parties")
     .then((response) => {
       // 응답 헤더에서 Location에 접근
       const location = response.headers.get("Location");
@@ -172,6 +172,12 @@ header {
 @media screen and (max-width: 768px) {
   header {
     font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+  button {
+    width: 600px;
+  }
+  .plusbutton {
+    width: 600px;
   }
 }
 .bannarname {
