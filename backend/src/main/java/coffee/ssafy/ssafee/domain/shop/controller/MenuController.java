@@ -1,11 +1,11 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

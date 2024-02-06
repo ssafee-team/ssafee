@@ -1,7 +1,7 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
-import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
+import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -37,9 +37,14 @@ public class Shop {
     @Column
     private String image;
 
-    @NotNull
     @Column(nullable = false)
-    private Boolean enabledAutoOrder;
+    private Boolean enabledOrder;
+
+    @Column(nullable = false)
+    private Integer minimumPrice;
+
+    @Column(nullable = false)
+    private Boolean closed;
 
     @Column(insertable = false, nullable = false)
     @ColumnDefault("false")
@@ -55,7 +60,9 @@ public class Shop {
         this.name = shopRequest.name();
         this.address = shopRequest.address();
         this.phone = shopRequest.phone();
-        this.enabledAutoOrder = shopRequest.enabledAutoOrder();
+        this.enabledOrder = shopRequest.enabledOrder();
+        this.minimumPrice = shopRequest.minimumPrice();
+        this.closed = shopRequest.closed();
     }
 
     public void updateImage(String image) {

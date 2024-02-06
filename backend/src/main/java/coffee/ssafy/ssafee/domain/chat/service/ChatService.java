@@ -29,6 +29,7 @@ public class ChatService {
     public void createChat(String accessCode, ChatRequest chatRequest) {
         Long partyId = partyService.findPartyIdByAccessCode(accessCode);
         Chat chat = Chat.builder()
+                .name(chatRequest.name())
                 .content(chatRequest.content())
                 .party(entityManager.getReference(Party.class, partyId))
                 .build();

@@ -12,6 +12,7 @@ import static coffee.ssafy.ssafee.common.DateUtils.LOCAL_DATETIME_PATTERN;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ChatResponse(
+        String name,
         String content,
         @JsonFormat(pattern = LOCAL_DATETIME_PATTERN)
         @Schema(implementation = String.class, example = LOCAL_DATETIME_EXAMPLE)
