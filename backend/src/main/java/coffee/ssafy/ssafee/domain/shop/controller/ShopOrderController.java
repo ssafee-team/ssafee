@@ -48,11 +48,45 @@ public class ShopOrderController {
             @AuthenticationPrincipal JwtPrincipalInfo principal,
             @PathVariable("shop_id") Long shopId,
             @PathVariable("party_id") Long partyId) {
-        // 사장님이 "주문수락" 버튼 클릭
-        // 파티 confirmTime update
         managerService.validateShop(principal, shopId);
         shopOrderService.orderConfirm(shopId, partyId);
         shopOrderSocketIoService.sendConfirmNotification(partyId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{party_id}/reject")
+    @Operation(summary = "매니저 : 주문거절", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> orderReject(
+            @AuthenticationPrincipal JwtPrincipalInfo principal,
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("party_id") Long partyId) {
+        managerService.validateShop(principal, shopId);
+        shopOrderService.orderReject(shopId, partyId);
+        shopOrderSocketIoService.sendRejectNotification(partyId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{party_id}/made")
+    @Operation(summary = "매니저 : 제조완료", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> orderMade(
+            @AuthenticationPrincipal JwtPrincipalInfo principal,
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("party_id") Long partyId) {
+        managerService.validateShop(principal, shopId);
+        shopOrderService.orderMade(shopId, partyId);
+        shopOrderSocketIoService.sendMadeNotification(partyId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{party_id}/start-delivery")
+    @Operation(summary = "매니저 : 배달시작", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> orderStartDelivery(
+            @AuthenticationPrincipal JwtPrincipalInfo principal,
+            @PathVariable("shop_id") Long shopId,
+            @PathVariable("party_id") Long partyId) {
+        managerService.validateShop(principal, shopId);
+        shopOrderService.orderStartDelivery(shopId, partyId);
+        shopOrderSocketIoService.sendStartDeliveryNotification(partyId);
         return ResponseEntity.noContent().build();
     }
 

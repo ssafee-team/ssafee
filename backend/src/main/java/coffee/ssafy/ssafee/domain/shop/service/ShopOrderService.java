@@ -68,6 +68,19 @@ public class ShopOrderService {
         // 1. 유효한 파티인가?
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        // 2. 유효한 shop_id 인가?
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
+
+        // 3. confirmed_time 을 현재 시간으로 업데이트
+        party.updateConfirmedTime(LocalDateTime.now());
+        partyRepository.save(party);
+    }
+
+    public void orderReject(Long shopId, Long partyId) {
+        // 1. 유효한 파티인가?
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 유효한 shop_id 인가?
         Shop shop = shopRepository.findById(shopId)
@@ -76,5 +89,11 @@ public class ShopOrderService {
         // 3. confirmed_time 을 현재 시간으로 업데이트
         party.updateConfirmedTime(LocalDateTime.now());
         partyRepository.save(party);
+    }
+
+    public void orderMade(Long shopId, Long partyId) {
+    }
+
+    public void orderStartDelivery(Long shopId, Long partyId) {
     }
 }

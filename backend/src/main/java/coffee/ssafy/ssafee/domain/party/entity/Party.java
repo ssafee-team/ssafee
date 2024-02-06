@@ -92,7 +92,7 @@ public class Party extends BaseTimeEntity {
     }
 
     public void updateConfirmedTime(LocalDateTime now) {
-        this.lastOrderTime = now;
+        this.confirmedTime = now;
     }
     public void updateRejectedTime(LocalDateTime now) {
         this.rejectedTime = now;
