@@ -532,8 +532,7 @@ function onSuccess(response) {
   const locationPath = response.headers.location;
   const parts = locationPath.split("/"); // '/'를 기준으로 문자열을 분할
   const roomcode = parts[parts.length - 1];
-  // window.location.href = "http://localhost:8083/room/" + roomcode;
-  window.location.href = "https://ssafy.coffee/room/" + roomcode;
+  window.location.href = "/room/" + roomcode;
 }
 
 // 실패 콜백 함수를 정의합니다.

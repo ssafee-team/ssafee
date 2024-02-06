@@ -169,12 +169,10 @@ const updateRemainingTime = () => {
     //마감시간 지난 경우
     //go("/after")화면으로
     remainingTime.value = "마감";
-    // window.location.href = 'http://localhost:8083/After/' + code.value
     console.log(window.location.href);
     // console.log(code.value);
     setTimeout(() => {
-      // window.location.href = 'http://localhost:8083/After/' + code.value;
-      window.location.href = "https://ssafy.coffee/After/" + code.value;
+      window.location.href = "/After/" + code.value;
     }, 100);
   }
 };
