@@ -1,9 +1,7 @@
 <template>
   <div class="modal-wrap" v-show="modalCheck">
     <div class="modal-container">
-      <p class="p" >
-        방이 생성되었습니다
-      </p>
+      <p class="p">방이 생성되었습니다</p>
 
       <div style="text-align: right">
         <RouterLink to="/">
@@ -15,7 +13,7 @@
 
   <div class="modal-wrap" v-if="EmptyModal">
     <div class="modal-container">
-      <p class="p" >
+      <p class="p">
         빈 항목을 채워주세요.
         <br />
       </p>
@@ -534,8 +532,8 @@ function onSuccess(response) {
   const locationPath = response.headers.location;
   const parts = locationPath.split("/"); // '/'를 기준으로 문자열을 분할
   const roomcode = parts[parts.length - 1];
-  window.location.href = 'http://localhost:8083/room/' + roomcode;
-  // window.location.href = "https://ssafy.coffee/room/" + roomcode;
+  // window.location.href = "http://localhost:8083/room/" + roomcode;
+  window.location.href = "https://ssafy.coffee/room/" + roomcode;
 }
 
 // 실패 콜백 함수를 정의합니다.
@@ -617,7 +615,6 @@ input {
   border-radius: 4px;
   box-sizing: border-box;
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
-  
 }
 
 /* header {
@@ -740,7 +737,7 @@ input {
   display: block; /* 기본적으로는 보임 */
 }
 
-.p{
+.p {
   font-size: 20px;
   text-align: center;
   color: white;
@@ -764,7 +761,7 @@ input {
   }
 
   /* 필요에 따라 추가적인 스타일 조정 */
-  
+
   .p {
     font-size: 16px;
   }

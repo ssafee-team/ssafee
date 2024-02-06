@@ -1,6 +1,7 @@
 <template lang="">
   <div class="chat-window">
     <div class="chat-body">
+      <div class="chat-overlay"></div>
       <div style="padding: 5px">
         <div class="cur-date">{{ currentDate }}</div>
       </div>
@@ -17,7 +18,8 @@
       <textarea
         v-model="newMessage"
         @keyup.enter="sendMessage"
-        placeholder="메세지를 입력하세요."
+        placeholder="준비중입니다."
+        disabled
       />
       <button @click="sendMessage">전송</button>
     </div>
@@ -32,15 +34,14 @@ export default {
       messages: [
         {
           username: "야생의 너구리",
-          text: "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요",
+          text: "안녕하세요안녕하세요안녕하세요",
         },
+        { username: "야생의 너구리", text: "안녕하세요" },
+        { username: "야생의 너구리", text: "아이스아메리카노 주세요" },
         { username: "야생의 너구리", text: "아아아아" },
-        { username: "야생의 너구리", text: "아아아아" },
-        { username: "야생의 너구리", text: "아아아아" },
-        { username: "야생의 너구리", text: "아아아아" },
-
-        { username: "야생의 너구리", text: "퇴근마렵네" },
-        { username: "야생의 너구리", text: "커피 뭐가" },
+        { username: "그냥 너구리", text: "나도 아아" },
+        { username: "야생의 너구리", text: "우와앙" },
+        { username: "그냥 너구리", text: "이야아아" },
         { username: "야생의 너구리", text: "퇴근하고싶다" },
       ],
       newMessage: "",
@@ -91,6 +92,18 @@ export default {
   border-radius: 10px;
   background-color: #97afba;
   border: 3px solid #97afba;
+  position: relative;
+}
+
+.chat-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 투명도 조절을 위해 rgba 사용 */
+  /* z-index: 1; 다른 요소 위에 표시하기 위해 z-index 설정 */
+  border-radius: 10px;
 }
 
 .cur-date {
@@ -183,14 +196,14 @@ textarea::placeholder {
 
 /* 화면 폭이 768px 미만일 때 */
 @media screen and (max-width: 768px) {
-  .cur-date, .chat-messages{
+  .cur-date,
+  .chat-messages {
     font-size: 16px;
   }
-  .message, .chat-input > textarea, .chat-input > button{
+  .message,
+  .chat-input > textarea,
+  .chat-input > button {
     font-size: 14px;
   }
-
-  
-
 }
 </style>
