@@ -21,7 +21,7 @@
     </div>
     <div class="link-container">
       <!-- <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }"> -->
-        <!-- <button>After</button> -->
+      <!-- <button>After</button> -->
       <!-- </router-link> -->
       <!-- <RouterLink to="After">
       <button > After</button>
@@ -122,8 +122,8 @@ const headerHeight = ref("72px"); // 예시로 100px를 기본값으로 설정
 
 button {
   font-size: 20px; /* 폰트 크기 설정 */
-  background-color: 52, 74, 83; /* 배경색 설정 */
-  color: black; /* 글자색 설정 */
+  background-color: #f5f5f5; /* 배경색 설정 */
+  color: #344a53; /* 글자색 설정 */
   padding: 10px 20px; /* 상하, 좌우 패딩 설정 */
   border: none; /* 테두리 제거 */
   border-radius: 5px; /* 테두리 둥글게 */
@@ -131,12 +131,15 @@ button {
   display: flex;
   margin-top: 20px;
   justify-content: center;
+  font-weight: bold;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  border: 1px solid #f5f5f5;
 }
 
 .plusbutton {
   font-size: 20px; /* 폰트 크기 설정 */
-  background-color: 52, 74, 83; /* 배경색 설정 */
-  color: black; /* 글자색 설정 */
+  background-color: #f5f5f5; /* 배경색 설정 */
+  color: #344a53; /* 글자색 설정 */
   padding: 10px 20px; /* 상하, 좌우 패딩 설정 */
   border: none; /* 테두리 제거 */
   border-radius: 5px; /* 테두리 둥글게 */
@@ -169,6 +172,12 @@ header {
 @media screen and (max-width: 768px) {
   header {
     font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+  button {
+    width: 600px;
+  }
+  .plusbutton {
+    width: 600px;
   }
 }
 .bannarname {

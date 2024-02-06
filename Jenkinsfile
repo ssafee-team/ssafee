@@ -42,10 +42,8 @@ pipeline {
             }
             steps {
                 sh 'docker compose -p ssafee build frontend-dev backend-dev'
-                    sh 'docker compose -p ssafee up -d frontend-dev'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
-                    writeFile file: '.env', text: readFile(dotenv)
-                    sh 'docker compose -p ssafee up -d backend-dev'
+                    sh 'docker compose -p ssafee --env-file $dotenv up -d frontend-dev backend-dev'
                 }
             }
         }
@@ -56,10 +54,8 @@ pipeline {
             }
             steps {
                 sh 'docker compose -p ssafee build frontend backend'
-                sh 'docker compose -p ssafee up -d frontend'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
-                    writeFile file: '.env', text: readFile(dotenv)
-                    sh 'docker compose -p ssafee up -d backend'
+                    sh 'docker compose -p ssafee --env-file $dotenv up -d frontend backend'
                 }
             }
         }

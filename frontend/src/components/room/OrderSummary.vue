@@ -19,12 +19,7 @@
         <button class="btn-delete" @click="deleteOrder(index)">취소</button>
       </li>
     </ul>
-    <OrderModal
-      v-if="isOrderModalOpen"
-      @close="closeOrderModal"
-      :orders="limitedOrderList"
-      :code="code"
-    />
+    <OrderModal v-if="isOrderModalOpen" @close="closeOrderModal" :orders="orderList" :code="code" />
   </div>
 </template>
 <script>
@@ -101,7 +96,7 @@ export default {
   border-radius: 10px 10px 0px 0px;
   height: 180px;
   max-height: 300px;
-  width: 65%;
+  width: 67%;
   margin: 0px 10px 0px 10px;
   /* position: relative; */
   /* position: absolute; */

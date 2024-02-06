@@ -174,8 +174,7 @@ const updateRemainingTime = () => {
     // console.log(code.value);
     setTimeout(() => {
       // window.location.href = 'http://localhost:8083/After/' + code.value;
-      window.location.href = 'https://ssafy.coffee/After/' + code.value;
-      
+      window.location.href = "https://ssafy.coffee/After/" + code.value;
     }, 100);
   }
 };
