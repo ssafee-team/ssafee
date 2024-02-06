@@ -43,7 +43,7 @@ public class ShopService {
     public void updateShopImage(Long id, MultipartFile file) {
         shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
-                .updateImage(s3Service.putImage("shops/" + id + "/", file));
+                .updateImage(s3Service.putImage(id + "/", file));
     }
 
 }
