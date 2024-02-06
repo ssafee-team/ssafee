@@ -16,53 +16,16 @@ export default defineConfig({
     https: false,
     port: 8083,
     open: true,
+
+    // 개발 환경에서 프록시 설정
     proxy: {
-      "/api/v1": {
-        // target: "http://localhost:80/", //http://localhost:80/api/v1/shops
-        target: "https://ssafy.coffee/",
+      "/api": {
+        target: "http://localhost",
+        changeOrigin: true,
+        secure: false,
       },
     },
     historyApiFallback: true,
     hot: true,
   },
-
-  // devServer에 프록시 설정 추가
-  // devServer: {
-  //   proxy: {
-  //     "/api": {
-  //       target: "https://ssafy.coffee",
-  //       changeOrigin: true,
-  //       pathRewrite: { "^/api": "" },
-  //     },
-  //   },
-  // },
-
-  // server: {
-  //   proxy: {
-  //     "/server": {
-  //       // target: "https://3ea3-220-93-153-206.ngrok-free.app",
-  //       target: "http://127.0.0.1:8083",
-  //       changeOrigin: "true",
-  //       rewrite: (path) => path.replace(/^\/server/, ""),
-  //     },
-  //   },
-  // },
-
-  // server: {
-  //   https: false,
-  //   port: 80,
-  //   open: true,
-  //   proxy: {
-  //     "/api/v1": {
-  //       target: "http://localhost:80/",
-  //     },
-  //   },
-  // },
-
-  // server: {
-  // port: 80,
-  // proxy: {
-  //   "/api": "https://localhost:80",
-  // },
-  // },
 });

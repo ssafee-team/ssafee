@@ -70,8 +70,7 @@ getPartiesToday(queryParams, onSuccess, onFailure);
 
 //fetch로
 function getParties() {
-  // fetch("http://localhost/api/v1/parties")
-  fetch("https://ssafy.coffee/api/v1/parties")
+  fetch("/api/v1/parties")
     .then((response) => {
       // 응답 헤더에서 Location에 접근
       const location = response.headers.get("Location");
