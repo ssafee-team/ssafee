@@ -26,7 +26,6 @@
             <!-- <RouterLink to="After">
       <button > After</button>
     </RouterLink> -->
-            <ChatView />
         </div>
     </div>
 </template>
@@ -35,8 +34,6 @@
 import { onMounted, ref } from "vue";
 
 import { getPartiesToday } from "@/api/party";
-
-import ChatView from "@/components/room/chat/ChatView.vue";
 
 // createapp, mount함수는 진입점(index.js, main.js)에서 사용함
 

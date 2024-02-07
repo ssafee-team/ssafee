@@ -2,7 +2,7 @@
     <div class="chat-window">
         <div class="chat-body">
             <div style="padding: 5px">
-                <div class="cur-date">currentDate</div>
+                <div class="cur-date">{{ getToday() }}</div>
             </div>
             <div class="chat-messages">
                 <div v-for="(message, index) in recvList" :key="index" class="message-box">
@@ -13,13 +13,14 @@
                 </div>
             </div>
         </div>
-        <div>
+        <!-- <div>
             유저 이름 :
             <input v-model="userName" type="text" />
-        </div>
+        </div> -->
         <div class="chat-input">
-            <input v-model="message" type="text" @keyup="sendMessage" placeholder="메세지를 입력하세요." />
-            <button>전송(현재 작동 안됨)</button>
+            <textarea v-model="message" @keyup="sendMessage" placeholder="메세지를 입력하세요."></textarea>
+            <!-- <input v-model="message" type="text" @keyup="sendMessage" placeholder="메세지를 입력하세요." /> -->
+            <button v-on:click="sendMessageClick">전송</button>
         </div>
     </div>
 </template>
@@ -32,7 +33,7 @@ import Stomp from "webstomp-client";
 export default {
     name: "ChatView",
     setup() {
-        const userName = ref("");
+        const userName = ref("유저");
         const message = ref("");
         const recvList = ref([]);
         let stompClient = null;
@@ -44,11 +45,19 @@ export default {
             }
         };
 
+        const sendMessageClick = () => {
+            if (userName.value !== "" && message.value !== "") {
+                send();
+                message.value = "";
+            }
+        };
+
         const send = () => {
-            console.log("Send message:", message.value);
+            // console.log("Send message:", message.value);
             if (stompClient && stompClient.connected) {
                 const msg = {
                     userName: userName.value,
+                    // userName: Math.random(),
                     content: message.value,
                 };
                 stompClient.send("/receive", JSON.stringify(msg), {});
@@ -56,17 +65,17 @@ export default {
         };
 
         const connect = () => {
-            const serverURL = "ws://localhost:8080/ws";
+            const serverURL = "ws://localhost:80/ws";
             // const serverURL = "/ws";
             const socket = new WebSocket(serverURL);
             stompClient = Stomp.over(socket);
-            console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+            // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
             stompClient.connect(
                 {},
                 (frame) => {
-                    console.log("소켓 연결 성공", frame);
+                    // console.log("소켓 연결 성공", frame);
                     stompClient.subscribe("/send", (res) => {
-                        console.log("구독으로 받은 메시지 입니다.", res.body);
+                        // console.log("구독으로 받은 메시지 입니다.", res.body);
                         recvList.value.push(JSON.parse(res.body));
                     });
                 },
@@ -74,6 +83,18 @@ export default {
                     console.log("소켓 연결 실패", error);
                 }
             );
+        };
+
+        const getToday = () => {
+            let arrDayStr = ["일", "월", "화", "수", "목", "금", "토"];
+
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth;
+            let days = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            let day = arrDayStr[date.getDay()];
+
+            return year + "년 " + month + "월 " + days + "일 (" + day + ")";
         };
 
         onMounted(() => {
@@ -91,6 +112,8 @@ export default {
             message,
             recvList,
             sendMessage,
+            getToday,
+            sendMessageClick,
             // send 함수를 템플릿에서 사용하지 않으므로 반환하지 않아도 됩니다.
         };
     },

@@ -24,7 +24,7 @@ spring:
       enabled: false
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:80}
 
 jwt:
   access-secret-key-base64: ${JWT_ACCESS_SECRET_KEY_BASE64:iAbBnFDrPJgglJr+yO0dC1qITxoCJcm1HB8ZiFWhtN19lWOdCaiPmvqXRTLmqe4cIdaT5X62swd/8lfp8rdw0Q==}

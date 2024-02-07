@@ -30,7 +30,7 @@
                 </div>
                 <div class="right-panel">
                     <!-- <div>채팅창</div> -->
-                    <!-- <Chat /> -->
+                    <ChatView />
                     <!-- 오른쪽 컨텐츠 (6:4 중 4 부분) -->
                     <!-- 추가적인 내용이 들어갈 수 있습니다. -->
                 </div>
@@ -47,6 +47,7 @@ import MenuList from "@/components/room/MenuList.vue";
 import OrderListModal from "@/components/room/modal/OrderListModal.vue";
 import { getParty, getOrderList } from "@/api/party";
 import { useRoute, useRouter } from "vue-router";
+import ChatView from "@/components/room/chat/ChatView.vue";
 
 // const roomCode = ref("");
 
