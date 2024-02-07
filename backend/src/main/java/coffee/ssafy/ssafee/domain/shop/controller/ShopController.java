@@ -44,7 +44,7 @@ public class ShopController {
     public ResponseEntity<Void> updateShop(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                            @PathVariable Long id,
                                            @RequestBody ShopRequest shopRequest) {
-        managerService.validate(principal, id);
+        managerService.validateShop(principal, id);
         shopService.updateShop(id, shopRequest);
         return ResponseEntity.noContent().build();
     }
@@ -54,7 +54,7 @@ public class ShopController {
     public ResponseEntity<String> updateShopImage(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                   @PathVariable Long id,
                                                   @RequestParam("image") MultipartFile file) {
-        managerService.validate(principal, id);
+        managerService.validateShop(principal, id);
         if (file.isEmpty()) {
             throw new ShopException(ShopErrorCode.File_IS_EMPTY);
         }
