@@ -70,11 +70,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://ssafy.coffee"));
+        configuration.setAllowedOrigins(List.of("https://ssafy.coffee", "https://dev.ssafy.coffee"));
         configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
+        configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
