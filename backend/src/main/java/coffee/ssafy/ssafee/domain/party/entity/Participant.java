@@ -45,4 +45,8 @@ public class Participant {
         this.paid = participantUpdateRequest.paid();
     }
 
+    public void updateIsCarrier() {
+        this.isCarrier = true;
+    }
+
 }

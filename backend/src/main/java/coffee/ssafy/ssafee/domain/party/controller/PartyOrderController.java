@@ -1,9 +1,6 @@
 package coffee.ssafy.ssafee.domain.party.controller;
 
-import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.IsCarrierResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
-import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.service.PartyOrderService;
 import coffee.ssafy.ssafee.domain.party.service.PartySocketIoService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
@@ -13,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("/api/v1/parties/{access_code}")
@@ -27,15 +21,14 @@ public class PartyOrderController {
 
     @PostMapping("/order")
     @Operation(summary = "총무 : 주문 요청 생성", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<List<String>> createOrder(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                                    @PathVariable("access_code") String accessCode) {
-        // 총무가 "주문요청" 버튼 클릭
-        // 사장님 화면에 주문요청 생성 (알림 발송) (수락/거절)
-        // 클릭 시, participants 목록 중에 해당 리스트 length 길이 // 6 만큼 랜덤하게 뽑기
+    public ResponseEntity<Void> createOrder(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                            @PathVariable("access_code") String accessCode) {
+
         Long userId = Long.valueOf(principal.id());
         Long partyId = partyOrderService.createOrder(accessCode);
+        isCarrier(accessCode);
         partySocketIoService.sendOrderNotification(partyId);
-        return ResponseEntity.ok().body(partyOrderService.isCarrier(accessCode));
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/order")
@@ -45,24 +38,37 @@ public class PartyOrderController {
     }
 
     @PostMapping("/notice")
-    @Operation(summary = "총무 : 알림보내기")
-    public ResponseEntity<Void> orderDelivered(@PathVariable("access_code") String accessCode) {
+    @Operation(summary = "총무 : 알림보내기", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> orderDelivered(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                               @PathVariable("access_code") String accessCode) {
+        Long userId = Long.valueOf(principal.id());
         partyOrderService.orderDelivered(accessCode);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/give-me-money")
     @Operation(summary = "총무 : 송금요청 알림보내기")
-    public ResponseEntity<Void> giveMeMoney(@PathVariable("access_code") String accessCode) {
+    public ResponseEntity<Void> giveMeMoney(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                            @PathVariable("access_code") String accessCode) {
+        Long userId = Long.valueOf(principal.id());
         partyOrderService.giveMeMoney(accessCode);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/ad")
-    @Operation(summary = "총무 : 커피파티 홍보알림 보내기")
-    public ResponseEntity<Void> sendAdvertise(@PathVariable("access_code") String accessCode) {
+    @Operation(summary = "총무 : 커피파티 홍보알림 보내기", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> sendAdvertise(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                              @PathVariable("access_code") String accessCode) {
+        Long userId = Long.valueOf(principal.id());
         partyOrderService.sendAdvertise(accessCode);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/is-carrier")
+    @Operation(summary = "배달인원선정")
+    public ResponseEntity<Void> isCarrier(@PathVariable("access_code") String accessCode) {
+        partyOrderService.isCarrier(accessCode);
+        return ResponseEntity.noContent().build();
     }
 
 }

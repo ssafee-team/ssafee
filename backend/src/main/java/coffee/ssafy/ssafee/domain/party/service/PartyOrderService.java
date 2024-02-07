@@ -1,8 +1,5 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.IsCarrierResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
@@ -10,22 +7,18 @@ import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
-import coffee.ssafy.ssafee.domain.shop.entity.Shop;
-import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
-import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
-import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Transactional
@@ -35,6 +28,7 @@ public class PartyOrderService {
     private final PartyRepository partyRepository;
     private final PartyMapper partyMapper;
     private final MatterMostService matterMostService;
+    private final ParticipantRepository participantRepository;
 
     public Long createOrder(String accessCode) {
         // 검증
@@ -49,7 +43,7 @@ public class PartyOrderService {
         // 3. 최소주문금액을 넘었는가?
         Integer minimumPrice = party.getShop().getMinimumPrice();
         int total = 0;
-        for(ChoiceMenu menu : party.getChoiceMenus()) {
+        for (ChoiceMenu menu : party.getChoiceMenus()) {
             total += menu.getMenu().getPrice();
         }
         if (total < minimumPrice) {
@@ -134,22 +128,26 @@ public class PartyOrderService {
 
     }
 
-    public List<String> isCarrier(String accessCode) {
-        List<IsCarrierResponse> carrierCandidateList = partyRepository.findByAccessCode(accessCode).stream()
-                .map(partyMapper::toIsCarrierDto)
-                .collect(Collectors.toList());
-        int count = carrierCandidateList.size() / 6;
+    public void isCarrier(String accessCode) {
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+
+        int carrierCount = party.getParticipants().size() / 6;
+        Set<Integer> numbers = new HashSet<>();
+
         Random random = new Random();
+        while (numbers.size() != carrierCount) {
+            int value = random.nextInt(party.getParticipants().size());
+            numbers.add(value);
+        }
 
-        // 랜덤 인덱스를 생성하고 바로 해당 인덱스의 요소로 변환
-        List<String> realCarrierList = IntStream.generate(() -> random.nextInt(carrierCandidateList.size()))
-                .distinct()
-                .limit(count)
-                .mapToObj(carrierCandidateList::get)
-                .map(IsCarrierResponse::name) // 실제 필드 이름으로 변경 필요
-                .collect(Collectors.toList());
-
-        return realCarrierList;
+        Integer[] numbersArr = numbers.toArray(new Integer[carrierCount]);
+        for (int i = 0; i < carrierCount; i++) {
+            Long PID = party.getParticipants().get(numbersArr[i]).getId();
+            participantRepository.findByPartyIdAndId(party.getId(), PID)
+                    .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTICIPANT))
+                    .updateIsCarrier();
+        }
     }
 
 }

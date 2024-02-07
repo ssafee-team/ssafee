@@ -19,4 +19,5 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     List<Party> findAllByCreatedTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
 
     List<Party> findAllByShopId(Long shopId);
+
 }
