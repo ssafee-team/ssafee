@@ -6,6 +6,9 @@ import coffee.ssafy.ssafee.domain.chat.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +33,12 @@ public class ChatController {
     @Operation(summary = "채팅 기록 조회")
     public ResponseEntity<List<ChatResponse>> getChats(@PathVariable("access_code") String accessCode) {
         return ResponseEntity.ok().body(chatService.getChats(accessCode));
+    }
+
+    @MessageMapping("/receive")
+    @SendTo("/send")
+    public void chatHandler(String accessCode, ChatRequest chatRequest) {
+        chatService.createChat(accessCode, chatRequest);
     }
 
 }

@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.chat.controller;
-
-public class ChatSocketController {
-}
+//package coffee.ssafy.ssafee.domain.chat.controller;
+//
+//public class ChatSocketController {
+//}
