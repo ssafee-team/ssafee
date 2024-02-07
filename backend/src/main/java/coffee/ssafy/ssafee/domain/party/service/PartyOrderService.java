@@ -1,6 +1,8 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
+import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,6 +26,7 @@ public class PartyOrderService {
 
     private final PartyRepository partyRepository;
     private final ShopRepository shopRepository;
+    private final MatterMostService matterMostService;
 
     public Long createOrder(String accessCode) {
         // 검증
@@ -46,22 +50,53 @@ public class PartyOrderService {
         return party.getId();
     }
 
-    public Long orderDelivered(String accessCode) {
+    public void orderDelivered(String accessCode) {
         // 검증
         // 1. 유효한 엑세스 코드인가?
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         // TODO: 배달시작 필드가 null인지 검사
         party.updateDeliveredTime(LocalDateTime.now());
-        return party.getId();
+        if (party.getCreator().getWebhookUrl() != null) {
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), "@here @고영훈 커피 배달 완료");
+        }
     }
 
-    //
-    public void sendMattermostNotification(Long partyId) {
-        Party party = partyRepository.findById(partyId)
+    public void giveMeMoney(String accessCode) {
+        Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
-        String webHookUrl = party.getCreator().getWebhookUrl();
 
+        if (party.getCreator().getWebhookUrl() != null) {
+            List<Participant> participants = party.getParticipants();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("#### \uD83D\uDD14알림\uD83D\uDD14 \n");
+            sb.append("@here 송금 바랍니다 \n");
+            sb.append(party.getCreator().getBank() + " " + party.getCreator().getAccount() + "\n\n");
+            sb.append("| 이름 | 주문메뉴 | 금액 |\n");
+            sb.append("|:-----------:|:-----------:|:-----------:|\n");
+
+            for (Participant p : participants) {
+                System.out.println(p.getName());
+                Integer price = p.getChoiceMenus().stream()
+                        .map(choiceMenu -> choiceMenu.getMenu().getPrice()
+                                + choiceMenu.getChoiceMenuOptionCategories().stream()
+                                .map(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream()
+                                        .map(choiceOption -> choiceOption.getOption().getPrice())
+                                        .reduce(0, Integer::sum))
+                                .reduce(0, Integer::sum))
+                        .reduce(0, Integer::sum);
+                if (!p.getPaid()) {
+                    sb.append("| ");
+                    sb.append(p.getName());
+                    sb.append(" | ");
+                    sb.append(p.getChoiceMenus().stream().map(choiceMenu -> choiceMenu.getMenu().getName()).collect(Collectors.joining(", ")));
+                    sb.append(" | ");
+                    sb.append(price);
+                    sb.append(" |\n");
+                }
+            }
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+        }
     }
-
 }

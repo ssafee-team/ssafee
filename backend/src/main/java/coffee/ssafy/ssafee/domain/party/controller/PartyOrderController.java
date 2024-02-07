@@ -31,8 +31,14 @@ public class PartyOrderController {
     @PostMapping("/{access_code}/notice")
     @Operation(summary = "총무 : 알림보내기")
     public ResponseEntity<Void> orderDelivered(@PathVariable("access_code") String accessCode) {
-        Long partyId = partyOrderService.orderDelivered(accessCode);
-        partyOrderService.sendMattermostNotification(partyId);
+        partyOrderService.orderDelivered(accessCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{access_code}/give-me-money")
+    @Operation(summary = "총무 : 송금요청 알림보내기")
+    public ResponseEntity<Void> giveMeMoney(@PathVariable("access_code") String accessCode) {
+        partyOrderService.giveMeMoney(accessCode);
         return ResponseEntity.ok().build();
     }
 
