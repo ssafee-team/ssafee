@@ -1,6 +1,7 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
 import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.IsCarrierResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
@@ -19,8 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Transactional
@@ -127,6 +132,24 @@ public class PartyOrderService {
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
 
+    }
+
+    public List<String> isCarrier(String accessCode) {
+        List<IsCarrierResponse> carrierCandidateList = partyRepository.findByAccessCode(accessCode).stream()
+                .map(partyMapper::toIsCarrierDto)
+                .collect(Collectors.toList());
+        int count = carrierCandidateList.size() / 6;
+        Random random = new Random();
+
+        // 랜덤 인덱스를 생성하고 바로 해당 인덱스의 요소로 변환
+        List<String> realCarrierList = IntStream.generate(() -> random.nextInt(carrierCandidateList.size()))
+                .distinct()
+                .limit(count)
+                .mapToObj(carrierCandidateList::get)
+                .map(IsCarrierResponse::name) // 실제 필드 이름으로 변경 필요
+                .collect(Collectors.toList());
+
+        return realCarrierList;
     }
 
 }
