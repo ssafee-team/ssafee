@@ -52,7 +52,7 @@ public class MenuService {
     public void updateMenuImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
         menuRepository.findByShopIdAndId(shopId, menuId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
-                .updateImage(s3Service.putImage("menus/" + menuId, file));
+                .updateImage(s3Service.putImage(shopId + "/", file));
     }
 
     public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {

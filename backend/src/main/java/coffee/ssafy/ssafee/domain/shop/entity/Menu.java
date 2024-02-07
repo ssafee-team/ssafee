@@ -29,6 +29,9 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private String description;
+
     @NotNull
     @Column(nullable = false)
     private Integer price;
@@ -36,8 +39,9 @@ public class Menu {
     @Column
     private String image;
 
-    @Column
-    private String description;
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
+    private Boolean soldout;
 
     @Column(insertable = false, nullable = false)
     @ColumnDefault("false")
@@ -48,7 +52,6 @@ public class Menu {
     @Setter
     private MenuCategory menuCategory;
 
-    // Shop 엔티티에 대한 참조 추가
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false)
     @Setter
@@ -66,6 +69,7 @@ public class Menu {
         this.name = menuRequest.name();
         this.description = menuRequest.description();
         this.price = menuRequest.price();
+        this.soldout = menuRequest.soldout();
     }
 
     public void updateImage(String image) {

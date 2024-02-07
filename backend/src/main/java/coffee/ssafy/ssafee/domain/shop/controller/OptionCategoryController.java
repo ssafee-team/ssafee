@@ -1,9 +1,9 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionCategoryService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,7 +35,7 @@ public class OptionCategoryController {
     public ResponseEntity<Void> createOptionCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                      @PathVariable("shop_id") Long shopId,
                                                      @RequestBody OptionCategoryRequest optionCategoryRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         Long optionCategoryId = optionCategoryService.createOptionCategory(shopId, optionCategoryRequest);
         URI location = URI.create("/api/v1/shops/" + shopId + "/option-categories/" + optionCategoryId);
         return ResponseEntity.created(location).build();
@@ -47,7 +47,7 @@ public class OptionCategoryController {
                                                      @PathVariable("shop_id") Long shopId,
                                                      @PathVariable("oc_id") Long optionCategoryId,
                                                      @RequestBody OptionCategoryRequest optionCategoryRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         optionCategoryService.updateOptionCategory(shopId, optionCategoryId, optionCategoryRequest);
         return ResponseEntity.noContent().build();
     }
@@ -57,7 +57,7 @@ public class OptionCategoryController {
     public ResponseEntity<Void> deleteOptionCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                      @PathVariable("shop_id") Long shopId,
                                                      @PathVariable("oc_id") Long optionCategoryId) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         optionCategoryService.deleteOptionCategory(shopId, optionCategoryId);
         return ResponseEntity.ok().build();
     }

@@ -57,9 +57,15 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
+    // Dependency use for WebSocket
+    implementation 'com.corundumstudio.socketio:netty-socketio:2.0.8'
+
     // https://developers.cloudflare.com/r2/api/s3/
     implementation platform('software.amazon.awssdk:bom:2.23.+')
     implementation 'software.amazon.awssdk:s3'
+
+    // MatterMost
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

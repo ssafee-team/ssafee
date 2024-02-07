@@ -46,6 +46,21 @@ public class Party extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime lastOrderTime;
 
+    @Column
+    private LocalDateTime confirmedTime;
+
+    @Column
+    private LocalDateTime rejectedTime;
+
+    @Column
+    private LocalDateTime realOrderedTime;
+
+    @Column
+    private LocalDateTime madeTime;
+
+    @Column
+    private LocalDateTime deliveredTime;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
@@ -61,7 +76,7 @@ public class Party extends BaseTimeEntity {
     private List<Participant> participants;
 
     @OneToMany(mappedBy = "party", fetch = FetchType.LAZY)
-    private List<OrderMenu> orderMenus;
+    private List<ChoiceMenu> choiceMenus;
 
     public void prepareCreation(String accessCode, Shop shop, User user, CreatorRequest creatorRequest) {
         this.accessCode = accessCode;
@@ -74,6 +89,22 @@ public class Party extends BaseTimeEntity {
                 .account(creatorRequest.account())
                 .party(this)
                 .build();
+    }
+
+    public void updateConfirmedTime(LocalDateTime now) {
+        this.confirmedTime = now;
+    }
+    public void updateRejectedTime(LocalDateTime now) {
+        this.rejectedTime = now;
+    }
+    public void updateRealOrderedTime(LocalDateTime now) {
+        this.realOrderedTime = now;
+    }
+    public void updateMadeTime(LocalDateTime now) {
+        this.madeTime = now;
+    }
+    public void updateDeliveredTime(LocalDateTime now) {
+        this.deliveredTime = now;
     }
 
 }

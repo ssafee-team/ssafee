@@ -1,12 +1,12 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.service.ShopService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,7 +44,7 @@ public class ShopController {
     public ResponseEntity<Void> updateShop(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                            @PathVariable Long id,
                                            @RequestBody ShopRequest shopRequest) {
-        managerService.validate(principal, id);
+        managerService.validateShop(principal, id);
         shopService.updateShop(id, shopRequest);
         return ResponseEntity.noContent().build();
     }
@@ -54,7 +54,7 @@ public class ShopController {
     public ResponseEntity<String> updateShopImage(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                   @PathVariable Long id,
                                                   @RequestParam("image") MultipartFile file) {
-        managerService.validate(principal, id);
+        managerService.validateShop(principal, id);
         if (file.isEmpty()) {
             throw new ShopException(ShopErrorCode.File_IS_EMPTY);
         }

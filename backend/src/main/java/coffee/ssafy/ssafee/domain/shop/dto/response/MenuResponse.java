@@ -8,6 +8,7 @@ public record MenuResponse(
         Long id,
         String name,
         Integer price,
-        String image
+        String image,
+        Boolean soldout
 ) {
 }

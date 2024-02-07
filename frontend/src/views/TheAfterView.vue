@@ -156,12 +156,12 @@
     (res) => {
       res.data.forEach(elem => { 
         nameSet.add(elem.participant_name);
-        menuSet.add(elem.chosen_menu.name);
+        menuSet.add(elem.menu.name);
 
         let optionPrice = 0;
         let options = [];
-        elem.chosen_option_categories.forEach(option_categories => {
-          option_categories.chosen_options.forEach(option => {
+        elem.option_categories.forEach(option_categories => {
+          option_categories.options.forEach(option => {
             options.push({id:option.id, name:option.name, price:option.price})
             optionPrice += option.price
           })      
@@ -178,9 +178,9 @@
         orders.value.push({
           classNo: 2,
           studentName: elem.participant_name,
-          menuName: elem.chosen_menu.name,
-          menuPrice: elem.chosen_menu.price + optionPrice,
-          menuPriceNoOptions: elem.chosen_menu.price,
+          menuName: elem.menu.name,
+          menuPrice: elem.menu.price + optionPrice,
+          menuPriceNoOptions: elem.menu.price,
           menuOptions: options,
         })
 

@@ -24,8 +24,9 @@ public class ShopService {
     private final S3Service s3Service;
 
     public ShopDetailResponse findShopById(Long id) {
-        return shopMapper.toDetailDto(shopRepository.findById(id)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP)));
+        return shopRepository.findById(id)
+                .map(shopMapper::toDetailDto)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
     }
 
     public List<ShopResponse> findShops() {
@@ -43,7 +44,7 @@ public class ShopService {
     public void updateShopImage(Long id, MultipartFile file) {
         shopRepository.findById(id)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
-                .updateImage(s3Service.putImage("shops/" + id + "/", file));
+                .updateImage(s3Service.putImage(id + "/", file));
     }
 
 }

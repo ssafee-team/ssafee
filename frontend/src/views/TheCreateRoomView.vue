@@ -223,6 +223,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { getShops } from "@/api/shop";
 import { createParty } from "@/api/party";
+import { getLocalStorageToken } from "@/api/oauth2";
 
 const headerHeight = ref("72px"); // 예시로 100px를 기본값으로 설정
 
@@ -275,7 +276,8 @@ const submitForm = () => {
   } else {
     // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
     modalOpen();
-    createParty(partyData.value, onSuccess, onFailure);
+    const token = getLocalStorageToken();
+    createParty(token, partyData.value, onSuccess, onFailure);
   }
 
   let isValid = true;
@@ -532,8 +534,7 @@ function onSuccess(response) {
   const locationPath = response.headers.location;
   const parts = locationPath.split("/"); // '/'를 기준으로 문자열을 분할
   const roomcode = parts[parts.length - 1];
-  // window.location.href = "http://localhost:8083/room/" + roomcode;
-  window.location.href = "https://ssafy.coffee/room/" + roomcode;
+  window.location.href = "/room/" + roomcode;
 }
 
 // 실패 콜백 함수를 정의합니다.

@@ -16,7 +16,10 @@ DROP TABLE IF EXISTS `auto_orders`,
 `participants`,
 `parties`,
 `shops`,
-`users`;
+`users`,
+`choice_menus`,
+`choice_menu_option_categories`,
+`choice_menu_options`;
 
 CREATE TABLE `shops` (
     `shop_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -24,7 +27,9 @@ CREATE TABLE `shops` (
     `address` varchar(255) NOT NULL,
     `phone` varchar(32) NOT NULL,
     `image` varchar(512) NULL,
-    `enabled_auto_order` BOOL NOT NULL DEFAULT FALSE,
+    `enabled_order` BOOL NOT NULL DEFAULT FALSE,
+    `minimum_price` BIGINT NOT NULL,    
+    `closed` BOOL NOT NULL DEFAULT FALSE,
     `deleted` BOOL NOT NULL DEFAULT FALSE
 );
 
@@ -42,9 +47,13 @@ CREATE TABLE `menus` (
     `description` VARCHAR(255) NOT NULL,
     `price` INT NOT NULL,
     `image` VARCHAR(512) NULL,
+    `soldout` BOOL NOT NULL DEFAULT FALSE,
     `deleted` BOOL NOT NULL DEFAULT FALSE,
     `menu_category_id` BIGINT NOT NULL,
-    FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`)
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`),
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+    
 );
 
 CREATE TABLE `option_categories` (
@@ -52,7 +61,9 @@ CREATE TABLE `option_categories` (
     `name` VARCHAR(32) NOT NULL,
     `required` BOOL NOT NULL,
     `max_count` INT NULL,
-    `deleted` BOOL NOT NULL DEFAULT FALSE
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
+    `shop_id` BIGINT NOT NULL,
+	FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
 
 CREATE TABLE `menus_option_categories` (
@@ -69,7 +80,9 @@ CREATE TABLE `options` (
     `price` INT NOT NULL,
     `deleted` BOOL NOT NULL DEFAULT FALSE,
     `option_category_id` BIGINT NOT NULL,
-    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`),
+	FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
 
 CREATE TABLE `users` (
@@ -84,22 +97,17 @@ CREATE TABLE `parties` (
     `generation` INT NOT NULL,
     `classroom` INT NOT NULL,
     `last_order_time` DATETIME NOT NULL,
+    `confirmed_time` DATETIME NULL,
+    `rejected_time` DATETIME NULL,
+    `real_ordered_time` DATETIME NULL,
+    `made_time` DATETIME NULL,
+    `delivered_time` DATETIME NULL,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL, 
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-);
-
-CREATE TABLE `orders` (
-	`order_id` BIGINT NOT NULL PRIMARY KEY auto_increment,
-    `confirmed` bool not null default false,
-    `rejected` bool not null default false,
-    `maked`bool not null default false,
-    `delivered` bool not null default false,
-    `party_id` bigint not null,
-    foreign key (`party_id`) references `parties`(`party_id`)
 );
 
 CREATE TABLE `creators` (
@@ -115,6 +123,7 @@ CREATE TABLE `creators` (
 
 CREATE TABLE `chats` (
     `chat_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(8) NOT NULL,
     `content` VARCHAR(255) NOT NULL,
     `created_time` DATETIME NOT NULL,
     `party_id` BIGINT NOT NULL,
@@ -130,8 +139,8 @@ CREATE TABLE `participants` (
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
 
-CREATE TABLE `order_menus` (
-    `order_menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `choice_menus` (
+    `choice_menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `menu_id` BIGINT NOT NULL,
@@ -142,19 +151,19 @@ CREATE TABLE `order_menus` (
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
 
-CREATE TABLE `order_menu_option_categories` (
-    `order_menu_option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `order_menu_id` BIGINT NOT NULL,
+CREATE TABLE `choice_menu_option_categories` (
+    `choice_menu_option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `choice_menu_id` BIGINT NOT NULL,
     `option_category_id` BIGINT NOT NULL,
-    FOREIGN KEY (`order_menu_id`) REFERENCES `order_menus`(`order_menu_id`),
+    FOREIGN KEY (`choice_menu_id`) REFERENCES `choice_menus`(`choice_menu_id`),
     FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
 );
 
-CREATE TABLE `order_menu_options` (
-    `order_menu_option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `order_menu_option_category_id` BIGINT NOT NULL,
+CREATE TABLE `choice_menu_options` (
+    `choice_menu_option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `choice_menu_option_category_id` BIGINT NOT NULL,
     `option_id` BIGINT NOT NULL,
-    FOREIGN KEY (`order_menu_option_category_id`) REFERENCES `order_menu_option_categories`(`order_menu_option_category_id`),
+    FOREIGN KEY (`choice_menu_option_category_id`) REFERENCES `choice_menu_option_categories`(`choice_menu_option_category_id`),
     FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
 );
 

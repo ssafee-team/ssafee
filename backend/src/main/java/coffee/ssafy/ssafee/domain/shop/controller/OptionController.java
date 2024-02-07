@@ -1,9 +1,9 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -36,7 +36,7 @@ public class OptionController {
                                              @PathVariable("shop_id") Long shopId,
                                              @PathVariable("oc_id") Long optionCategoryId,
                                              @RequestBody OptionRequest optionRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         Long optionId = optionService.createOption(shopId, optionCategoryId, optionRequest);
         URI location = URI.create("/api/v1/shops/" + shopId + "/option-categories/" + optionCategoryId + "/options/" + optionId);
         return ResponseEntity.created(location).build();
@@ -49,7 +49,7 @@ public class OptionController {
                                              @PathVariable("oc_id") Long optionCategoryId,
                                              @PathVariable("id") Long optionId,
                                              @RequestBody OptionRequest optionRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         optionService.updateOption(shopId, optionCategoryId, optionId, optionRequest);
         return ResponseEntity.noContent().build();
     }
@@ -60,7 +60,7 @@ public class OptionController {
                                              @PathVariable("shop_id") Long shopId,
                                              @PathVariable("oc_id") Long optionCategoryId,
                                              @PathVariable("id") Long optionId) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         optionService.deleteOption(shopId, optionCategoryId, optionId);
         return ResponseEntity.ok().build();
     }

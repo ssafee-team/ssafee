@@ -15,9 +15,7 @@
     </div>
 
     <div class="link-container">
-      <RouterLink to="CreateRoomView">
-        <button class="plusbutton plusbutton:hover">+</button>
-      </RouterLink>
+      <button @click="handleAuth" class="plusbutton plusbutton:hover">+</button>
     </div>
     <div class="link-container">
       <!-- <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }"> -->
@@ -32,8 +30,41 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-
 import { getPartiesToday } from "@/api/party";
+import { useRouter } from "vue-router";
+import { OAUTH2_URLS, getLocalStorageToken, setLocalStorageToken } from "@/api/oauth2";
+
+// 방을 생성하려면 구글 로그인을 통해 토큰을 발급해야 합니다.
+const router = useRouter();
+const handleAuth = () => {
+  const routePushCreateRoom = () => router.push("/CreateRoomView");
+
+  // 1. 로컬스토리지에 만료되지 않은 토큰이 있다면 방 생성 페이지로 이동합니다.
+  const token = getLocalStorageToken();
+  if (token) {
+    routePushCreateRoom();
+    return;
+  }
+
+  // 2. 토큰이 없거나 만료됐을 경우 구글 로그인 팝업을 생성합니다.
+  const width = 600, height = 600;
+  const left = (window.innerWidth - width) / 2;
+  const top = (window.innerHeight - height) / 2;
+  const popup = window.open(OAUTH2_URLS.google, "Login OAuth2 Google", `toolbar=no, menubar=no, width=${width}, height=${height}, top=${top}, left=${left}`);
+
+  // 3. 구글 로그인 팝업에서 토큰을 받아오면 로컬스토리지에 저장하고 방 생성 페이지로 이동합니다.
+  window.addEventListener("message", (event) => {
+    if (event.origin != window.location.origin) {
+      return;
+    }
+    const { token } = event.data;
+    if (token) {
+      setLocalStorageToken(token);
+      popup.close()
+      routePushCreateRoom();
+    }
+  }, false);
+}
 
 // createapp, mount함수는 진입점(index.js, main.js)에서 사용함
 
@@ -70,8 +101,7 @@ getPartiesToday(queryParams, onSuccess, onFailure);
 
 //fetch로
 function getParties() {
-  // fetch("http://localhost/api/v1/parties")
-  fetch("https://ssafy.coffee/api/v1/parties")
+  fetch("/api/v1/parties")
     .then((response) => {
       // 응답 헤더에서 Location에 접근
       const location = response.headers.get("Location");
