@@ -9,6 +9,11 @@ const router = createRouter({
       name: "main",
       component: () => import("@/views/TheMainPageView.vue"),
     },
+    {
+      path: "/login/oauth2/redirect/:registraionId",
+      name: "LoginOAuth2",
+      component: () => import("@/views/TheLoginOAuth2View.vue"),
+    },
     // {
     //   path: '/about',
     //   name: 'about',

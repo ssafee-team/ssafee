@@ -40,8 +40,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated() // TODO: 인증 비활성화
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
                         .anyRequest().permitAll())
