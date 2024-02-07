@@ -1,11 +1,14 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
+import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 public class PartyOrderService {
 
     private final PartyRepository partyRepository;
-    private final ShopRepository shopRepository;
+    private final PartyMapper partyMapper;
     private final MatterMostService matterMostService;
 
     public Long createOrder(String accessCode) {
@@ -48,6 +51,12 @@ public class PartyOrderService {
             throw new PartyException(PartyErrorCode.THE_ORDER_AMOUNT_IS_LESS_THAN_THE_MINIMUM_ORDER);
         }
         return party.getId();
+    }
+
+    public PartyStatusResponse getOrders(String accessCode) {
+        return partyRepository.findByAccessCode(accessCode)
+                .map(partyMapper::toPartyStatus)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 
     public void orderDelivered(String accessCode) {
