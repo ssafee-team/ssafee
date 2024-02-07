@@ -79,13 +79,11 @@ public class PartyOrderService {
             for (Participant p : participants) {
                 System.out.println(p.getName());
                 Integer price = p.getChoiceMenus().stream()
-                        .map(choiceMenu -> choiceMenu.getMenu().getPrice()
-                                + choiceMenu.getChoiceMenuOptionCategories().stream()
-                                .map(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream()
-                                        .map(choiceOption -> choiceOption.getOption().getPrice())
-                                        .reduce(0, Integer::sum))
-                                .reduce(0, Integer::sum))
-                        .reduce(0, Integer::sum);
+                        .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
+                                .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
+                                .mapToInt(choiceOption -> choiceOption.getOption().getPrice())
+                                .sum())
+                        .sum();
                 if (!p.getPaid()) {
                     sb.append("| ");
                     sb.append(p.getName());
