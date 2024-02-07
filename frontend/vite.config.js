@@ -20,9 +20,8 @@ export default defineConfig({
     // 개발 환경에서 프록시 설정
     proxy: {
       "/api": {
-        target: "http://localhost",
-        changeOrigin: true,
-        secure: false,
+        target: "https://dev.ssafy.coffee",
+        changeOrigin: true
       },
     },
     historyApiFallback: true,
