@@ -42,4 +42,11 @@ public class PartyOrderController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{access_code}/ad")
+    @Operation(summary = "총무 : 커피파티 홍보알림 보내기")
+    public ResponseEntity<Void> sendAdvertise(@PathVariable("access_code") String accessCode) {
+        partyOrderService.sendAdvertise(accessCode);
+        return ResponseEntity.ok().build();
+    }
+
 }

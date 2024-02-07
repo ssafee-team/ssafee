@@ -70,9 +70,11 @@ public class PartyOrderService {
             List<Participant> participants = party.getParticipants();
 
             StringBuilder sb = new StringBuilder();
-            sb.append("#### \uD83D\uDD14알림\uD83D\uDD14 \n");
-            sb.append("@here 송금 바랍니다 \n");
-            sb.append(party.getCreator().getBank() + " " + party.getCreator().getAccount() + "\n\n");
+            sb.append("### :loopy: SSAFEE NOTICE :loopy: \n\n");
+            sb.append("#### 파티명: " + party.getName() + "\n\n");
+            sb.append("@here \n");
+            sb.append("#### 송금 바랍니다 \n");
+            sb.append("#### " + party.getCreator().getBank() + "(" + party.getCreator().getName() + "): " + party.getCreator().getAccount() + "\n\n");
             sb.append("| 이름 | 주문메뉴 | 금액 |\n");
             sb.append("|:-----------:|:-----------:|:-----------:|\n");
 
@@ -97,4 +99,25 @@ public class PartyOrderService {
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
     }
+
+    public void sendAdvertise(String accessCode) {
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        // 파티 access 코드를 webhook url로 발송한다.
+        // [초대 링크]()
+        String inviteUrl = "https://ssafy.coffee/room/" + accessCode;
+        StringBuilder sb;
+        if (party.getCreator().getWebhookUrl() != null) {
+            sb = new StringBuilder();
+            sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
+            sb.append("@here \n");
+            sb.append("#### 새로운 커피파티가 개설되었습니다. \n");
+            sb.append("#### 카페: " + party.getShop().getName() + "\n");
+            sb.append("#### 마감시간: " + party.getLastOrderTime() + " \n");
+            sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+        }
+
+    }
+
 }
