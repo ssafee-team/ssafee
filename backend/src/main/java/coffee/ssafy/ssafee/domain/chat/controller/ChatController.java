@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.chat.controller;
 import coffee.ssafy.ssafee.domain.chat.dto.request.ChatRequest;
 import coffee.ssafy.ssafee.domain.chat.dto.response.ChatResponse;
 import coffee.ssafy.ssafee.domain.chat.service.ChatService;
+import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

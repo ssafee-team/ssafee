@@ -1,11 +1,9 @@
 package coffee.ssafy.ssafee.domain.party.mapper;
 
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
-import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
-import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

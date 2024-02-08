@@ -17,6 +17,10 @@ public record JwtPrincipalInfo(
         String role
 ) implements UserDetails {
 
+    public Long userId() {
+        return Long.valueOf(id);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> role);
