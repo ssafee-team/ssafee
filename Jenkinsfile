@@ -44,6 +44,7 @@ pipeline {
                 sh 'docker compose -p ssafee build frontend-dev backend-dev'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
                     sh 'docker compose -p ssafee --env-file $dotenv up -d frontend-dev backend-dev'
+                    sh 'docker compose -p ssafee exec nginx nginx -s reload'
                 }
             }
         }
@@ -56,6 +57,7 @@ pipeline {
                 sh 'docker compose -p ssafee build frontend backend'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
                     sh 'docker compose -p ssafee --env-file $dotenv up -d frontend backend'
+                    sh 'docker compose -p ssafee exec nginx nginx -s reload'
                 }
             }
         }
