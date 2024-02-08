@@ -26,19 +26,17 @@ public class ChatService {
     private final ChatMapper chatMapper;
 
     @Transactional
-    public void createChat(String accessCode, ChatRequest chatRequest) {
-        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+    public void createChat(Long partyId, ChatRequest chatRequest) {
         Chat chat = Chat.builder()
-                .name(chatRequest.name())
                 .content(chatRequest.content())
+                .name("")
                 .party(entityManager.getReference(Party.class, partyId))
                 .build();
         chatRepository.save(chat);
     }
 
     @Transactional
-    public List<ChatResponse> getChats(String accessCode) {
-        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+    public List<ChatResponse> getChats(Long partyId) {
         return chatRepository.findAllByPartyId(partyId).stream()
                 .map(chatMapper::toDto)
                 .toList();

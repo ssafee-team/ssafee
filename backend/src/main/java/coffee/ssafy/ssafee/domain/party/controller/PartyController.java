@@ -29,7 +29,7 @@ public class PartyController {
     @Operation(summary = "파티 생성", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> createParty(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                             @RequestBody PartyRequest partyRequest) {
-        Long userId = Long.valueOf(principal.id());
+        Long userId = principal.userId();
         String accessCode = partyService.createParty(userId, partyRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode);
         return ResponseEntity.created(location).build();
@@ -45,7 +45,7 @@ public class PartyController {
     @GetMapping("/{access_code}")
     @Operation(summary = "파티 조회")
     public ResponseEntity<PartyDetailResponse> getParty(@PathVariable("access_code") String accessCode) {
-        return ResponseEntity.ok().body(partyService.findPartyByAccessCode(accessCode));
+        return ResponseEntity.ok().body(partyService.findParty(accessCode));
     }
 
 }

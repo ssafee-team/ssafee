@@ -1,11 +1,14 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.request.ChoiceMenuRequest;
+import coffee.ssafy.ssafee.domain.party.dto.request.ChoiceMenuCreateRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
 import coffee.ssafy.ssafee.domain.party.entity.*;
+import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
+import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.ChoiceMenuMapper;
 import coffee.ssafy.ssafee.domain.party.repository.ChoiceMenuRepository;
 import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
+import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import coffee.ssafy.ssafee.domain.shop.entity.Menu;
 import coffee.ssafy.ssafee.domain.shop.entity.Option;
 import coffee.ssafy.ssafee.domain.shop.entity.OptionCategory;
@@ -24,19 +27,19 @@ public class ChoiceMenuService {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final PartyService partyService;
+    private final PartyRepository partyRepository;
     private final ParticipantRepository participantRepository;
     private final ChoiceMenuRepository choiceMenuRepository;
     private final ChoiceMenuMapper choiceMenuMapper;
 
-    public Long create(String accessCode, ChoiceMenuRequest choiceMenuRequest) {
-        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
-        Party party = entityManager.getReference(Party.class, partyId);
-        Menu menuReference = entityManager.getReference(Menu.class, choiceMenuRequest.menuId());
+    public Long createChoiceMenu(String accessCode, ChoiceMenuCreateRequest choiceMenuCreateRequest) {
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        Menu menuReference = entityManager.getReference(Menu.class, choiceMenuCreateRequest.menuId());
 
-        Participant participant = participantRepository.findByPartyIdAndName(partyId, choiceMenuRequest.participantName())
+        Participant participant = participantRepository.findByPartyIdAndName(party.getId(), choiceMenuCreateRequest.participantName())
                 .orElseGet(() -> Participant.builder()
-                        .name(choiceMenuRequest.participantName())
+                        .name(choiceMenuCreateRequest.participantName())
                         .party(party)
                         .build());
         participantRepository.save(participant);
@@ -46,7 +49,7 @@ public class ChoiceMenuService {
                 .participant(participant)
                 .party(party)
                 .build();
-        choiceMenu.setChoiceMenuOptionCategories(choiceMenuRequest.optionCategories().stream()
+        choiceMenu.setChoiceMenuOptionCategories(choiceMenuCreateRequest.optionCategories().stream()
                 .map(optionCategoryRequest -> {
                     ChoiceMenuOptionCategory choiceMenuOptionCategory = ChoiceMenuOptionCategory.builder()
                             .choiceMenu(choiceMenu)
@@ -65,15 +68,13 @@ public class ChoiceMenuService {
         return choiceMenu.getId();
     }
 
-    public List<ChoiceMenuResponse> findOrderMenusByAccessCode(String accessCode) {
-        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+    public List<ChoiceMenuResponse> findChoiceMenus(Long partyId) {
         return choiceMenuRepository.findAllByPartyId(partyId).stream()
                 .map(choiceMenuMapper::toDto)
                 .toList();
     }
 
-    public void deleteOrderMenuByAccessCodeAndId(String accessCode, Long choiceMenuId) {
-        Long partyId = partyService.findPartyIdByAccessCode(accessCode);
+    public void deleteChoiceMenu(Long partyId, Long choiceMenuId) {
         choiceMenuRepository.deleteByPartyIdAndId(partyId, choiceMenuId);
     }
 
