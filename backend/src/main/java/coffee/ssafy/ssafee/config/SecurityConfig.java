@@ -40,8 +40,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated() // TODO: 인증 비활성화
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
                         .anyRequest().permitAll())
@@ -71,11 +70,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://ssafy.coffee"));
+        configuration.setAllowedOrigins(List.of("https://ssafy.coffee", "https://dev.ssafy.coffee"));
         configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
+        configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

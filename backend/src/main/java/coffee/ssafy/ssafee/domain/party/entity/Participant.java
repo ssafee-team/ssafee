@@ -38,7 +38,7 @@ public class Participant {
     private Party party;
 
     @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)
-    private List<OrderMenu> orderMenus;
+    private List<ChoiceMenu> choiceMenus;
 
     public void update(ParticipantUpdateRequest participantUpdateRequest) {
         this.isCarrier = participantUpdateRequest.isCarrier();

@@ -15,9 +15,9 @@ const url = "/api/v1/parties";
 
 //예시) 노션의 api 명세 참고
 // 파티를 생성할 경우 총무의 정보를 백단에 보내주는 함수 예시
-async function createParty(param, success, fail) {
-  console.log("param", param);
-  await local.post(`${url}`, param).then(success).catch(fail);
+async function createParty(token, param, success, fail) {
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  await local.post(`${url}`, param, config).then(success).catch(fail);
 }
 
 //예시2)

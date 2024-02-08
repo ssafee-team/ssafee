@@ -10,9 +10,14 @@ public class PartySocketIoService {
 
     private final SocketIOServer server;
 
-    // 주문 알림 전송
+    // 주문요청알림 전송
     public void sendOrderNotification(Long partyId) {
-        server.getBroadcastOperations().sendEvent("주문 요청이 도착했습니다", partyId);
+        server.getBroadcastOperations().sendEvent("orderRequest", partyId);
+    }
+
+    // 배달완료알림 전송 + webHookUrl
+    public void sendCompleteDeliveryNotification(Long partyId) {
+        server.getBroadcastOperations().sendEvent("completeDelivery", partyId);
     }
 
 }

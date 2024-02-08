@@ -11,15 +11,15 @@
           <div class="name">{{ order.participant_name }}</div>
           <div class="menus">
             <div class="menu-info">
-              <div class="menu-name">{{ order.chosen_menu.name }}</div>
+              <div class="menu-name">{{ order.menu.name }}</div>
 
               <div
-                v-for="optionCategory in order.chosen_option_categories"
+                v-for="optionCategory in order.option_categories"
                 :key="optionCategory.id"
               >
                 <div
                   class="menu-option"
-                  v-for="option in optionCategory.chosen_options"
+                  v-for="option in optionCategory.options"
                   :key="option.id"
                 >
                   {{ option.name }}
@@ -55,9 +55,9 @@ export default {
       this.$emit("close");
     },
     calculateTotalPrice(order) {
-      let totalPrice = order.chosen_menu.price;
-      for (const category of order.chosen_option_categories) {
-        for (const option of category.chosen_options) {
+      let totalPrice = order.menu.price;
+      for (const category of order.option_categories) {
+        for (const option of category.options) {
           totalPrice += option.price;
         }
       }

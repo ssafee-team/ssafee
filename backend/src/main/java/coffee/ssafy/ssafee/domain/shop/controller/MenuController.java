@@ -1,11 +1,11 @@
 package coffee.ssafy.ssafee.domain.shop.controller;
 
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.service.MenuService;
+import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -40,7 +40,7 @@ public class MenuController {
                                            @PathVariable("shop_id") Long shopId,
                                            @PathVariable("mc_id") Long menuCategoryId,
                                            @RequestBody MenuRequest menuRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         Long menuId = menuService.createMenu(shopId, menuCategoryId, menuRequest);
         URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId + "/menus/" + menuId);
         return ResponseEntity.created(location).build();
@@ -53,7 +53,7 @@ public class MenuController {
                                            @PathVariable("mc_id") Long menuCategoryId,
                                            @PathVariable("menu_id") Long menuId,
                                            @RequestBody MenuRequest menuRequest) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         menuService.updateMenu(shopId, menuCategoryId, menuId, menuRequest);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +65,7 @@ public class MenuController {
                                                 @PathVariable("mc_id") Long menuCategoryId,
                                                 @PathVariable("menu_id") Long menuId,
                                                 @RequestParam("image") MultipartFile file) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         if (file.isEmpty()) {
             throw new ShopException(ShopErrorCode.File_IS_EMPTY);
         }
@@ -79,7 +79,7 @@ public class MenuController {
                                            @PathVariable("shop_id") Long shopId,
                                            @PathVariable("mc_id") Long menuCategoryId,
                                            @PathVariable("menu_id") Long menuId) {
-        managerService.validate(principal, shopId);
+        managerService.validateShop(principal, shopId);
         menuService.deleteMenu(shopId, menuCategoryId, menuId);
         return ResponseEntity.ok().build();
     }

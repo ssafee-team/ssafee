@@ -8,6 +8,8 @@ public record ShopRequest(
         String name,
         String address,
         String phone,
-        Boolean enabledAutoOrder
+        Boolean enabledOrder,
+        Integer minimumPrice,
+        Boolean closed
 ) {
 }

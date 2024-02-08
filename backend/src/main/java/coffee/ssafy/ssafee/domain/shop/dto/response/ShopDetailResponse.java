@@ -12,7 +12,9 @@ public record ShopDetailResponse(
         String address,
         String phone,
         String image,
-        Boolean enabledAutoOrder,
+        Boolean enabledOrder,
+        Integer minimumPrice,
+        Boolean closed,
         List<MenuCategoryDetailResponse> menuCategories
 ) {
 }

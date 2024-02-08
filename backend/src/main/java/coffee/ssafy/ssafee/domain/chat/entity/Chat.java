@@ -23,7 +23,10 @@ public class Chat {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private String content;  // message
+    private String name;
+
+    @Column(nullable = false, updatable = false)
+    private String content;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

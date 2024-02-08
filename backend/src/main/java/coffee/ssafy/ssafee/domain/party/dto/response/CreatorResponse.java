@@ -9,6 +9,7 @@ public record CreatorResponse(
         String name,
         String email,
         String bank,
-        String account
+        String account,
+        String webhookUrl
 ) {
 }
