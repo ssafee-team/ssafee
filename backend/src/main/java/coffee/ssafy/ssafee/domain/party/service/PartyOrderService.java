@@ -121,7 +121,6 @@ public class PartyOrderService {
             sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
-
     }
 
     public void pickCarrier(Long partyId) {
@@ -134,5 +133,20 @@ public class PartyOrderService {
     public boolean existsCarrier(Long partyId) {
         return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
     }
+
+    // TODO: 배달부 선정 WebHook 메시지 StringBulilder에 쓸것
+
+//     :fire_parrot: SSAFEE NOTICE :fire_parrot:
+//            ----------------------------
+//
+//    @here
+//
+//| 반 | 배달부 명단 |
+//            | --- | --- |
+//            | 2 | 양희승 |
+//            | 1 | 전상혁 |
+//            | 1 | 고영훈 |
+//
+//            :thanggu9_1:  :thanggu9_2:  :thanggu12:  :thanggu13:  :thanggu14:
 
 }
