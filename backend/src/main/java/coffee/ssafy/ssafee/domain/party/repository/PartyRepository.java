@@ -20,4 +20,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     List<Party> findAllByShopId(Long shopId);
 
+    boolean existsByAccessCodeAndUserId(String accessCode, Long userId);
+
 }

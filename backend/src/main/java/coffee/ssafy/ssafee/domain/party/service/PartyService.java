@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Transactional
@@ -32,22 +32,15 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyMapper partyMapper;
 
-    private static String generateAccessCode() {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuilder stringBuilder = new StringBuilder(ACCESS_CODE_LENGTH);
-        for (int i = 0; i < 10; i++) {
-            int index = random.nextInt(characters.length());
-            char randomChar = characters.charAt(index);
-            stringBuilder.append(randomChar);
-        }
-        return stringBuilder.toString();
-    }
-
     public String createParty(Long userId, PartyRequest partyRequest) {
-        String accessCode = generateAccessCode();
-        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String accessCode = ThreadLocalRandom.current()
+                .ints(ACCESS_CODE_LENGTH, 0, characters.length())
+                .mapToObj(characters::charAt)
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
         User userReference = entityManager.getReference(User.class, userId);
+        Shop shopReference = entityManager.getReference(Shop.class, partyRequest.shopId());
 
         Party party = partyMapper.toEntity(partyRequest);
         party.prepareCreation(accessCode, shopReference, userReference, partyRequest.creator());
@@ -56,25 +49,30 @@ public class PartyService {
     }
 
     public List<PartyResponse> findParties(LocalDate startDate, LocalDate endDate) {
-        LocalDate today = LocalDate.now();
         if (startDate == null || endDate == null) {
-            startDate = today;
-            endDate = today;
+            startDate = endDate = LocalDate.now();
         }
         return partyRepository.findAllByCreatedTimeBetween(startDate, endDate).stream()
                 .map(partyMapper::toDto)
                 .toList();
     }
 
-    public PartyDetailResponse findPartyByAccessCode(String accessCode) {
-        return partyMapper.toDetailDto(partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY)));
+    public PartyDetailResponse findParty(String accessCode) {
+        return partyRepository.findByAccessCode(accessCode)
+                .map(partyMapper::toDetailDto)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 
-    public Long findPartyIdByAccessCode(String accessCode) {
+    public Long findPartyId(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
                 .getId();
+    }
+
+    public void validateUser(String accessCode, Long userId) {
+        if (!partyRepository.existsByAccessCodeAndUserId(accessCode, userId)) {
+            throw new PartyException(PartyErrorCode.UNAUTHORIZED_USER);
+        }
     }
 
 }

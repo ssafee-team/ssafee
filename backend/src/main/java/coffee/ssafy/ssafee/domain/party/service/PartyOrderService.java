@@ -13,11 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PartyOrderService {
 
-    private final PartyRepository partyRepository;
-    private final PartyMapper partyMapper;
     private final MatterMostService matterMostService;
+    private final PartyRepository partyRepository;
     private final ParticipantRepository participantRepository;
+    private final PartyMapper partyMapper;
 
     public Long createOrder(String accessCode) {
         // 검증
@@ -37,8 +34,7 @@ public class PartyOrderService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 마감시간 전인가 후인가?
-        party.updateRealOrderedTime(LocalDateTime.now());
-        partyRepository.save(party);
+        party.realOrder();
 
         // 3. 최소주문금액을 넘었는가?
         Integer minimumPrice = party.getShop().getMinimumPrice();
@@ -64,7 +60,7 @@ public class PartyOrderService {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         // TODO: 배달시작 필드가 null인지 검사
-        party.updateDeliveredTime(LocalDateTime.now());
+        party.deliver();
         if (party.getCreator().getWebhookUrl() != null) {
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), "@here @고영훈 커피 배달 완료");
         }
@@ -128,26 +124,15 @@ public class PartyOrderService {
 
     }
 
-    public void isCarrier(String accessCode) {
-        Party party = partyRepository.findByAccessCode(accessCode)
-                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+    public void pickCarrier(Long partyId) {
+        List<Participant> participants = participantRepository.findAllByPartyId(partyId);
+        int carrierCount = (participants.size() + 5) / 6;
+        Collections.shuffle(participants);
+        participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
+    }
 
-        int carrierCount = party.getParticipants().size() / 6;
-        Set<Integer> numbers = new HashSet<>();
-
-        Random random = new Random();
-        while (numbers.size() != carrierCount) {
-            int value = random.nextInt(party.getParticipants().size());
-            numbers.add(value);
-        }
-
-        Integer[] numbersArr = numbers.toArray(new Integer[carrierCount]);
-        for (int i = 0; i < carrierCount; i++) {
-            Long PID = party.getParticipants().get(numbersArr[i]).getId();
-            participantRepository.findByPartyIdAndId(party.getId(), PID)
-                    .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTICIPANT))
-                    .updateIsCarrier();
-        }
+    public boolean existsCarrier(Long partyId) {
+        return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
     }
 
 }

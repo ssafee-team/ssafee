@@ -8,12 +8,12 @@ import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
-    Optional<Participant> findById(Long id);
-
-    List<Participant> findByPartyId(Long partyId);
+    List<Participant> findAllByPartyId(Long partyId);
 
     Optional<Participant> findByPartyIdAndId(Long partyId, Long id);
 
     Optional<Participant> findByPartyIdAndName(Long partyId, String name);
+
+    boolean existsByPartyIdAndIsCarrierIsTrue(Long partyId);
 
 }

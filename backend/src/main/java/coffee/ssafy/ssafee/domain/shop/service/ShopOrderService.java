@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -73,7 +72,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: Rejected field == null?
         // 3. confirmed_time 을 현재 시간으로 업데이트
-        party.updateConfirmedTime(LocalDateTime.now());
+        party.confirm();
         partyRepository.save(party);
     }
 
@@ -87,7 +86,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: confirmed field == null?
         // 3. rejected_time 을 현재 시간으로 업데이트
-        party.updateRejectedTime(LocalDateTime.now());
+        party.reject();
         partyRepository.save(party);
     }
 
@@ -101,7 +100,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: confirmed field == null?
         // 3. made_time 을 현재 시간으로 업데이트
-        party.updateMadeTime(LocalDateTime.now());
+        party.make();
         partyRepository.save(party);
     }
 

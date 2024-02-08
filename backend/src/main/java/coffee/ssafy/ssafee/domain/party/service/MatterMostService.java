@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class MatterMostService {
 
-    private WebClient webClient;
+    private final WebClient webClient;
 
     @Autowired
     public MatterMostService(WebClient.Builder webClientBuilder) {

@@ -2,6 +2,7 @@ package coffee.ssafy.ssafee.domain.party.controller;
 
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyOrderService;
+import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import coffee.ssafy.ssafee.domain.party.service.PartySocketIoService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,16 +19,18 @@ public class PartyOrderController {
 
     private final PartySocketIoService partySocketIoService;
     private final PartyOrderService partyOrderService;
+    private final PartyService partyService;
 
     @PostMapping("/order")
     @Operation(summary = "총무 : 주문 요청 생성", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> createOrder(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                             @PathVariable("access_code") String accessCode) {
-
-        Long userId = Long.valueOf(principal.id());
+        partyService.validateUser(accessCode, principal.userId());
         Long partyId = partyOrderService.createOrder(accessCode);
-        isCarrier(accessCode);
         partySocketIoService.sendOrderNotification(partyId);
+        if (!partyOrderService.existsCarrier(partyId)) {
+            partyOrderService.pickCarrier(partyId);
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -41,16 +44,16 @@ public class PartyOrderController {
     @Operation(summary = "총무 : 알림보내기", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> orderDelivered(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                                @PathVariable("access_code") String accessCode) {
-        Long userId = Long.valueOf(principal.id());
+        partyService.validateUser(accessCode, principal.userId());
         partyOrderService.orderDelivered(accessCode);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/give-me-money")
-    @Operation(summary = "총무 : 송금요청 알림보내기")
+    @Operation(summary = "총무 : 송금요청 알림보내기", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> giveMeMoney(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                             @PathVariable("access_code") String accessCode) {
-        Long userId = Long.valueOf(principal.id());
+        partyService.validateUser(accessCode, principal.userId());
         partyOrderService.giveMeMoney(accessCode);
         return ResponseEntity.ok().build();
     }
@@ -59,16 +62,9 @@ public class PartyOrderController {
     @Operation(summary = "총무 : 커피파티 홍보알림 보내기", security = @SecurityRequirement(name = "access-token"))
     public ResponseEntity<Void> sendAdvertise(@AuthenticationPrincipal JwtPrincipalInfo principal,
                                               @PathVariable("access_code") String accessCode) {
-        Long userId = Long.valueOf(principal.id());
+        partyService.validateUser(accessCode, principal.userId());
         partyOrderService.sendAdvertise(accessCode);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/is-carrier")
-    @Operation(summary = "배달인원선정")
-    public ResponseEntity<Void> isCarrier(@PathVariable("access_code") String accessCode) {
-        partyOrderService.isCarrier(accessCode);
-        return ResponseEntity.noContent().build();
     }
 
 }
