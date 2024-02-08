@@ -126,9 +126,16 @@ export default {
 }
 
 .chat-body {
+    height: 500px;
+    max-height: 500px;
     border-radius: 10px;
     background-color: #97afba;
     border: 3px solid #97afba;
+    overflow-y: hidden;
+}
+
+.chat-body::-webkit-scrollbar {
+    display: none;
 }
 
 .cur-date {
