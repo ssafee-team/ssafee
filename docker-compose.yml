@@ -57,7 +57,7 @@ services:
       - TZ=Asia/Seoul
       - SERVER_PORT=8081
       - SPRING_PROFILE=prod
-      - PROD_DB_URL=jdbc:mysql://mysql:3306/${PROD_DB_DATABASE}
+      - PROD_DB_URL=jdbc:mysql://mysql:3306/${PROD_DB_DATABASE}?useSSL=false
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
       - GOOGLE_CLIENT_ID
