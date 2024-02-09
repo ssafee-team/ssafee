@@ -1,7 +1,5 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.response.ChoiceMenuResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.ParticipantResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
@@ -9,16 +7,13 @@ import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
-import coffee.ssafy.ssafee.domain.shop.entity.Shop;
-import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
-import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
-import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,9 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PartyOrderService {
 
-    private final PartyRepository partyRepository;
-    private final PartyMapper partyMapper;
     private final MatterMostService matterMostService;
+    private final PartyRepository partyRepository;
+    private final ParticipantRepository participantRepository;
+    private final PartyMapper partyMapper;
 
     public Long createOrder(String accessCode) {
         // 검증
@@ -38,13 +34,12 @@ public class PartyOrderService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 마감시간 전인가 후인가?
-        party.updateRealOrderedTime(LocalDateTime.now());
-        partyRepository.save(party);
+        party.realOrder();
 
         // 3. 최소주문금액을 넘었는가?
         Integer minimumPrice = party.getShop().getMinimumPrice();
         int total = 0;
-        for(ChoiceMenu menu : party.getChoiceMenus()) {
+        for (ChoiceMenu menu : party.getChoiceMenus()) {
             total += menu.getMenu().getPrice();
         }
         if (total < minimumPrice) {
@@ -65,7 +60,7 @@ public class PartyOrderService {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         // TODO: 배달시작 필드가 null인지 검사
-        party.updateDeliveredTime(LocalDateTime.now());
+        party.deliver();
         if (party.getCreator().getWebhookUrl() != null) {
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), "@here @고영훈 커피 배달 완료");
         }
@@ -126,7 +121,32 @@ public class PartyOrderService {
             sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
-
     }
+
+    public void pickCarrier(Long partyId) {
+        List<Participant> participants = participantRepository.findAllByPartyId(partyId);
+        int carrierCount = (participants.size() + 5) / 6;
+        Collections.shuffle(participants);
+        participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
+    }
+
+    public boolean existsCarrier(Long partyId) {
+        return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
+    }
+
+    // TODO: 배달부 선정 WebHook 메시지 StringBulilder에 쓸것
+
+//     :fire_parrot: SSAFEE NOTICE :fire_parrot:
+//            ----------------------------
+//
+//    @here
+//
+//| 반 | 배달부 명단 |
+//            | --- | --- |
+//            | 2 | 양희승 |
+//            | 1 | 전상혁 |
+//            | 1 | 고영훈 |
+//
+//            :thanggu9_1:  :thanggu9_2:  :thanggu12:  :thanggu13:  :thanggu14:
 
 }

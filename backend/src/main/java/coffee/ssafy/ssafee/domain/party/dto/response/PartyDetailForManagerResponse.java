@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record PartyDetailForManagerResponse (
+public record PartyDetailForManagerResponse(
         Long partyId,
         String partyName,
         Long shopId,

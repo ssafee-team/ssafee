@@ -14,13 +14,20 @@ export default defineConfig({
   //프론트 포트 설정, 백과 데이터 주고 받을 때는
   server: {
     https: false,
-    port: 8083,
+    port: 3000,
     open: true,
+    hmr: {
+      protocol: 'ws',
+      clientPort: 3000,
+      host: 'localhost',
+    },
+
 
     // 개발 환경에서 프록시 설정
     proxy: {
       "/api": {
-        target: "http://localhost",
+        target: "http://localhost:80",
+        // target: "https://dev.ssafee.coffee",
         changeOrigin: true,
         secure: false,
       },
@@ -28,4 +35,14 @@ export default defineConfig({
     historyApiFallback: true,
     hot: true,
   },
+  define: {
+    // 'process.env': {},
+
+    // By default, Vite doesn't include shims for NodeJS/
+    // necessary for segment analytics lib to work
+    'global': {},
+  },
+  // env: {
+  //   VITE_VUE_WS_URL : import.meta.env.VITE_VUE_WS_URL,
+  // },
 });

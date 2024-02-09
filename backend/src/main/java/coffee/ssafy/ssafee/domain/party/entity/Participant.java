@@ -40,9 +40,12 @@ public class Participant {
     @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)
     private List<ChoiceMenu> choiceMenus;
 
-    public void update(ParticipantUpdateRequest participantUpdateRequest) {
-        this.isCarrier = participantUpdateRequest.isCarrier();
+    public void updatePaid(ParticipantUpdateRequest participantUpdateRequest) {
         this.paid = participantUpdateRequest.paid();
+    }
+
+    public void updateIsCarrier() {
+        this.isCarrier = true;
     }
 
 }
