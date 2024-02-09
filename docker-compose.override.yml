@@ -59,7 +59,7 @@ services:
       - TZ=Asia/Seoul
       - SERVER_PORT=8082
       - SPRING_PROFILE=prod
-      - PROD_DB_URL=jdbc:mysql://mysql-dev:3307/${PROD_DB_DATABASE}?useSSL=false
+      - PROD_DB_URL=jdbc:mysql://mysql-dev:3307/${PROD_DB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
       - GOOGLE_CLIENT_ID
@@ -92,4 +92,4 @@ services:
       - MYSQL_USER=${PROD_DB_USERNAME}
       - MYSQL_PASSWORD=${PROD_DB_PASSWORD}
     volumes:
-      - ./db/mysql-dev:/var/lib/mysql
+      - /var/lib/mysql-dev:/var/lib/mysql
