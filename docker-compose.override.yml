@@ -3,6 +3,8 @@ version: '3.8'
 networks:
   dev:
     driver: bridge
+  dev-db:
+    driver: bridge
 
 services:
   nginx:
@@ -50,13 +52,14 @@ services:
     build: backend
     networks:
       - dev
+      - dev-db
     expose:
       - 8082
     environment:
       - TZ=Asia/Seoul
       - SERVER_PORT=8082
       - SPRING_PROFILE=prod
-      - PROD_DB_URL
+      - PROD_DB_URL=jdbc:mysql://mysql-dev:3307/${PROD_DB_DATABASE}
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
       - GOOGLE_CLIENT_ID
@@ -70,4 +73,23 @@ services:
       - S3_SECRET_ACCESS_KEY
       - S3_BUCKET
       - S3_REGION
-      - S3_PUBLIC_DOMAIN
+      - S3_PUBLIC_ACCESS_DOMAIN
+    depends_on:
+      - mysql-dev
+
+  mysql-dev:
+    container_name: mysql-dev
+    image: mysql:8.0
+    networks:
+      - dev-db
+    expose:
+      - 3307
+    environment:
+      - TZ=Asia/Seoul
+      - MYSQL_TCP_PORT=3307
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${PROD_DB_DATABASE}
+      - MYSQL_USER=${PROD_DB_USERNAME}
+      - MYSQL_PASSWORD=${PROD_DB_PASSWORD}
+    volumes:
+      - ./db/mysql-dev:/var/lib/mysql
