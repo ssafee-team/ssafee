@@ -37,10 +37,10 @@ const router = createRouter({
       component: () => import("../views/TheCreateRoomView.vue"),
     },
     {
-      path: "/After/:access_code",
-      name: "After",
+      path: "/after/:code",
+      name: "after",
       component: () => import("../views/TheAfterView.vue"),
-      props: true
+      props: true,
     },
     {
       path: "/Manager",
@@ -54,14 +54,14 @@ const router = createRouter({
     },
     {
       path: "/manager/:manager_id/party/:access_code",
-      name:"OrdersForManager",
+      name: "OrdersForManager",
       component: () => import("../views/TheOrdersForManagerView.vue"),
     },
     {
       path: "/manager/:manager_id/edit",
       name: "ManagerEditor",
       component: () => import("../views/TheManagerEditorView.vue"),
-    }
+    },
   ],
 });
 

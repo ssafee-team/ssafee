@@ -413,7 +413,7 @@ hr {
 .menu-price,
 .options-price,
 .total-price {
-  color: #00a7d0;
+  color: #00a5e7;
 }
 
 .total-info {
@@ -427,12 +427,12 @@ hr {
 }
 
 input[type="checkbox"] {
-  accent-color: #00a7d0;
+  accent-color: #00a5e7;
 }
 
 .add {
   cursor: pointer;
-  background-color: #00a7d0;
+  background-color: #00a5e7;
   // background-color: #020817;
   border: 0px;
   font-weight: bold;
@@ -496,7 +496,7 @@ input[type="checkbox"] {
   cursor: pointer;
   border: none;
 
-  background: #00a7d0;
+  background: #00a5e7;
   font-weight: bold;
   border-radius: 5px;
   padding: 10px 15px;

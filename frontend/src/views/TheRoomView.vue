@@ -184,7 +184,7 @@ const updateRemainingTime = () => {
     console.log(window.location.href);
     // console.log(code.value);
     setTimeout(() => {
-      window.location.href = "/After/" + code.value;
+      window.location.href = "/after/" + code.value;
     }, 100);
   }
 };
