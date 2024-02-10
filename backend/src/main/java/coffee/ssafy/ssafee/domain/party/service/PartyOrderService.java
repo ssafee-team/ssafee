@@ -83,7 +83,6 @@ public class PartyOrderService {
             sb.append("|:-----------:|:-----------:|:-----------:|\n");
 
             for (Participant p : participants) {
-                System.out.println(p.getName());
                 Integer price = p.getChoiceMenus().stream()
                         .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
                                 .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
@@ -123,20 +122,33 @@ public class PartyOrderService {
         }
     }
 
-    public void pickCarrier(Long partyId) {
-        List<Participant> participants = participantRepository.findAllByPartyId(partyId);
-        int carrierCount = (participants.size() + 5) / 6;
-        Collections.shuffle(participants);
-        participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
-    }
+    public void sendCarrierResult(String accessCode) {
+        Party party = partyRepository.findByAccessCode(accessCode)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+        StringBuilder sb;
+        if (party.getCreator().getWebhookUrl() != null) {
+            List<Participant> participants = party.getParticipants();
 
-    public boolean existsCarrier(Long partyId) {
-        return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
+            sb = new StringBuilder();
+            sb.append("## :fire_parrot: SSAFEE NOTICE :fire_parrot: \n");
+            sb.append("@here \n\n");
+            sb.append("| 배달부 명단 | \n");
+            sb.append("|: --- :| \n");
+            for (Participant p : participants) {
+                if (p.getIsCarrier()) {
+                    sb.append("| ");
+                    sb.append(p.getName());
+                    sb.append(" |\n");
+                }
+            }
+            sb.append(":thanggu9_1:  :thanggu9_2:  :thanggu12:  :thanggu13:  :thanggu14: \n");
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+        }
     }
 
     // TODO: 배달부 선정 WebHook 메시지 StringBulilder에 쓸것
 
-//     :fire_parrot: SSAFEE NOTICE :fire_parrot:
+//     :fire_parrot: SSAFEE NOTICE:fire_parrot:
 //            ----------------------------
 //
 //    @here
@@ -148,5 +160,16 @@ public class PartyOrderService {
 //            | 1 | 고영훈 |
 //
 //            :thanggu9_1:  :thanggu9_2:  :thanggu12:  :thanggu13:  :thanggu14:
+
+    public void pickCarrier(Long partyId) {
+        List<Participant> participants = participantRepository.findAllByPartyId(partyId);
+        int carrierCount = (participants.size() + 5) / 6;
+        Collections.shuffle(participants);
+        participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
+    }
+
+    public boolean existsCarrier(Long partyId) {
+        return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
+    }
 
 }

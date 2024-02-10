@@ -8,6 +8,7 @@ import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.PartitionKey;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class PartyOrderController {
         partySocketIoService.sendOrderNotification(partyId);
         if (!partyOrderService.existsCarrier(partyId)) {
             partyOrderService.pickCarrier(partyId);
+            partyOrderService.sendCarrierResult(accessCode);
         }
         return ResponseEntity.ok().build();
     }
@@ -64,6 +66,13 @@ public class PartyOrderController {
                                               @PathVariable("access_code") String accessCode) {
         partyService.validateUser(accessCode, principal.userId());
         partyOrderService.sendAdvertise(accessCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/today-carriers")
+    @Operation(summary = "총무 : 배달부선정결과 알림보내기")
+    public ResponseEntity<Void> sendCarrierResult(@PathVariable("access_code") String accessCode) {
+        partyOrderService.sendCarrierResult(accessCode);
         return ResponseEntity.ok().build();
     }
 
