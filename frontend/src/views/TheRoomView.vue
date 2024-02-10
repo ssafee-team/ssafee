@@ -78,7 +78,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "18:00",
+  last_order_time: "24:00",
   created_time: "",
   shop_id: "",
   creator: {
@@ -255,6 +255,7 @@ head {
   justify-content: space-between;
   align-items: center;
   border-radius: 5px;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   /* background-color: #020817; */
 }
 
@@ -368,6 +369,7 @@ button {
   border: 3px solid #1e293b;
   border-radius: 5px;
   box-sizing: inherit;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .right-panel {

@@ -290,9 +290,10 @@ export default {
       // console.log("전체 주문 목록", this.orderList);
 
       //주문 정보를 orderList에 추가
-      this.orderList.push(order);
+      // this.orderList.push(order);
       //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
-      this.$emit("order-added", this.orderList);
+      // this.$emit("order-added", this.orderList);
+      window.location.reload();
     },
   },
 };
@@ -307,6 +308,7 @@ export default {
   border: 3px solid #1e293b;
   border-radius: 10px;
   box-sizing: inherit;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .menu-categories > div {
@@ -326,8 +328,9 @@ export default {
 .menu-categories > div.selected {
   background-color: #343844;
   width: auto;
-
+  // box-sizing: inherit;
   border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .menu-content {
@@ -338,7 +341,8 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   // box-sizing: border-box;
-  box-sizing: inherit;
+  // box-sizing: inherit;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .menu-items {
@@ -432,10 +436,11 @@ input[type="checkbox"] {
   // background-color: #020817;
   border: 0px;
   font-weight: bold;
-  //color: #ffffff;
+  color: #ffffff;
   font-size: 20px;
   margin: 10px;
   border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 .close-btn {
@@ -490,8 +495,8 @@ input[type="checkbox"] {
   width: 120px;
   cursor: pointer;
   border: none;
+
   background: #00a7d0;
-  //color: white;
   font-weight: bold;
   border-radius: 5px;
   padding: 10px 15px;

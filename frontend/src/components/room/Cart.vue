@@ -2,12 +2,17 @@
   <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
   <div class="tabs">
     <div class="tab">주문내역</div>
+    <select v-model="sortMethod" @change="sortOrders">
+      <option value="default">기본</option>
+      <option value="userName">이름순</option>
+      <option value="menuName">메뉴순</option>
+    </select>
   </div>
 
   <!-- 주문내역 -->
   <div class="content">
     <div class="order-list">
-      <div v-for="(order, index) in orders" :key="index" class="order">
+      <div v-for="(order, index) in sortedOrders" :key="index" class="order">
         <!-- 선택한 메뉴와 가격 -->
         <div class="item">
           <div class="menu-name">{{ order.menu.name }}</div>
@@ -58,6 +63,8 @@ export default {
 
   data() {
     return {
+      dropdownOpen: false, //드롭다운 상태변수
+      sortMethod: "default", //현재 선택된 정렬 방식
       // orders: [], //주문내역 저장할 배열
     };
   },
@@ -68,20 +75,39 @@ export default {
     // this.fetchOrderList();
   },
 
+  computed: {
+    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
+    sortedOrders() {
+      const orders = [...this.orders]; // 주문 목록을 복사하여 정렬
+      console.log("정렬전, ", orders);
+      // 정렬 방식에 따라 주문 목록을 정렬
+      if (this.sortMethod === "userName") {
+        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name));
+      } else if (this.sortMethod === "menuName") {
+        console.log("ㅇㅇㅇㅇ");
+        orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
+      }
+
+      console.log("정렬후,", orders);
+      return orders;
+    },
+  },
+
   methods: {
-    // fetchOrderList() {
-    //   console.log("현재코드", this.code);
-    //   // getOrderList 함수를 호출하여 주문내역을 가져옴
-    //   getOrderList(this.code, this.handleSuccess, this.handleFailure);
-    // },
-    // handleSuccess(response) {
-    //   // 주문내역을 성공적으로 가져왔을 때 처리할 내용
-    //   this.orders = response.data; // 가져온 주문내역을 orders 배열에 저장
-    // },
-    // handleFailure(error) {
-    //   // 주문내역을 가져오는 데 실패했을 때 처리할 내용
-    //   console.error(error);
-    // },
+    //드롭다운
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    //주문자 이름별 정렬
+    sortByUserName() {
+      this.sortMethod = "userName";
+      this.toggleDropdown();
+    },
+    //메뉴별 정렬
+    sortByMenuName() {
+      this.sortMethod = "menuName";
+      this.toggleDropdown();
+    },
 
     removeOrder(orderId) {
       // 선택한 주문을 삭제
@@ -124,12 +150,23 @@ export default {
 </script>
 
 <style scoped>
+select {
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+}
+option {
+  font-size: 16px;
+  font-weight: bold;
+}
+
 /* 탭 스타일 */
 .tabs {
   display: flex;
   height: 40px;
-  justify-content: center;
-  box-shadow: 0px 0px 10px 0px rgb(227, 226, 226);
+  justify-content: space-around;
+  border-bottom: 3px solid #1e293b;
+  /* box-shadow: 0px 0px 10px 0px rgb(227, 226, 226); */
 }
 
 .tab {
