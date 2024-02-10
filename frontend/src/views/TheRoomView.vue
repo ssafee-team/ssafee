@@ -43,7 +43,7 @@
               <!-- 추가적인 내용이 들어갈 수 있습니다. -->
             </div>
             <div class="center-panel">
-              <Cart :orders="orderList" />
+              <Cart :orders="orderList" :code="code" />
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
@@ -78,7 +78,7 @@ const partyInfo = ref({
   name: "",
   generation: "",
   classroom: "",
-  last_order_time: "",
+  last_order_time: "18:00",
   created_time: "",
   shop_id: "",
   creator: {
@@ -102,14 +102,6 @@ const shopId = partyInfo.value.shop_id;
 
 const isOrderListModalOpen = ref(false);
 
-//const deadLine = ref("10:35"); //마감시간 백에서 받아오고 임의 설정
-// const lastOrderTime = partyInfo.value.last_order_time;
-// const lastOrderDateTime = new Date(lastOrderTime);
-// const hours = lastOrderDateTime.getHours();
-// const minutes = lastOrderDateTime.getMinutes();
-
-// const formattedTime = `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
-
 const remainingTime = ref(""); //남은시간
 
 // 헤더 높이를 저장하는 변수
@@ -130,6 +122,7 @@ onMounted(() => {
   code.value = route.params.code;
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo();
+  addToOrderList();
 });
 
 onUnmounted(() => {
@@ -146,7 +139,7 @@ const getPartyInfo = () => {
       partyInfo.value.name = data.name;
       partyInfo.value.generation = data.generation;
       partyInfo.value.classroom = data.classroom;
-      partyInfo.value.last_order_time = data.last_order_time;
+      // partyInfo.value.last_order_time = data.last_order_time;
       partyInfo.value.created_time = data.created_time;
       partyInfo.value.shop_id = data.shop_id;
       partyInfo.value.creator = data.creator;
@@ -196,9 +189,7 @@ const updateRemainingTime = () => {
   }
 };
 
-const openOrderListModal = () => {
-  isOrderListModalOpen.value = true;
-
+const addToOrderList = () => {
   // 주문 목록 조회
   getOrderList(
     code.value, //partyCode 전달
