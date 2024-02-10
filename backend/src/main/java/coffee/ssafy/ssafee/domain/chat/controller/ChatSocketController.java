@@ -18,8 +18,9 @@ public class ChatSocketController {
     public SocketVO SocketHandler(SocketVO socketVO) {
         String userName = socketVO.getUserName();
         String content = socketVO.getContent();
+        String contentTime = socketVO.getContentTime();
 
-        SocketVO result = new SocketVO(userName, content);
+        SocketVO result = new SocketVO(userName, content, contentTime);
         // 반환
         return result;
     }

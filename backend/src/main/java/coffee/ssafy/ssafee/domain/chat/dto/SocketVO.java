@@ -8,4 +8,5 @@ import lombok.Data;
 public class SocketVO {
     private String userName;
     private String content;
+    private String contentTime;
 }
