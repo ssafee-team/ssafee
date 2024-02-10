@@ -1,29 +1,35 @@
 <template>
   <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
   <div class="tabs">
-    <div class="tab" :class="{ active: activeTab === 'My Cart' }" @click="activeTab = 'My Cart'">
-      My Cart
-    </div>
-    <div class="tab" :class="{ active: activeTab === 'Our Cart' }" @click="activeTab = 'Our Cart'">
-      Our Cart
-    </div>
+    <div class="tab">주문내역</div>
   </div>
 
-  <!-- My Cart의 내용 -->
-  <div v-if="activeTab === 'My Cart'" class="content">
+  <!-- 주문내역 -->
+  <div class="content">
     <div class="order-list">
       <div v-for="(order, index) in orders" :key="index" class="order">
         <!-- 선택한 메뉴와 가격 -->
         <div class="item">
-          {{ order.name }} - {{ order.price }}원
-          <span class="remove" @click="removeOrder(index)">X</span>
+          <div class="menu-name">{{ order.menu.name }}</div>
+          <div class="menu-price">{{ order.menu.price }}원</div>
+          <span class="remove" @click="removeOrder(order.id)">X</span>
         </div>
         <!-- 선택한 옵션과 가격 -->
-        <div v-for="(option, idx) in order.option_categories" :key="idx" class="option">
-          <template v-if="option.option_names && option.option_names.length > 0">
-            ㄴ{{ option.option_names.join(", ") }} - {{ option.option_prices.join(", ") }}원
-          </template>
+        <div
+          v-for="optionCategory in order.option_categories"
+          :key="optionCategory.id"
+          class="option"
+        >
+          <div class="menu-option" v-for="option in optionCategory.options" :key="option.id">
+            <div class="option-name">ㄴ{{ option.name }}</div>
+            <div class="option-price">+{{ option.price }}</div>
+          </div>
         </div>
+        <!-- <div v-for="(option, idx) in order.option_categories" :key="idx" class="option"> -->
+        <!-- <template v-if="option.name && option.option_names.length > 0">
+            ㄴ{{ option.options.map((opt) => opt.name + " - " + opt.price + "원").join(", ") }}
+          </template> -->
+        <!-- </div> -->
       </div>
     </div>
     <!-- 총 주문 금액 -->
@@ -37,32 +43,81 @@
 </template>
 
 <script>
+import { deleteOrderMenu } from "@/api/party";
+
 export default {
   props: {
     orders: {
       type: Array,
       required: true,
     },
+    code: {
+      required: true,
+    },
   },
 
   data() {
     return {
-      activeTab: "My Cart", // 기본적으로 My Cart가 선택됨
+      // orders: [], //주문내역 저장할 배열
     };
   },
 
+  mounted() {
+    // 페이지가 로드될 때 getOrderList 함수를 호출하여 주문내역을 가져옴
+    console.log("33", this.code);
+    // this.fetchOrderList();
+  },
+
   methods: {
-    removeOrder(index) {
+    // fetchOrderList() {
+    //   console.log("현재코드", this.code);
+    //   // getOrderList 함수를 호출하여 주문내역을 가져옴
+    //   getOrderList(this.code, this.handleSuccess, this.handleFailure);
+    // },
+    // handleSuccess(response) {
+    //   // 주문내역을 성공적으로 가져왔을 때 처리할 내용
+    //   this.orders = response.data; // 가져온 주문내역을 orders 배열에 저장
+    // },
+    // handleFailure(error) {
+    //   // 주문내역을 가져오는 데 실패했을 때 처리할 내용
+    //   console.error(error);
+    // },
+
+    removeOrder(orderId) {
       // 선택한 주문을 삭제
-      this.orders.splice(index, 1);
+      const index = this.orders.findIndex((order) => order.id === orderId);
+      if (index !== -1) {
+        // 서버에 삭제 요청 보내기
+        deleteOrderMenu(
+          this.code,
+          orderId,
+          () => {
+            // 성공 시 주문 리스트에서 해당 주문 삭제
+            this.orders.splice(index, 1);
+          },
+          (error) => {
+            // 실패 시
+            console.error("주문 삭제 실패:", error);
+          }
+        );
+      }
     },
     calculateTotalPrice() {
-      // 주문 내역의 총 주문 금액을 계산
       let total = 0;
+
       for (const order of this.orders) {
-        total += parseFloat(order.price);
+        let orderTotal = parseFloat(order.menu.price); // 메뉴의 가격을 먼저 더함
+
+        for (const optionCategory of order.option_categories) {
+          for (const option of optionCategory.options) {
+            orderTotal += parseFloat(option.price); // 각 옵션의 가격을 더함
+          }
+        }
+
+        total += orderTotal; // 각 주문 항목의 총 가격을 더함
       }
-      return total.toFixed(0);
+
+      return total.toFixed(0); // 소수점 이하 자리를 버리고 정수로 반환
     },
   },
 };
@@ -74,6 +129,7 @@ export default {
   display: flex;
   height: 40px;
   justify-content: center;
+  box-shadow: 0px 0px 10px 0px rgb(227, 226, 226);
 }
 
 .tab {
@@ -84,12 +140,6 @@ export default {
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-}
-
-.tab.active {
-  background-color: #343844;
-  border-radius: 3px 3px 0 0;
-  /* border-radius: 10px; */
 }
 
 /* 주문 내역 스타일 */
@@ -109,17 +159,42 @@ export default {
   font-size: 18px;
   font-weight: bold;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 .remove {
+  margin-left: 30px;
   cursor: pointer;
   color: red;
+}
+
+.menu-name {
+  width: 190px;
+}
+.menu-price {
+  color: #00a5e7;
+  margin-left: 10px;
 }
 
 .option {
   /* color: #FFFFFF; */
   margin-left: 20px;
+}
+
+.menu-option {
+  display: flex;
+}
+
+.option-name {
+  width: 190px;
+}
+
+.option-price {
+  color: #00a5e7;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
@@ -147,6 +222,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #ffffff;
   background-color: #343844;
   /* bottom: 0; */
   /* position: sticky; */

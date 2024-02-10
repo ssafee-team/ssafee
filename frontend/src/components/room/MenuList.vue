@@ -104,6 +104,7 @@ export default {
 
     //페이지 렌더링 시 첫 번째 카테고리를 선택하지 않고 기본적으로 보여줌
     this.selectCategory(0);
+    console.log("22", this.code);
   },
 
   computed: {
@@ -266,9 +267,6 @@ export default {
         option_categories: selectedOptionCategories, // 선택한 옵션 카테고리와 그에 해당하는 옵션들의 ID
       };
 
-      //주문 정보를 orderList에 추가
-      // this.orderList.push(order);
-
       // console.log(order.option_names);
       // console.log("주문하기 버튼 클릭!");
 
@@ -290,8 +288,11 @@ export default {
 
       console.log(order);
       // console.log("전체 주문 목록", this.orderList);
+
+      //주문 정보를 orderList에 추가
+      this.orderList.push(order);
       //부모 컴포넌트에 이벤트 발생시켜 주문 정보를 전달
-      this.$emit("order-cart", order);
+      this.$emit("order-added", this.orderList);
     },
   },
 };
