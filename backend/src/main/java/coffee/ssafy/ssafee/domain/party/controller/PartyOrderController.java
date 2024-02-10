@@ -70,8 +70,10 @@ public class PartyOrderController {
     }
 
     @PostMapping("/today-carriers")
-    @Operation(summary = "총무 : 배달부선정결과 알림보내기")
-    public ResponseEntity<Void> sendCarrierResult(@PathVariable("access_code") String accessCode) {
+    @Operation(summary = "총무 : 배달부선정결과 알림보내기", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> sendCarrierResult(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                  @PathVariable("access_code") String accessCode) {
+        partyService.validateUser(accessCode, principal.userId());
         partyOrderService.sendCarrierResult(accessCode);
         return ResponseEntity.ok().build();
     }

@@ -146,21 +146,6 @@ public class PartyOrderService {
         }
     }
 
-    // TODO: 배달부 선정 WebHook 메시지 StringBulilder에 쓸것
-
-//     :fire_parrot: SSAFEE NOTICE:fire_parrot:
-//            ----------------------------
-//
-//    @here
-//
-//| 반 | 배달부 명단 |
-//            | --- | --- |
-//            | 2 | 양희승 |
-//            | 1 | 전상혁 |
-//            | 1 | 고영훈 |
-//
-//            :thanggu9_1:  :thanggu9_2:  :thanggu12:  :thanggu13:  :thanggu14:
-
     public void pickCarrier(Long partyId) {
         List<Participant> participants = participantRepository.findAllByPartyId(partyId);
         int carrierCount = (participants.size() + 5) / 6;
