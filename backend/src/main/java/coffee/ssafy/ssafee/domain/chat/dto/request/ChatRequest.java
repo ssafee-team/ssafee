@@ -3,8 +3,11 @@ package coffee.ssafy.ssafee.domain.chat.dto.request;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ChatRequest(
-        String content
+        String userName,
+        String content,
+        String contentTime
+
 ) {
 }

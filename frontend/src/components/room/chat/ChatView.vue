@@ -11,6 +11,8 @@ export default {
     const recvList = ref([])
     const errMessage = ref('') // 채팅 입력에 관한 에러 메시지
     const chatScroll = ref(null)
+    const pathParts = window.location.pathname.split('/') // 현재 페이지 경로를 분리
+    const accessCode = pathParts[pathParts.length - 1] // 경로의 마지막 accessCode 분리
     const userNumbers = []
 
     // 채팅 유저 번호 할당
@@ -24,7 +26,7 @@ export default {
       while (userNumbers.includes(randomUserNumber))
 
       userNumbers.push(randomUserNumber)
-      console.log(`현재 유저 수${userNumbers}`)
+      console.log(`현재 유저 수 ${userNumbers}`)
       return randomUserNumber
     }
 
@@ -60,17 +62,15 @@ export default {
         message.value = ''
         return
       }
-
       if (stompClient && stompClient.connected) {
         const msg = {
           userName: userName.value,
           content: message.value,
-          // inputTime: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString(),
-          // inputTime: new Date().toISOString(),
           contentTime: getTime(),
+          accessCode,
         }
-        // console.log("시간은요?" + msg.inputTime); // 2024-02-09T21:33:47.954Z
-        stompClient.send('/receive', JSON.stringify(msg), {})
+        console.log(`Sending message to /receive/${accessCode}`)
+        stompClient.send(`/receive/${accessCode}`, JSON.stringify(msg), {})
       }
     }
 
@@ -79,18 +79,13 @@ export default {
       // const serverURL = "/ws";
       const socket = new WebSocket(serverURL)
       stompClient = Stomp.over(socket)
-      // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-
-      stompClient.debug = function (str) {
-                if (str.includes("ERROR")) console.log(str);
-            };
-
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
       stompClient.connect(
         {},
         (frame) => {
           // console.log("소켓 연결 성공", frame);
-          stompClient.subscribe('/send', (res) => {
-            // console.log('구독으로 받은 메시지 입니다.', res.body)
+          stompClient.subscribe(`/send/${accessCode}`, (res) => {
+            console.log('구독으로 받은 메시지 입니다.', res.body)
             recvList.value.push(JSON.parse(res.body))
 
             nextTick(() => {

@@ -12,9 +12,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class ChatWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-//    @MessageMapping("/receive")
-//    @SendTo("/send")
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/send");
