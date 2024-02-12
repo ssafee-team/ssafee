@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Order Notification</title>
+    <!-- Socket.IO 클라이언트 라이브러리를 포함합니다 -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 서버와의 소켓 연결을 설정합니다
+            var socket = io('http://localhost:3000'); // 여기서 주소는 서버의 주소로 변경해야 합니다
+
+            // 주문 수락 알림을 받습니다
+            socket.on('confirmed', function (partyId) {
+                console.log('주문이 수락되었습니다: ' + partyId);
+                // 필요한 로직 추가
+            });
+
+            // 주문 거절 알림을 받습니다
+            socket.on('rejected', function (partyId) {
+                console.log('주문이 거절되었습니다: ' + partyId);
+                // 필요한 로직 추가
+            });
+
+            // 제조 완료 알림을 받습니다
+            socket.on('made', function (partyId) {
+                console.log('주문 제조가 완료되었습니다: ' + partyId);
+                // 필요한 로직 추가
+            });
+
+            // 배달 시작 알림을 받습니다
+            socket.on('startDelivery', function (partyId) {
+                console.log('배달이 시작되었습니다: ' + partyId);
+                // 필요한 로직 추가
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Shop Order Notifications</h1>
+    <!-- 알림을 표시하는 데 사용할 요소 추가 -->
+</body>
+</html>
