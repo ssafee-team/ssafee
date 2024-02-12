@@ -273,7 +273,7 @@ export default {
       // 주문 정보를 서버로 보내기 위해 데이터 형식 맞춰주기 (백단에 보내는 용도)
       const orderData = {
         menu_id: order.menuId,
-        participant_name: "전상혁", // 주문자 이름
+        participant_name: "전상", // 주문자 이름
         option_categories: order.option_categories.map((category) => {
           return {
             option_category_id: category.option_category_id,

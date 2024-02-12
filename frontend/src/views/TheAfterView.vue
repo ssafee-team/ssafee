@@ -115,8 +115,8 @@ onMounted(() => {
   code.value = route.params.code;
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo();
-  addToOrderList();
   getCarrierList();
+  addToOrderList();
 });
 
 onUnmounted(() => {
@@ -178,15 +178,33 @@ const updateRemainingTime = () => {
 };
 
 const addToOrderList = () => {
+
   // 주문 목록 조회
-  getOrderList(
-    code.value, //partyCode 전달
+  getParticipants(
+    code.value,
     (response) => {
-      orderList.value = response.data;
-      // console.log("주문 현황 불러오기: ", orderList.value);
+      const participants = response.data;
+      getOrderList(
+        code.value,
+        (response) => {
+          orderList.value = response.data.map(order => {
+            
+            const participant = participants.find(participant => participant.name === order.participant_name);
+            
+            return {
+              ...order,
+              participant_id: participant ? participant.id : null // Add participant_id or null if participant not found
+            };
+          });
+          console.log("주문 현황 불러오기: ", orderList.value);
+        },
+        (error) => {
+          console.error("주문 현황 조회 실패: ", error);
+        }
+      );
     },
     (error) => {
-      console.error("주문 현황 조회 실패: ", error);
+      console.error(error);
     }
   );
 };
@@ -195,7 +213,9 @@ const getCarrierList = () => {
   getParticipants(
     code.value,
     (response) => {
+      
       carrierParticipants.value = response.data.filter((participant) => participant.is_carrier);
+    
     },
     (error) => {
       console.error(error);

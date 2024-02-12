@@ -12,43 +12,25 @@
   <!-- 주문내역 -->
   <div class="content">
     <div class="order-list">
-      <div v-for="(order, index) in sortedOrders" :key="index" class="order">
-        <!-- 선택한 메뉴와 가격 -->
-        <div class="item" :class="{ checked: order.checked }" @click="toggleCheck(order)">
-          <div class="menu-name">
-            <input type="checkbox" v-model="order.checked" class="checkbox" @click.stop />
-            <div>{{ order.menu.name }}</div>
+      <div v-for="(participantOrders, participantName) in groupedOrders" :key="participantName" class="participant">
+        
+        <div class="participant-name">
+          <input type="checkbox" v-model="participantOrders[0].paid" @change="toggleCheck(participantOrders)">
+          {{ participantName }}</div>
+
+        <hr>
+        <div v-for="(order, index) in participantOrders" :key="index" class="order" :class="{ checked: order.checked }">
+          <div class="item" :class="{ checked: order.checked }">
+            <div class="menu-name">{{ order.menu.name }}</div>
+            <div class="menu-price">{{ order.menu.price }}원</div>
           </div>
-          <div class="menu-price">
-            <div>{{ order.menu.price }}원</div>
-          </div>
-          <span class="remove" @click="removeOrder(order.id)">X</span>
-        </div>
-        <!-- 선택한 옵션과 가격 -->
-        <div
-          v-for="optionCategory in order.option_categories"
-          :key="optionCategory.id"
-          class="option"
-        >
-          <div
-            class="menu-option"
-            v-for="option in optionCategory.options"
-            :key="option.id"
-            :class="{ checked: order.checked }"
-          >
-            <div class="option-name">
-              <div>ㄴ{{ option.name }}</div>
-            </div>
-            <div class="option-price">
-              <div>+{{ option.price }}</div>
+          <div v-for="optionCategory in order.option_categories" :key="optionCategory.id" class="option">
+            <div class="menu-option" v-for="option in optionCategory.options" :key="option.id" :class="{ checked: order.checked }">
+              ㄴ<div class="option-name">{{ option.name }}</div>
+              <div class="option-price">{{ option.price }}원</div>
             </div>
           </div>
         </div>
-        <!-- <div v-for="(option, idx) in order.option_categories" :key="idx" class="option"> -->
-        <!-- <template v-if="option.name && option.option_names.length > 0">
-              ㄴ{{ option.options.map((opt) => opt.name + " - " + opt.price + "원").join(", ") }}
-            </template> -->
-        <!-- </div> -->
       </div>
     </div>
     <!-- 총 주문 금액 -->
@@ -62,7 +44,7 @@
 </template>
 
 <script>
-import { deleteOrderMenu } from "@/api/party";
+import { modifyParticipants } from "@/api/after";
 
 export default {
   props: {
@@ -85,47 +67,60 @@ export default {
 
   mounted() {
     // 페이지가 로드될 때 getOrderList 함수를 호출하여 주문내역을 가져옴
-    console.log("33", this.code);
+    // console.log("33", this.code);
     // this.fetchOrderList();
   },
 
   computed: {
+    groupedOrders() {
+      const grouped = {};
+      for (const order of this.sortedOrders) {
+        const participantName = order.participant_name;
+        if (!grouped[participantName]) {
+          grouped[participantName] = [];
+        }
+        grouped[participantName].push(order);
+      }
+      
+      return grouped;
+    },
+
+
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders]; // 주문 목록을 복사하여 정렬
-      console.log("정렬전, ", orders);
+
       // 정렬 방식에 따라 주문 목록을 정렬
       if (this.sortMethod === "userName") {
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name));
       } else if (this.sortMethod === "menuName") {
-        console.log("ㅇㅇㅇㅇ");
+
         orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
       }
 
-      console.log("정렬후,", orders);
       return orders;
     },
   },
 
   methods: {
-    toggleCheck(order) {
-      order.checked = !order.checked;
-      if (order.participant.is_paid) {
-        updateParticipantPayment(
-          this.code,
-          order.participant.id,
-          { is_paid: !order.participant.is_paid },
-          () => {
-            order.participant.is_paid = !order.participant.is_paid;
-          },
-          (error) => {
-            console.error("Failed to update participant payment status:", error);
-            order.checked = !order.checked;
-          }
-        );
+    toggleCheck(participantOrders) {
+  for (const order of participantOrders) {
+    order.checked = !order.checked; 
+    modifyParticipants(
+      this.code,
+      order.participant_id,
+      { paid: !order.paid },
+      () => {
+        order.paid = !order.paid;
+        console.log("바뀜?", order.paid);
+      },
+      (error) => {
+        console.error(error);
+        order.checked = !order.checked;
       }
-    },
-
+    );
+  }
+},
     //드롭다운
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
@@ -141,25 +136,6 @@ export default {
       this.toggleDropdown();
     },
 
-    removeOrder(orderId) {
-      // 선택한 주문을 삭제
-      const index = this.orders.findIndex((order) => order.id === orderId);
-      if (index !== -1) {
-        // 서버에 삭제 요청 보내기
-        deleteOrderMenu(
-          this.code,
-          orderId,
-          () => {
-            // 성공 시 주문 리스트에서 해당 주문 삭제
-            this.orders.splice(index, 1);
-          },
-          (error) => {
-            // 실패 시
-            console.error("주문 삭제 실패:", error);
-          }
-        );
-      }
-    },
     calculateTotalPrice() {
       let total = 0;
 
@@ -198,7 +174,7 @@ export default {
 }
 
 .menu-name {
-  width: 190px;
+  /* width: 190px; */
   display: flex;
   align-items: center;
 }
@@ -249,7 +225,7 @@ option {
   font-size: 18px;
   font-weight: bold;
   display: flex;
-  /* justify-content: space-between; */
+  justify-content: space-between;
 }
 
 .remove {
@@ -259,8 +235,21 @@ option {
 }
 
 .menu-name {
-  width: 190px;
+  width: 300px;
 }
+
+.participant-name{
+  margin-left: 10px;
+  margin-top: 10px;
+  /* margin-right: 10px; */
+  font-weight: bold;
+  font-size: 18px;
+}
+
+input{
+  margin-right: 10px;
+}
+
 .menu-price {
   color: #00a5e7;
   margin-left: 10px;

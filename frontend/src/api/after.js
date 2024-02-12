@@ -26,4 +26,8 @@ function getParticipants(code, success, fail) {
   local.get(`${url}/${code}/participants`).then(success).catch(fail);
 }
 
-export { getCreator, getOrderList, getParticipants };
+function modifyParticipants(code, id, data, success, fail){
+  local.put(`${url}/${code}/participants/${id}`, data).then(success).catch(fail);
+}
+
+export { getCreator, getOrderList, getParticipants, modifyParticipants };
