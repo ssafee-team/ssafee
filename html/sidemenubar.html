@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: sideMenuBar ::</title>
+</head>
+<style>
+    body {
+        position: absolute;
+        left: 0;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        color: black;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+        width: 300px;
+        background: #020817;
+        height: 100%;
+        position: fixed;
+    }
+
+    li a {
+        text-decoration: none;
+        font-size: 25px;
+        padding: 10px;
+        display: block;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    li a:hover {
+        background: #333;
+        color: #fff;
+        border-radius: 25px;
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .sidebar ul {
+        flex-direction: column;
+    }
+
+    .sidebar li{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        list-style-type: none;
+    }
+</style>
+<body>
+    <div class="header" id="header-placeholder">
+    </div>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="#">홈</a></li>
+            <li><a href="#">가게 수정</a></li>
+            <li><a href="#">메뉴 관리</a></li>
+            <li><a href="#">옵션 관리</a></li>
+        </ul>
+    </div>
+
+    <script>
+        fetch('./MHeader.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('header-placeholder').innerHTML = text);
+    </script>
+</body>
+</html>
