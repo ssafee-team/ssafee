@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div v-if="isLoading" class="loader-overlay">
+      <div class="loader"></div>
+    </div>
     <MainHeader />
     <main>
       <div class="container">
@@ -33,14 +36,10 @@
             <button class="btn-roomlist" @click="goMain">방목록</button>
             <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
           </div> -->
-          <!-- Body 화면 6:4 비율로 분할 -->
           <div class="body-container">
             <div class="left-panel">
-              <!-- <div>메뉴가 들어갈 부분</div> -->
               <MenuList :shopId="1" :code="code" @order-cart="addToCart" />
-
-              <!-- 왼쪽 컨텐츠 (6:4 중 6 부분) -->
-              <!-- 추가적인 내용이 들어갈 수 있습니다. -->
+             
             </div>
             <div class="center-panel">
               <Cart :orders="orderList" :code="code" />
@@ -72,6 +71,7 @@ import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const code = ref(""); //파티 코드
+const isLoading = ref(true); //로딩 상태 변수
 
 const partyInfo = ref({
   id: "",
@@ -123,6 +123,9 @@ onMounted(() => {
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo();
   addToOrderList();
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1000);
 });
 
 onUnmounted(() => {
@@ -396,5 +399,48 @@ button {
   .btn-roomlist {
     font-size: 16px;
   }
+}
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* 투명한 배경색 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* 다른 요소 위에 표시 */
+}
+
+.loader {
+  width: 35px;
+  height: 80px;
+  position: relative;
+}
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px 5px;
+  border-top: 1px solid #bbb6aa;
+  border-bottom: 4px solid #bbb6aa;
+  background: 
+    linear-gradient(#612329 0 0) bottom no-repeat content-box, 
+    #e4e0d7;
+  mix-blend-mode: darken;
+  animation: l1 1.5s infinite linear;
+}
+.loader:before {
+  content: "";
+  position: absolute;
+  inset: -18px calc(50% - 2px) 8px;
+  background: #eb6b3e;   
+  transform-origin: bottom;
+  transform: rotate(8deg);
+}
+@keyframes l1 {
+ 0%   {background-size: 100% 100%}
+ 100% {background-size: 100% 5%}
 }
 </style>

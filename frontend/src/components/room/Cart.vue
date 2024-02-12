@@ -71,7 +71,6 @@ export default {
 
   mounted() {
     // 페이지가 로드될 때 getOrderList 함수를 호출하여 주문내역을 가져옴
-    console.log("33", this.code);
     // this.fetchOrderList();
   },
 
@@ -79,16 +78,16 @@ export default {
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders]; // 주문 목록을 복사하여 정렬
-      console.log("정렬전, ", orders);
+      // console.log("정렬전, ", orders);
       // 정렬 방식에 따라 주문 목록을 정렬
       if (this.sortMethod === "userName") {
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name));
       } else if (this.sortMethod === "menuName") {
-        console.log("ㅇㅇㅇㅇ");
+        // console.log("ㅇㅇㅇㅇ");
         orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
       }
 
-      console.log("정렬후,", orders);
+      // console.log("정렬후,", orders);
       return orders;
     },
   },
