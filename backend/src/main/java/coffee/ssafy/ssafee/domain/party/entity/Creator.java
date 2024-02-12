@@ -19,10 +19,6 @@ public class Creator {
     private Long id;
 
     @NotNull
-    @Column(nullable = false, updatable = false)
-    private String email;
-
-    @NotNull
     @Column(nullable = false)
     private String name;
 
@@ -35,7 +31,7 @@ public class Creator {
     private String account;
 
     @Null
-    @Column(nullable = true)
+    @Column
     private String webhookUrl;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
