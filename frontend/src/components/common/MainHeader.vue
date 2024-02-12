@@ -1,6 +1,6 @@
 <template>
   <header class="head">
-    <div class="head-logo">
+    <div class="head-logo" @click="goToMain">
       <img src="@/assets/img/logo_ssaffe_2nd.png" alt="" />
       <div class="head-name">SSAFEE®</div>
     </div>
@@ -15,6 +15,11 @@ export default {
       name: "전상혁",
     };
   },
+  methods:{
+    goToMain(){
+      this.$router.push({name: "main"});
+    }
+  }
 };
 </script>
 <style scoped>
@@ -35,6 +40,7 @@ export default {
 }
 
 .head-logo {
+  cursor: pointer;
   display: flex;
   align-items: center;
   /* flex-direction: column; */
