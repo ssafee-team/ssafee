@@ -31,7 +31,7 @@ public class ChatService {
     }
 
     @Transactional
-    public void createChat(Long partyId, ChatRequest chatRequest) {
+    public ChatResponse createChat(Long partyId, ChatRequest chatRequest) {
         Party partyReference = entityManager.getReference(Party.class, partyId);
         Chat chat = Chat.builder()
                 .name("")
@@ -39,6 +39,7 @@ public class ChatService {
                 .party(partyReference)
                 .build();
         chatRepository.save(chat);
+        return chatMapper.toDto(chat);
     }
 
 }

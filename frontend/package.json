@@ -11,16 +11,15 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
     "@vueuse/core": "^10.7.2",
     "axios": "^1.6.7",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",
     "sass": "^1.70.0",
-    "sockjs-client": "^1.6.1",
     "vue": "^3.4.18",
     "vue-router": "^4.2.5",
-    "vue-socket.io": "^3.0.10",
-    "webstomp-client": "^1.2.6"
+    "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",

@@ -1,323 +1,186 @@
 <script setup>
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
-import Stomp from 'webstomp-client'
+import { useBrowserLocation, useFetch } from '@vueuse/core'
+import { Client } from '@stomp/stompjs'
 
-const message = ref('')
-const recvList = ref([])
-const errMessage = ref('') // 채팅 입력에 관한 에러 메시지
-const chatScroll = ref(null)
-const pathParts = window.location.pathname.split('/') // 현재 페이지 경로를 분리
-const accessCode = pathParts[pathParts.length - 1] // 경로의 마지막 accessCode 분리
-const userNumbers = []
+const location = useBrowserLocation()
+const accessCode = location.value.pathname.split('/').pop()
+const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
+const wsEndpoint = '/ws'
+const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
 
-// 채팅 유저 번호 할당
-function getUserNumber() {
-  if (userNumbers.length >= 300)
-    throw new Error('채팅방이 가득 찼습니다.')
+const chatListRef = ref()
+const chats = ref(await (await fetch(`/api/v1/parties/${accessCode}/chats`)).json())
+const content = defineModel()
+const error = ref()
 
-  let randomUserNumber
-  do
-    randomUserNumber = Math.floor(Math.random() * 300) + 1
-  while (userNumbers.includes(randomUserNumber))
+const client = new Client({
+  brokerURL: wsUrl,
+  onConnect: () => {
+    client.subscribe(`/sub/party/${accessCode}/message`, (message) => {
+      chats.value.push(JSON.parse(message.body))
 
-  userNumbers.push(randomUserNumber)
-  console.log(`현재 유저 수 ${userNumbers}`)
-  return randomUserNumber
-}
-
-let stompClient = null // 소켓 통신
-const randomUserNumber = getUserNumber()
-const userName = ref(`유저 ${randomUserNumber}`)
-
-function isCurrentUser(messageUsername) {
-  return messageUsername === userName.value
-}
-
-function sendMessage(e) {
-  if (e.keyCode === 13 && userName.value !== '' && message.value !== '') {
-    send()
-    message.value = ''
-  }
-}
-
-function sendMessageClick() {
-  if (userName.value !== '' && message.value !== '') {
-    send()
-    message.value = ''
-  }
-}
-
-function send() {
-  if (message.value.trim().length === 0) {
-    errMessage.value = '메시지를 입력하세요.'
-    setTimeout(() => {
-      errMessage.value = ''
-    }, 1000)
-    message.value = ''
-    return
-  }
-  if (stompClient && stompClient.connected) {
-    const msg = {
-      userName: userName.value,
-      content: message.value,
-      contentTime: getTime(),
-      accessCode,
-    }
-    console.log(`Sending message to /receive/${accessCode}`)
-    stompClient.send(`/receive/${accessCode}`, JSON.stringify(msg), {})
-  }
-}
-
-function connect() {
-  const serverURL = 'ws://localhost:80/ws'
-  const socket = new WebSocket(serverURL)
-  stompClient = Stomp.over(socket)
-
-  console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
-  stompClient.connect(
-    {},
-    (frame) => {
-      stompClient.subscribe(`/send/${accessCode}`, (res) => {
-        console.log('구독으로 받은 메시지 입니다.', res.body)
-        recvList.value.push(JSON.parse(res.body))
-
-        nextTick(() => {
-          chatScroll.value.scrollTop = chatScroll.value.scrollHeight
-        })
+      nextTick(() => {
+        chatListRef.value.scrollTop = chatListRef.value.scrollHeight
       })
-    },
-    (error) => {
-      console.log('소켓 연결 실패', error)
-    },
-  )
-}
+    })
+  },
+})
 
-function getToday() {
-  const arrDayStr = ['일', '월', '화', '수', '목', '금', '토']
-
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth()
-  const days = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-  const day = arrDayStr[date.getDay()]
-
-  return `${year}년 ${month}월 ${days}일 (${day})`
-}
-
-function getTime() {
-  const today = new Date()
-  const hours = (`0${today.getHours()}`).slice(-2)
-  const minutes = (`0${today.getMinutes()}`).slice(-2)
-  const seconds = (`0${today.getSeconds()}`).slice(-2)
-  const timeString = `${hours}:${minutes}:${seconds}`
-  return timeString
+function publish() {
+  if (content.value.trim().length === 0)
+    return
+  client.publish({
+    destination: `/pub/party/${accessCode}/chat`,
+    body: JSON.stringify({ content: content.value }),
+  })
+  content.value = ''
 }
 
 onMounted(() => {
-  connect()
+  chatListRef.value.scrollTop = chatListRef.value.scrollHeight
+  client.activate()
 })
 
 onUnmounted(() => {
-  if (stompClient)
-    stompClient.disconnect()
+  client.deactivate()
 })
 </script>
 
 <template>
-  <div class="chat-window">
-    <div class="chat-body">
-      <div style="padding: 5px">
-        <div class="cur-date">
-          {{ getToday() }}
+  <div class="tabs">
+    <div class="tab">
+      채팅
+    </div>
+  </div>
+
+  <div class="content">
+    <div ref="chatListRef" class="chat-list">
+      <div v-for="chat in chats" :key="chat.createdTime" class="chat">
+        <div v-show="chat.name" class="chat-name">
+          {{ chat.name }}
         </div>
-      </div>
-      <div ref="chatScroll" class="chat-messages">
-        <!-- <div v-for="(message, index) in recvList" :key="index" class="message-box"> -->
-        <div
-          v-for="(message, index) in recvList" :key="index" class="message-box" :class="{
-            'right-align': isCurrentUser(message.userName),
-            'left-align': !isCurrentUser(message.userName),
-          }"
-        >
-          <div class="user-box">
-            <strong>{{ message.userName }}</strong>
-          </div>
-          <div
-            class="message" :class="{
-              'right-align-message': isCurrentUser(message.userName),
-              'left-align-message': !isCurrentUser(message.userName),
-            }"
-          >
-            {{ message.content }}
-          </div>
-          <div class="time-box">
-            {{ message.contentTime }}
-          </div>
+        <div class="chat-content">
+          {{ chat.content }}
+        </div>
+        <div class="chat-time">
+          {{ chat.created_time.split('T').pop() }}
         </div>
       </div>
     </div>
-    <div class="chat-input">
-      <textarea v-model="message" placeholder="메시지를 입력하세요." @keyup="sendMessage" />
-      <!-- <input v-model="message" type="text" @keyup="sendMessage" placeholder="메시지를 입력하세요." /> -->
-      <button @click="sendMessageClick">
+    <div class="footer">
+      <input v-model="content" class="chat-input" @keyup.enter="publish">
+      <button class="send" @click="publish">
         전송
       </button>
-      <div v-if="errMessage" class="error-message">
-        {{ errMessage }}
-      </div>
     </div>
   </div>
 </template>
 
-<style>
-/* 전체 채팅 창 높이 조절해야 함. */
-.chat-window {
-  /* height: 100%; */
-  margin-bottom: auto;
-}
-
-.chat-body {
-  height: 700px;
-  max-height: 700px;
-  border-radius: 10px;
-  background-color: #97afba;
-  border: 3px solid #97afba;
-  overflow-y: hidden;
-}
-
-.chat-body::-webkit-scrollbar {
-  display: none;
-}
-
-.cur-date {
-  background-color: #344a53;
+<style scoped>
+/* 탭 스타일 */
+.tabs {
   display: flex;
-  justify-content: center;
+  height: 40px;
+  justify-content: space-around;
+  border-bottom: 3px solid #1e293b;
+  /* box-shadow: 0px 0px 10px 0px rgb(227, 226, 226); */
+}
+
+.tab {
+  width: 50%;
+  cursor: pointer;
   padding: 10px;
-  font-size: 20px;
+  /* color: #FFFFFF; */
+  font-size: 18px;
   font-weight: bold;
-  color: white;
-  margin: 15px 30px 15px 30px;
-  border-radius: 10px;
+  text-align: center;
 }
 
-.chat-messages {
-  padding: 10px;
-  max-height: 600px;
-  font-size: 20px;
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 605px;
+  /* max-height: 624px; */
+  /* height: calc(100% - 60px);  */
   overflow-y: auto;
+  box-sizing: inherit;
 }
 
-.chat-messages::-webkit-scrollbar {
+.chat-list {
+  overflow-y: auto;
+  /* 채팅 목록이 넘칠 경우 스크롤 생성 */
+  height: 550px;
+}
+
+.chat-list::-webkit-scrollbar {
   display: none;
 }
 
-.message-box {
-  /* text-align: right; */
-  margin-bottom: 20px;
-}
+.chat {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  margin-left: 6px;
+  margin-right: 6px;
+  padding: 4px;
+  border: 2px solid #343844;
 
-.user-box {
-  margin-bottom: 5px;
-}
-
-.right-align {
-  text-align: right;
-}
-
-.left-align {
-  text-align: left;
-}
-
-.right-align-message {
-  margin-left: auto;
-  margin-right: 5px;
-  padding: 5px;
   word-wrap: break-word;
-  max-width: 80%;
-  width: fit-content;
-  background-color: yellow;
-  border-radius: 10px;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.left-align-message {
-  margin-right: auto;
-  margin-left: 5px;
-  padding: 5px;
-  background-color: white;
-  word-wrap: break-word;
-  max-width: 80%;
   width: fit-content;
   border-radius: 10px;
+}
+
+.chat-name {}
+
+.chat-content {
+  font-size: 16px;
   font-weight: bold;
-  font-size: 18px;
 }
 
-.message-box>div>strong {
-  color: #344a53;
-}
-
-.time-box {
+.chat-time {
   font-size: 12px;
+  color: #999999;
+}
+
+.footer {
+  /* width: 100%; */
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  background-color: #343844;
+  /* bottom: 0; */
+  /* position: sticky; */
+  border-radius: 0 0 3px 3px;
+  /* box-sizing: inherit; */
 }
 
 .chat-input {
   display: flex;
   width: 100%;
-  height: auto;
-  /* height: 140px; */
-  margin-top: 10px;
-}
-
-.chat-input>textarea {
-  flex: 9;
-  padding: 10px;
-  background-color: #e6f4f1;
-  font-size: 20px;
-  border-radius: 10px;
-  border: 1px solid white;
-  resize: none;
-}
-
-textarea::placeholder {
-  color: #97afba;
+  font-size: 16px;
   font-weight: bold;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 10px;
+  color: #ffffff;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding-left: 10px;
 }
 
-.chat-input>button {
+.send {
+  display: flex;
+  width: 60px;
   cursor: pointer;
-  flex: 1;
-  margin-left: 5px;
   background-color: #00a5e7;
-  font-size: 20px;
+  /* background-color: #020817; */
+  border: 0px;
   font-weight: bold;
+  color: #ffffff;
+  font-size: 16px;
+  margin: 10px;
   border-radius: 10px;
-  border: 1px solid white;
-}
-
-.error-message {
-  color: red;
-  font-weight: bold;
-}
-
-/* 화면 폭이 768px 미만일 때 */
-@media screen and (max-width: 768px) {
-
-  .cur-date,
-  .chat-messages {
-    font-size: 16px;
-  }
-
-  .message,
-  .chat-input>textarea,
-  .chat-input>button {
-    font-size: 14px;
-  }
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  justify-content: center;
 }
 </style>

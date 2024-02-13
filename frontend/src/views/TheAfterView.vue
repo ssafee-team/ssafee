@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MainHeader from '@/components/common/MainHeader.vue'
-import ChatView from '@/components/room/chat/ChatView.vue'
+import Chat from '@/components/room/Chat.vue'
 import AfterCart from '@/components/after/AfterCart.vue'
 import { getOrderList, getParty } from '@/api/party'
 import CarrierList from '@/components/after/CarrierList.vue'
@@ -224,7 +224,7 @@ function getCarrierList() {
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
-              <ChatView />
+              <Chat />
             </div>
           </div>
         </body>
@@ -396,7 +396,10 @@ button {
   flex: 2.5;
   margin-left: 20px;
   /* height: 700px; */
+  border: 3px solid #1e293b;
+  border-radius: 5px;
   box-sizing: inherit;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 /* 화면 폭이 768px 미만일 때 */
