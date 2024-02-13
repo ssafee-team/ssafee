@@ -18,7 +18,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/v1/parties/{access_code}/chats")
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class ChatController {
     @SendTo("/send/{accessCode}")
     public ChatRequest SocketHandler(@DestinationVariable String accessCode, ChatRequest chatRequest) {
         Long partyId = partyService.findPartyId(accessCode);
-        chatService.saveChat(partyId, chatRequest);
+        chatService.createChat(partyId, chatRequest);
         return chatRequest;
     }
 

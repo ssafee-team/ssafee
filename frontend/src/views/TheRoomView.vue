@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
-import ChatView from '@/components/room/chat/ChatView.vue'
+import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
 import { getOrderList, getParty } from '@/api/party'
 
@@ -228,7 +228,7 @@ function goCreate() {
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
-              <ChatView />
+              <Chat />
             </div>
           </div>
         </body>

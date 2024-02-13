@@ -3,7 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailForManagerResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.PartyInfoForManagerResponse;
 import coffee.ssafy.ssafee.domain.shop.service.ShopOrderService;
-import coffee.ssafy.ssafee.domain.shop.service.ShopOrderSocketIoService;
+import coffee.ssafy.ssafee.domain.shop.service.ShopOrderSocketIOService;
 import coffee.ssafy.ssafee.domain.user.service.ManagerService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShopOrderController {
 
-    private final ShopOrderSocketIoService shopOrderSocketIoService;
+    private final ShopOrderSocketIOService shopOrderSocketIoService;
     private final ShopOrderService shopOrderService;
     private final ManagerService managerService;
 
