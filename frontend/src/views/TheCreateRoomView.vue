@@ -1,8 +1,10 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import { createParty } from '@/api/party'
+import CreateHeader from '@/components/common/CreateHeader.vue'
+import { getShops } from '@/api/shop'
 
 const router = useRouter()
 const headerHeight = ref('72px') // 예시로 100px를 기본값으로 설정
@@ -12,6 +14,7 @@ if (token.value === null)
 
 const form = ref({
   roomTitle: '',
+  shop_id: '',
   name: '',
   class: '',
   batch: '',
@@ -32,16 +35,57 @@ const formErrors = ref({
   phoneNumber: false,
 })
 
-Object.keys(form.value).forEach((key) => {
-  watch(
-    () => form.value[key],
-    (newValue) => {
-      // 여기서는 단순히 값이 비어있지 않은지 확인합니다.
-      // 필요에 따라 더 복잡한 검증 로직을 추가할 수 있습니다.
-      formErrors.value[key] = !newValue.trim()
+const shops = ref([])
+
+onMounted(() => {
+  console.log('시작')
+  getShopList()
+})
+
+function getShopList(param) {
+  // API 호출
+  getShops(
+    param,
+
+    ({ data }) => {
+      console.log('가져온 데이터: ', data)
+      shops.value.push(data)
+      console.log(shops.value, '제발')
+      console.log(shops.value.name)
+    },
+    (error) => {
+      console.log(error)
     },
   )
+}
+
+// shop_id에 대한 watch만 따로 처리
+watch(
+  () => form.value.shop_id,
+  (newValue) => {
+    // newValue가 존재하고 빈 문자열이 아닌 경우에만 처리
+    if (newValue !== undefined && newValue !== '') {
+      // 정수로 변환하여 저장
+      form.value.shop_id = Number.parseInt(newValue)
+    }
+  },
+)
+
+// shop_id를 제외한 나머지 필드들에 대한 watch 생성
+Object.keys(form.value).forEach((key) => {
+  // shop_id는 이미 위에서 처리되었으므로 여기서는 처리하지 않음
+  if (key !== 'shop_id') {
+    watch(
+      () => form.value[key],
+      (newValue) => {
+        // 여기서는 단순히 값이 비어있지 않은지 확인합니다.
+        // 필요에 따라 더 복잡한 검증 로직을 추가할 수 있습니다.
+        formErrors.value[key] = !newValue.trim()
+      },
+    )
+  }
 })
+
 // 기존에 정의된 함수들...
 
 function submitForm() {
@@ -82,44 +126,6 @@ function submitForm() {
   // 유효한 경우, 폼 제출 로직을 여기에 추가합니다.
   // 예: createParty(...)
 }
-
-// 여기부터 상혁이가 작성--------------------
-// const shops = ref({
-//   id: "",
-//   name: "",
-//   image: "",
-// });
-
-// onMounted(() => {
-//   console.log("시작");
-//   getShopList();
-// });
-
-// const getShopList = (param) => {
-//   //API 호출
-//   getShops(
-//     param,
-
-//     ({ data }) => {
-//       console.log("가져온 데이터: ", data);
-//       shops.value.id = data.id;
-//       shops.value.name = data.name;
-//       shops.value.image = data.image;
-//     },
-//     (error) => {
-//       console.log(error);
-//     }
-//   );
-// };
-// const shops = ref({
-//   id: "",
-//   name: "",
-//   address: "",
-//   phone: "",
-//   image: "",
-
-// })
-// 여기까지 상혁이가 작성--------------------
 
 const PickPlatform = ref('')
 const Pickdelivery = ref('')
@@ -175,7 +181,7 @@ const partyData = computed(() => ({
   generation: form.value.batch,
   classroom: form.value.class,
   last_order_time: form.value.deadline,
-  shop_id: 1,
+  shop_id: form.value.shop_id,
   creator: {
     name: form.value.name,
     email: 'skip',
@@ -392,21 +398,34 @@ function formatTime() {
     </div>
   </div>
 
-  <header :style="{ height: headerHeight }">
-    <div class="bannarname">
-      방 생성
-    </div>
-  </header>
+  <CreateHeader />
   <div id="empty" />
 
   <div class="parent">
     <div class="child2">
       <main class="form-container">
         <div class="form-field">
-          <label for="roomTitle">방제목</label>
+          <label for="roomTitle">파티명</label>
+
           <div class="input-with-error">
             <input id="roomTitle" v-model="form.roomTitle" type="text" maxlength="32" placeholder="방 제목을 입력해주세요">
             <span v-if="formErrors.roomTitle" class="error-message">방 제목을 입력해주세요.</span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="cafe">카페</label>
+          <div class="input-with-error">
+            <select id="cafe" v-model="form.shop_id" class="input-style">
+              <option disabled value="">
+                카페를 선택하세요
+              </option>
+              <!-- 수정된 부분: v-for 디렉티브에서 각 카페의 이름을 가져와서 표시 -->
+              <option v-for="shop in shops[0]" :key="shop.id" :value="shop.id">
+                {{ shop.name }}
+              </option>
+            </select>
+            <!-- <span v-if="formErrors.shop_id" class="error-message">카페를 선택하세요.</span> -->
           </div>
         </div>
 
@@ -473,60 +492,25 @@ function formatTime() {
             <span v-if="formErrors.accountNumber" class="error-message">계좌번호를 입력해주세요.</span>
           </div>
         </div>
+
+        <div class="form-field">
+          <label for="hook">WebHook_URL</label>
+          <div class="input-with-error">
+            <input id="hook" v-model="form.hook" type="text">
+          </div>
+        </div>
         <!-- <div class="form-field">
       <label for="phoneNumber">전화번호</label>
       <input type="text" id="phoneNumber" v-model="form.phoneNumber" maxlength="15"
       placeholder="010-1234-5678">
     </div> -->
+        <div class="button-container">
+          <button class="button-style" @click="submitForm">
+            생성하기
+          </button>
+        </div>
       </main>
     </div>
-
-    <div class="child cafe-selection">
-      <p><label>카페선택</label></p>
-      <img
-        src="../assets/img/coffeebrand/공차.jpg" alt="공차" class="border1" :class="{ grayscale: !isGongchaSelected }"
-        width="150px" height="150px" @click="addPlatform('공차')"
-      >
-      <br>
-
-      <img
-        src="../assets/img/coffeebrand/컴포즈드커피.jpg" alt="" class="border1" :class="{ grayscale: !isComposedSelected }"
-        width="150px" height="150px" @click="addPlatform('컴포즈드')"
-      >
-      <br>
-      <img
-        src="../assets/img/coffeebrand/백다방커피.jpg" alt="" class="border1" :class="{ grayscale: !isBaekSelected }"
-        width="150px" height="150px" @click="addPlatform('백다방')"
-      >
-    </div>
-
-    <!-- <div class="child">
-      <p><label> 플랫폼 선택</label></p>
-      <img
-        v-on:click="addDelivery('싸피')"
-        src="../assets/img/ssaffee_로고.png"
-        alt="싸"
-        :class="{ border1: true, grayscale: !isSsafySelected }"
-        width="150px"
-        height="150px"
-      />
-      <p>사장님께 자동으로 주문내역을 전달합니다</p>
-      <img
-        v-on:click="addDelivery('배민')"
-        src="../assets/img/delivery/배달플랫폼.jpg"
-        alt="배달플랫폼"
-        :class="{ border1: true, grayscale: !isBaeminSelected }"
-        width="150px"
-        height="150px"
-      />
-      <p>마감시간이 지난 후 타 배달 플랫폼을 활용하여 직접 주문해주셔야 합니다.</p>
-    </div> -->
-  </div>
-
-  <div class="button-container">
-    <button class="button-style" @click="submitForm">
-      완료
-    </button>
   </div>
 </template>
 
@@ -558,16 +542,19 @@ function formatTime() {
 }
 
 .form-container {
+  border: 3px solid #1E293B;
+  border-radius: 15px;
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+
 }
 
 .form-field {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 label {
@@ -575,7 +562,7 @@ label {
   margin-right: 10px;
   width: 180px;
   font-weight: bold;
-  color: #344a53;
+  color: #020817;
 }
 
 input {
@@ -583,12 +570,21 @@ input {
   height: 40px;
   padding: 8px;
   font-size: 18px;
-  border: 0.5px solid #f5f5f5;
-  border-radius: 4px;
+  border: 3px solid #1E293B;
+  border-radius: 15px;
   box-sizing: border-box;
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
-
+.input-style {
+  flex-grow: 1;
+  height: 40px;
+  padding: 8px;
+  font-size: 18px;
+  border: 3px solid #1E293B;
+  border-radius: 15px;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+}
 /* header {
   font-size: 2rem;
   width: 100%;
@@ -603,7 +599,7 @@ input {
 }
 
 .button-style {
-  background-color: #344a53;
+  background-color: #020817;
   /* 녹색 배경 */
   color: white;
   /* 흰색 텍스트 */
@@ -725,11 +721,6 @@ input {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-}
-
-.error-input {
-  border: 1px solid red;
-  /* 오류가 있을 때 빨간색 테두리 적용 */
 }
 
 .cafe-selection {

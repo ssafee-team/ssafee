@@ -21,9 +21,6 @@ export default {
         SSAFEE®
       </div>
     </div>
-    <!-- <div class="greeting">
-      {{ name }}님 안녕하세요
-    </div> -->
   </header>
 </template>
 
@@ -56,10 +53,10 @@ export default {
   margin-left: 10px;
 }
 
-.greeting {
+/* .greeting {
   font-size: 20px;
   margin-right: 10px;
-}
+} */
 
 img {
   margin-left: 10px;

@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// Manager
+import ManagerLogin from '@/components/manager/ManagerLogin.vue'
+import ManagerMain from '@/components/manager/ManagerMain.vue'
+import ManagerShop from '@/components/manager/ManagerShop.vue'
+import ManagerInfo from '@/components/manager/ManagerInfo.vue'
+import ManagerOrderList from '@/components/manager/ManagerOrderList.vue'
+
 // import { storeToRefs } from "pinia";
 
 const router = createRouter({
@@ -44,24 +51,30 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/Manager',
-      name: 'ManagerLogin',
-      component: () => import('../views/TheManagerLoginView.vue'),
+      path: '/m-login',
+      name: 'm-login',
+      component: ManagerLogin,
+
     },
     {
-      path: '/manager/:manager_id',
-      name: 'Manager',
-      component: () => import('../views/TheManagerView.vue'),
+      path: '/m-main',
+      name: '/m-main',
+      component: ManagerMain,
     },
     {
-      path: '/manager/:manager_id/party/:access_code',
-      name: 'OrdersForManager',
-      component: () => import('../views/TheOrdersForManagerView.vue'),
+      path: '/m-shop',
+      name: '/m-shop',
+      component: ManagerShop,
     },
     {
-      path: '/manager/:manager_id/edit',
-      name: 'ManagerEditor',
-      component: () => import('../views/TheManagerEditorView.vue'),
+      path: '/m-info',
+      name: '/m-info',
+      component: ManagerInfo,
+    },
+    {
+      path: '/m-order-list',
+      name: '/m-order-list',
+      component: ManagerOrderList,
     },
   ],
 })
