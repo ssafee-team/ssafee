@@ -148,12 +148,12 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: 20px;
   padding: 20px;
   border: 3px solid #1E293B;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 10px;
-  height: auto;
+  height: 400px;
   max-height: 400px;
   overflow-y: auto;
   /* 전체 너비를 차지하도록 설정 */

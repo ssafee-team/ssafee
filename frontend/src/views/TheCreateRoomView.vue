@@ -50,8 +50,6 @@ function getShopList(param) {
     ({ data }) => {
       console.log('가져온 데이터: ', data)
       shops.value.push(data)
-      console.log(shops.value, '제발')
-      console.log(shops.value.name)
     },
     (error) => {
       console.log(error)
@@ -89,7 +87,7 @@ Object.keys(form.value).forEach((key) => {
 // 기존에 정의된 함수들...
 
 function submitForm() {
-  const requiredFields = ['name', 'generation', 'classroom', 'last_order_time', 'creator']
+  const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time', 'creator']
   const isAnyFieldEmpty = requiredFields.some(
     field =>
       (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '')
@@ -425,7 +423,7 @@ function formatTime() {
                 {{ shop.name }}
               </option>
             </select>
-            <!-- <span v-if="formErrors.shop_id" class="error-message">카페를 선택하세요.</span> -->
+            <span v-if="formErrors.shop_id" class="error-message">카페를 선택하세요.</span>
           </div>
         </div>
 
@@ -545,6 +543,7 @@ function formatTime() {
   border: 3px solid #1E293B;
   border-radius: 15px;
   max-width: 800px;
+
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -675,7 +674,7 @@ input {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 550px;
-  background: #344a53;
+  background: #343844;
   border-radius: 5px;
   padding: 5px 10px;
   box-sizing: border-box;
