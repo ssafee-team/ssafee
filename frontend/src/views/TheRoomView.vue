@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+// import func from '../../vue-temp/vue-editor-bridge'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import ChatView from '@/components/room/chat/ChatView.vue'
 import Cart from '@/components/room/Cart.vue'
-import { getOrderList, getParty } from '@/api/party'
+import { getOrderList, getParty, orderRequest } from '@/api/party'
 
 // const roomCode = ref("");
 
@@ -164,6 +166,21 @@ function goMain() {
 function goCreate() {
   router.push({ name: 'CreateRoomView' })
 }
+
+function goOrder() {
+  orderRequest(
+    code.value,
+    console.log(code.value),
+    () => {
+      console.log('주문이 요청되었습니다.')
+      // 주문이 요청되면 할 일을 추가할 수 있습니다.
+    },
+    (error) => {
+      console.error('주문 요청에 실패했습니다:', error)
+      // 주문 요청 실패 시 처리할 내용을 추가할 수 있습니다.
+    },
+  )
+}
 </script>
 
 <template>
@@ -220,6 +237,11 @@ function goCreate() {
             <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
           </div> -->
           <div class="body-container">
+            <div>
+              <button class="order-request" @click="goOrder()">
+                주문요청
+              </button>
+            </div>
             <div class="left-panel">
               <MenuList :shop-id="1" :code="code" @order-cart="addToCart" />
             </div>
