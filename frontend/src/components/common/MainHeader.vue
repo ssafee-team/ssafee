@@ -1,27 +1,32 @@
-<template>
-  <header class="head">
-    <div class="head-logo" @click="goToMain">
-      <img src="@/assets/img/logo_ssaffe_2nd.png" alt="" />
-      <div class="head-name">SSAFEE®</div>
-    </div>
-    <div class="greeting">{{ name }}님 안녕하세요</div>
-  </header>
-</template>
-
 <script>
 export default {
   data() {
     return {
-      name: "전상혁",
-    };
-  },
-  methods:{
-    goToMain(){
-      this.$router.push({name: "main"});
+      name: '전상혁',
     }
-  }
-};
+  },
+  methods: {
+    goToMain() {
+      this.$router.push({ name: 'main' })
+    },
+  },
+}
 </script>
+
+<template>
+  <header class="head">
+    <div class="head-logo" @click="goToMain">
+      <img src="@/assets/img/logo_ssaffe_2nd.png" alt="">
+      <div class="head-name">
+        SSAFEE®
+      </div>
+    </div>
+    <div class="greeting">
+      {{ name }}님 안녕하세요
+    </div>
+  </header>
+</template>
+
 <style scoped>
 .head {
   width: 100%;

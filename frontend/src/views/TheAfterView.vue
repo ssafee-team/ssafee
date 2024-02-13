@@ -1,3 +1,170 @@
+<script setup>
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import MainHeader from '@/components/common/MainHeader.vue'
+import ChatView from '@/components/room/chat/ChatView.vue'
+import AfterCart from '@/components/after/AfterCart.vue'
+import { getOrderList, getParty } from '@/api/party'
+import CarrierList from '@/components/after/CarrierList.vue'
+import { getParticipants } from '@/api/after'
+
+// const roomCode = ref("");
+
+const route = useRoute()
+const router = useRouter()
+const code = ref('') // 파티 코드
+
+const partyInfo = ref({
+  id: '',
+  name: '',
+  generation: '',
+  classroom: '',
+  last_order_time: '24:00',
+  created_time: '',
+  shop_id: '',
+  creator: {
+    id: '',
+    name: '',
+    email: '',
+    bank: '',
+    account: '',
+  },
+})
+
+const orderList = ref([])
+
+const carrierParticipants = ref([])
+
+// 파티 객체 정보의 shop_id 추출
+const shopId = partyInfo.value.shop_id
+
+const isOrderListModalOpen = ref(false)
+
+const remainingTime = ref('') // 남은시간
+
+// 헤더 높이를 저장하는 변수
+const headerHeight = ref('')
+
+// 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
+function updateHeaderHeight() {
+  headerHeight.value = `${document.querySelector('header').offsetHeight}px`
+}
+
+// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
+onMounted(() => {
+  updateHeaderHeight()
+  window.addEventListener('resize', updateHeaderHeight)
+  updateRemainingTime() // 페이지 로드시 남은시간 계산
+  // 1초마다 남은시간 갱신
+  setInterval(updateRemainingTime, 1000)
+  code.value = route.params.code
+  // console.log("현재 방 코드: ", code.value);
+  getPartyInfo()
+  getCarrierList()
+  addToOrderList()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateHeaderHeight)
+})
+
+function getPartyInfo() {
+  getParty(
+    code.value,
+
+    ({ data }) => {
+      // console.log(data);
+      partyInfo.value.id = data.id
+      partyInfo.value.name = data.name
+      partyInfo.value.generation = data.generation
+      partyInfo.value.classroom = data.classroom
+      // partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.created_time = data.created_time
+      partyInfo.value.shop_id = data.shop_id
+      partyInfo.value.creator = data.creator
+      // console.log(partyInfo);
+    },
+    (error) => {
+      console.log(error)
+    },
+  )
+}
+
+// 남은시간 갱신하는 함수 호출
+function updateRemainingTime() {
+  const now = new Date() // 현재시간 변수
+  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
+
+  // console.log(deadlineTime);
+
+  const deadlineTime = new Date()
+  const [hours, minutes] = partyInfo.value.last_order_time.split(':').map(Number)
+
+  deadlineTime.setHours(hours, minutes, 0)
+  // deadlineTime.setHours(11, 48, 0);
+
+  // 마감시간에서 현재시간 차이를 저장
+  const diff = deadlineTime - now
+  //   console.log(diff);
+  //   console.log(code.value);
+
+  if (diff > 0) {
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+    remainingTime.value = `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes
+      } : ${seconds < 10 ? `0${seconds}` : seconds}`
+  }
+  else if (diff <= 0) {
+    // 마감시간 지난 경우
+    remainingTime.value = '마감'
+  }
+}
+
+function addToOrderList() {
+  // 주문 목록 조회
+  getParticipants(
+    code.value,
+    (response) => {
+      const participants = response.data
+      getOrderList(
+        code.value,
+        (response) => {
+          orderList.value = response.data.map((order) => {
+            const participant = participants.find(participant => participant.name === order.participant_name)
+
+            return {
+              ...order,
+              participant_id: participant ? participant.id : null, // Add participant_id or null if participant not found
+            }
+          })
+          console.log('주문 현황 불러오기: ', orderList.value)
+        },
+        (error) => {
+          console.error('주문 현황 조회 실패: ', error)
+        },
+      )
+    },
+    (error) => {
+      console.error(error)
+    },
+  )
+}
+
+function getCarrierList() {
+  getParticipants(
+    code.value,
+    (response) => {
+      carrierParticipants.value = response.data.filter(participant => participant.is_carrier)
+    },
+    (error) => {
+      console.error(error)
+    },
+  )
+}
+</script>
+
 <template>
   <div id="app">
     <MainHeader />
@@ -5,29 +172,44 @@
       <div class="container">
         <head>
           <div class="line">
-            <div class="party-name">{{ partyInfo.name }}</div>
+            <div class="party-name">
+              {{ partyInfo.name }}
+            </div>
           </div>
           <div class="center-title">
             <div class="row">
-              <div class="account">{{ partyInfo.creator.bank }}</div>
-              <div class="account">({{ partyInfo.creator.name }})</div>
+              <div class="account">
+                {{ partyInfo.creator.bank }}
+              </div>
+              <div class="account">
+                ({{ partyInfo.creator.name }})
+              </div>
             </div>
             <div class="row">
-              <div class="account-logo">logo</div>
-              <div class="account-num">{{ partyInfo.creator.account }}</div>
+              <div class="account-logo">
+                logo
+              </div>
+              <div class="account-num">
+                {{ partyInfo.creator.account }}
+              </div>
             </div>
           </div>
-          <img src="@/assets/img/logo_compose.png" alt="" />
+          <img src="@/assets/img/logo_compose.png" alt="">
           <div class="timeline">
             <div>잔여시간</div>
-            <div style="color: red" class="time">{{ remainingTime }}</div>
+            <div style="color: red" class="time">
+              {{ remainingTime }}
+            </div>
           </div>
           <div class="timeline">
             <div>마감시간</div>
 
-            <div class="time">{{ partyInfo.last_order_time }}</div>
+            <div class="time">
+              {{ partyInfo.last_order_time }}
+            </div>
           </div>
         </head>
+
         <body>
           <div class="body-container">
             <div class="left-panel">
@@ -52,182 +234,12 @@
     </main>
   </div>
 </template>
-<script setup>
-import MainHeader from "@/components/common/MainHeader.vue";
-import { ref, onMounted, onUnmounted } from "vue";
-import ChatView from "@/components/room/chat/ChatView.vue";
-import AfterCart from "@/components/after/AfterCart.vue";
-import { getParty, getOrderList } from "@/api/party";
-import { useRoute, useRouter } from "vue-router";
-import CarrierList from "@/components/after/CarrierList.vue";
-import { getParticipants } from "@/api/after";
-import { errorMessages } from "vue/compiler-sfc";
-
-// const roomCode = ref("");
-
-const route = useRoute();
-const router = useRouter();
-const code = ref(""); //파티 코드
-
-const partyInfo = ref({
-  id: "",
-  name: "",
-  generation: "",
-  classroom: "",
-  last_order_time: "24:00",
-  created_time: "",
-  shop_id: "",
-  creator: {
-    id: "",
-    name: "",
-    email: "",
-    bank: "",
-    account: "",
-  },
-});
-
-const orderList = ref([]);
-
-const carrierParticipants = ref([]);
-
-//파티 객체 정보의 shop_id 추출
-const shopId = partyInfo.value.shop_id;
-
-const isOrderListModalOpen = ref(false);
-
-const remainingTime = ref(""); //남은시간
-
-// 헤더 높이를 저장하는 변수
-const headerHeight = ref("");
-
-// 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
-const updateHeaderHeight = () => {
-  headerHeight.value = `${document.querySelector("header").offsetHeight}px`;
-};
-
-// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
-onMounted(() => {
-  updateHeaderHeight();
-  window.addEventListener("resize", updateHeaderHeight);
-  updateRemainingTime(); //페이지 로드시 남은시간 계산
-  // 1초마다 남은시간 갱신
-  setInterval(updateRemainingTime, 1000);
-  code.value = route.params.code;
-  // console.log("현재 방 코드: ", code.value);
-  getPartyInfo();
-  getCarrierList();
-  addToOrderList();
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", updateHeaderHeight);
-});
-
-const getPartyInfo = () => {
-  getParty(
-    code.value,
-
-    ({ data }) => {
-      // console.log(data);
-      partyInfo.value.id = data.id;
-      partyInfo.value.name = data.name;
-      partyInfo.value.generation = data.generation;
-      partyInfo.value.classroom = data.classroom;
-      // partyInfo.value.last_order_time = data.last_order_time;
-      partyInfo.value.created_time = data.created_time;
-      partyInfo.value.shop_id = data.shop_id;
-      partyInfo.value.creator = data.creator;
-      // console.log(partyInfo);
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
-
-// 남은시간 갱신하는 함수 호출
-const updateRemainingTime = () => {
-  const now = new Date(); //현재시간 변수
-  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
-
-  // console.log(deadlineTime);
-
-  const deadlineTime = new Date();
-  const [hours, minutes] = partyInfo.value.last_order_time.split(":").map(Number);
-
-  deadlineTime.setHours(hours, minutes, 0);
-  // deadlineTime.setHours(11, 48, 0);
-
-  //마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTime - now;
-  //   console.log(diff);
-  //   console.log(code.value);
-
-  if (diff > 0) {
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    remainingTime.value = `${hours < 10 ? "0" + hours : hours} : ${
-      minutes < 10 ? "0" + minutes : minutes
-    } : ${seconds < 10 ? "0" + seconds : seconds}`;
-  } else if (diff <= 0) {
-    //마감시간 지난 경우
-    remainingTime.value = "마감";
-  }
-};
-
-const addToOrderList = () => {
-
-  // 주문 목록 조회
-  getParticipants(
-    code.value,
-    (response) => {
-      const participants = response.data;
-      getOrderList(
-        code.value,
-        (response) => {
-          orderList.value = response.data.map(order => {
-            
-            const participant = participants.find(participant => participant.name === order.participant_name);
-            
-            return {
-              ...order,
-              participant_id: participant ? participant.id : null // Add participant_id or null if participant not found
-            };
-          });
-          console.log("주문 현황 불러오기: ", orderList.value);
-        },
-        (error) => {
-          console.error("주문 현황 조회 실패: ", error);
-        }
-      );
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-};
-
-const getCarrierList = () => {
-  getParticipants(
-    code.value,
-    (response) => {
-      
-      carrierParticipants.value = response.data.filter((participant) => participant.is_carrier);
-    
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-};
-</script>
 
 <style scoped>
 body {
   font-family: "Arial", sans-serif;
 }
+
 main {
   display: flex;
   flex-direction: column;
@@ -275,6 +287,7 @@ head {
   font-weight: bold;
   margin: 10px;
 }
+
 .time {
   width: auto;
   margin-left: 10px;
@@ -355,8 +368,10 @@ button {
   /* margin-top: 25px; */
   box-sizing: border-box;
 }
+
 .left-panel {
-  flex: 5; /* 7:3 비율로 나누기 위한 설정 */
+  flex: 5;
+  /* 7:3 비율로 나누기 위한 설정 */
   /* height: 700px; */
   /* border: 5px solid #ccc; */
   box-sizing: inherit;
@@ -387,11 +402,14 @@ button {
 /* 화면 폭이 768px 미만일 때 */
 @media screen and (max-width: 768px) {
   head {
-    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+    font-size: 18px;
+    /* 화면이 작을 때 텍스트 크기 조절 */
   }
+
   .body-container {
     flex-direction: column;
   }
+
   /* .right-panel {
       margin-left: 0;
       margin-top: 20px;

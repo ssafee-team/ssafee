@@ -1,54 +1,5 @@
-<template>
-  <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
-  <div class="tabs">
-    <div class="tab">주문내역</div>
-    <select v-model="sortMethod" @change="sortOrders">
-      <option value="default">기본</option>
-      <option value="userName">이름순</option>
-      <option value="menuName">메뉴순</option>
-    </select>
-  </div>
-
-  <!-- 주문내역 -->
-  <div class="content">
-    <div class="order-list">
-      <div v-for="(order, index) in sortedOrders" :key="index" class="order">
-        <!-- 선택한 메뉴와 가격 -->
-        <div class="item">
-          <div class="menu-name">{{ order.menu.name }}</div>
-          <div class="menu-price">{{ order.menu.price }}원</div>
-          <span class="remove" @click="removeOrder(order.id)">X</span>
-        </div>
-        <!-- 선택한 옵션과 가격 -->
-        <div
-          v-for="optionCategory in order.option_categories"
-          :key="optionCategory.id"
-          class="option"
-        >
-          <div class="menu-option" v-for="option in optionCategory.options" :key="option.id">
-            <div class="option-name">ㄴ{{ option.name }}</div>
-            <div class="option-price">+{{ option.price }}</div>
-          </div>
-        </div>
-        <!-- <div v-for="(option, idx) in order.option_categories" :key="idx" class="option"> -->
-        <!-- <template v-if="option.name && option.option_names.length > 0">
-            ㄴ{{ option.options.map((opt) => opt.name + " - " + opt.price + "원").join(", ") }}
-          </template> -->
-        <!-- </div> -->
-      </div>
-    </div>
-    <!-- 총 주문 금액 -->
-    <div class="footer">
-      <div class="total">
-        <div>총 주문금액</div>
-        <div class="total-price">{{ calculateTotalPrice() }}원</div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { deleteOrderMenu } from "@/api/party";
+import { deleteOrderMenu } from '@/api/party'
 
 export default {
   props: {
@@ -63,10 +14,29 @@ export default {
 
   data() {
     return {
-      dropdownOpen: false, //드롭다운 상태변수
-      sortMethod: "default", //현재 선택된 정렬 방식
+      dropdownOpen: false, // 드롭다운 상태변수
+      sortMethod: 'default', // 현재 선택된 정렬 방식
       // orders: [], //주문내역 저장할 배열
-    };
+    }
+  },
+
+  computed: {
+    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
+    sortedOrders() {
+      const orders = [...this.orders] // 주문 목록을 복사하여 정렬
+      // console.log("정렬전, ", orders);
+      // 정렬 방식에 따라 주문 목록을 정렬
+      if (this.sortMethod === 'userName') {
+        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
+      }
+      else if (this.sortMethod === 'menuName') {
+        // console.log("ㅇㅇㅇㅇ");
+        orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
+      }
+
+      // console.log("정렬후,", orders);
+      return orders
+    },
   },
 
   mounted() {
@@ -74,43 +44,25 @@ export default {
     // this.fetchOrderList();
   },
 
-  computed: {
-    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
-    sortedOrders() {
-      const orders = [...this.orders]; // 주문 목록을 복사하여 정렬
-      // console.log("정렬전, ", orders);
-      // 정렬 방식에 따라 주문 목록을 정렬
-      if (this.sortMethod === "userName") {
-        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name));
-      } else if (this.sortMethod === "menuName") {
-        // console.log("ㅇㅇㅇㅇ");
-        orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
-      }
-
-      // console.log("정렬후,", orders);
-      return orders;
-    },
-  },
-
   methods: {
-    //드롭다운
+    // 드롭다운
     toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
+      this.dropdownOpen = !this.dropdownOpen
     },
-    //주문자 이름별 정렬
+    // 주문자 이름별 정렬
     sortByUserName() {
-      this.sortMethod = "userName";
-      this.toggleDropdown();
+      this.sortMethod = 'userName'
+      this.toggleDropdown()
     },
-    //메뉴별 정렬
+    // 메뉴별 정렬
     sortByMenuName() {
-      this.sortMethod = "menuName";
-      this.toggleDropdown();
+      this.sortMethod = 'menuName'
+      this.toggleDropdown()
     },
 
     removeOrder(orderId) {
       // 선택한 주문을 삭제
-      const index = this.orders.findIndex((order) => order.id === orderId);
+      const index = this.orders.findIndex(order => order.id === orderId)
       if (index !== -1) {
         // 서버에 삭제 요청 보내기
         deleteOrderMenu(
@@ -118,35 +70,97 @@ export default {
           orderId,
           () => {
             // 성공 시 주문 리스트에서 해당 주문 삭제
-            this.orders.splice(index, 1);
+            this.orders.splice(index, 1)
           },
           (error) => {
             // 실패 시
-            console.error("주문 삭제 실패:", error);
-          }
-        );
+            console.error('주문 삭제 실패:', error)
+          },
+        )
       }
     },
     calculateTotalPrice() {
-      let total = 0;
+      let total = 0
 
       for (const order of this.orders) {
-        let orderTotal = parseFloat(order.menu.price); // 메뉴의 가격을 먼저 더함
+        let orderTotal = Number.parseFloat(order.menu.price) // 메뉴의 가격을 먼저 더함
 
         for (const optionCategory of order.option_categories) {
-          for (const option of optionCategory.options) {
-            orderTotal += parseFloat(option.price); // 각 옵션의 가격을 더함
-          }
+          for (const option of optionCategory.options)
+            orderTotal += Number.parseFloat(option.price) // 각 옵션의 가격을 더함
         }
 
-        total += orderTotal; // 각 주문 항목의 총 가격을 더함
+        total += orderTotal // 각 주문 항목의 총 가격을 더함
       }
 
-      return total.toFixed(0); // 소수점 이하 자리를 버리고 정수로 반환
+      return total.toFixed(0) // 소수점 이하 자리를 버리고 정수로 반환
     },
   },
-};
+}
 </script>
+
+<template>
+  <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
+  <div class="tabs">
+    <div class="tab">
+      주문내역
+    </div>
+    <select v-model="sortMethod" @change="sortOrders">
+      <option value="default">
+        기본
+      </option>
+      <option value="userName">
+        이름순
+      </option>
+      <option value="menuName">
+        메뉴순
+      </option>
+    </select>
+  </div>
+
+  <!-- 주문내역 -->
+  <div class="content">
+    <div class="order-list">
+      <div v-for="(order, index) in sortedOrders" :key="index" class="order">
+        <!-- 선택한 메뉴와 가격 -->
+        <div class="item">
+          <div class="menu-name">
+            {{ order.menu.name }}
+          </div>
+          <div class="menu-price">
+            {{ order.menu.price }}원
+          </div>
+          <span class="remove" @click="removeOrder(order.id)">X</span>
+        </div>
+        <!-- 선택한 옵션과 가격 -->
+        <div v-for="optionCategory in order.option_categories" :key="optionCategory.id" class="option">
+          <div v-for="option in optionCategory.options" :key="option.id" class="menu-option">
+            <div class="option-name">
+              ㄴ{{ option.name }}
+            </div>
+            <div class="option-price">
+              +{{ option.price }}
+            </div>
+          </div>
+        </div>
+        <!-- <div v-for="(option, idx) in order.option_categories" :key="idx" class="option"> -->
+        <!-- <template v-if="option.name && option.option_names.length > 0">
+            ㄴ{{ option.options.map((opt) => opt.name + " - " + opt.price + "원").join(", ") }}
+          </template> -->
+        <!-- </div> -->
+      </div>
+    </div>
+    <!-- 총 주문 금액 -->
+    <div class="footer">
+      <div class="total">
+        <div>총 주문금액</div>
+        <div class="total-price">
+          {{ calculateTotalPrice() }}원
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 select {
@@ -154,6 +168,7 @@ select {
   font-size: 16px;
   font-weight: bold;
 }
+
 option {
   font-size: 16px;
   font-weight: bold;
@@ -207,6 +222,7 @@ option {
 .menu-name {
   width: 190px;
 }
+
 .menu-price {
   color: #00a5e7;
   margin-left: 10px;
@@ -244,7 +260,8 @@ option {
 }
 
 .order-list {
-  overflow-y: auto; /* 주문 목록이 넘칠 경우 스크롤 생성 */
+  overflow-y: auto;
+  /* 주문 목록이 넘칠 경우 스크롤 생성 */
   height: 550px;
 }
 
@@ -273,6 +290,7 @@ option {
   display: flex;
   gap: 20px;
 }
+
 .total-price {
   color: #00a5e7;
 }
