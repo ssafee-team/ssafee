@@ -83,14 +83,14 @@ export default {
 
       stompClient.debug = function (str) {
                 if (str.includes("ERROR")) console.log(str);
-      };
-            
+            };
+
       stompClient.connect(
         {},
         (frame) => {
           // console.log("소켓 연결 성공", frame);
           stompClient.subscribe('/send', (res) => {
-            console.log('구독으로 받은 메시지 입니다.', res.body)
+            // console.log('구독으로 받은 메시지 입니다.', res.body)
             recvList.value.push(JSON.parse(res.body))
 
             nextTick(() => {

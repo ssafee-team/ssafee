@@ -1,5 +1,74 @@
+<template>
+  <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
+  <div class="tabs">
+    <div class="tab">주문내역</div>
+    <select v-model="sortMethod" @change="sortOrders">
+      <option value="default">기본</option>
+      <option value="userName">이름순</option>
+      <!-- <option value="menuName">메뉴순</option> -->
+    </select>
+  </div>
+
+  <!-- 주문내역 -->
+  <div class="content">
+    <div class="order-list">
+      <div
+        v-for="(participantOrders, participantName) in groupedOrders"
+        :key="participantName"
+        class="participant"
+      >
+        <hr />
+        <div class="participant-name">
+          <input
+            type="checkbox"
+            v-model="participantOrders[0].paid"
+            @change="toggleCheck(participantOrders)"
+          />
+          {{ participantName }}
+        </div>
+
+        <hr />
+        <div
+          v-for="(order, index) in participantOrders"
+          :key="index"
+          class="order"
+          :class="{ checked: order.checked }"
+        >
+          <div class="item" :class="{ checked: order.checked }">
+            <div class="menu-name">{{ order.menu.name }}</div>
+            <div class="menu-price">{{ order.menu.price }}원</div>
+          </div>
+          <div
+            v-for="optionCategory in order.option_categories"
+            :key="optionCategory.id"
+            class="option"
+          >
+            <div
+              class="menu-option"
+              v-for="option in optionCategory.options"
+              :key="option.id"
+              :class="{ checked: order.checked }"
+            >
+              ㄴ
+              <div class="option-name">{{ option.name }}</div>
+              <div class="option-price">+ {{ option.price }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 총 주문 금액 -->
+    <div class="footer">
+      <div class="total">
+        <div>총 주문금액</div>
+        <div class="total-price">{{ calculateTotalPrice() }}원</div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
-import { modifyParticipants } from '@/api/after'
+import { modifyParticipants } from "@/api/after";
 
 export default {
   props: {
@@ -14,39 +83,10 @@ export default {
 
   data() {
     return {
-      dropdownOpen: false, // 드롭다운 상태변수
-      sortMethod: 'default', // 현재 선택된 정렬 방식
+      dropdownOpen: false, //드롭다운 상태변수
+      sortMethod: "default", //현재 선택된 정렬 방식
       // orders: [], //주문내역 저장할 배열
-    }
-  },
-
-  computed: {
-    groupedOrders() {
-      const grouped = {}
-      for (const order of this.sortedOrders) {
-        const participantName = order.participant_name
-        if (!grouped[participantName])
-          grouped[participantName] = []
-
-        grouped[participantName].push(order)
-      }
-
-      return grouped
-    },
-
-    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
-    sortedOrders() {
-      const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-
-      // 정렬 방식에 따라 주문 목록을 정렬
-      if (this.sortMethod === 'userName')
-        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
-      else if (this.sortMethod === 'menuName')
-
-        orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
-
-      return orders
-    },
+    };
   },
 
   mounted() {
@@ -55,143 +95,113 @@ export default {
     // this.fetchOrderList();
   },
 
+  computed: {
+    groupedOrders() {
+      const grouped = {};
+      for (const order of this.sortedOrders) {
+        const participantName = order.participant_name;
+        if (!grouped[participantName]) {
+          grouped[participantName] = [];
+        }
+        grouped[participantName].push(order);
+      }
+
+      return grouped;
+    },
+
+    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
+    sortedOrders() {
+      const orders = [...this.orders]; // 주문 목록을 복사하여 정렬
+
+      // 정렬 방식에 따라 주문 목록을 정렬
+      if (this.sortMethod === "userName") {
+        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name));
+      }
+      // else if (this.sortMethod === "menuName") {
+      //   orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
+      // }
+
+      return orders;
+    },
+  },
+
   methods: {
     toggleCheck(participantOrders) {
-      for (const order of participantOrders) {
-        order.checked = !order.checked
-        modifyParticipants(
-          this.code,
-          order.participant_id,
-          { paid: !order.paid },
-          () => {
-            order.paid = !order.paid
-            console.log('바뀜?', order.paid)
-          },
-          (error) => {
-            console.error(error)
-            order.checked = !order.checked
-          },
-        )
-      }
+      const participantId = participantOrders[0].participant_id;
+      const paidValue = participantOrders[0].paid;
+
+      // console.log("아이디는", participantId);
+      // console.log("상태는", paidValue);
+
+      modifyParticipants(
+        this.code,
+        participantId,
+        { paid: paidValue },
+        () => {
+          for (const order of participantOrders) {
+            order.paid = paidValue;
+            order.checked = !order.checked;
+          }
+        },
+        (error) => {
+          console.error(error);
+
+          for (const order of participantOrders) {
+            order.checked = !order.checked;
+          }
+        }
+      );
     },
-    // 드롭다운
+    //드롭다운
     toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen
+      this.dropdownOpen = !this.dropdownOpen;
     },
-    // 주문자 이름별 정렬
+    //주문자 이름별 정렬
     sortByUserName() {
-      this.sortMethod = 'userName'
-      this.toggleDropdown()
+      this.sortMethod = "userName";
+      this.toggleDropdown();
     },
-    // 메뉴별 정렬
+    //메뉴별 정렬
     sortByMenuName() {
-      this.sortMethod = 'menuName'
-      this.toggleDropdown()
+      this.sortMethod = "menuName";
+      this.toggleDropdown();
     },
 
     calculateTotalPrice() {
-      let total = 0
+      let total = 0;
 
       for (const order of this.orders) {
-        let orderTotal = Number.parseFloat(order.menu.price) // 메뉴의 가격을 먼저 더함
+        let orderTotal = parseFloat(order.menu.price); // 메뉴의 가격을 먼저 더함
 
         for (const optionCategory of order.option_categories) {
-          for (const option of optionCategory.options)
-            orderTotal += Number.parseFloat(option.price) // 각 옵션의 가격을 더함
+          for (const option of optionCategory.options) {
+            orderTotal += parseFloat(option.price); // 각 옵션의 가격을 더함
+          }
         }
 
-        total += orderTotal // 각 주문 항목의 총 가격을 더함
+        total += orderTotal; // 각 주문 항목의 총 가격을 더함
       }
 
-      return total.toFixed(0) // 소수점 이하 자리를 버리고 정수로 반환
+      return total.toFixed(0); // 소수점 이하 자리를 버리고 정수로 반환
     },
   },
-}
+};
 </script>
-
-<template>
-  <!-- 탭 형태로 My Cart와 Our Cart를 표시 -->
-  <div class="tabs">
-    <div class="tab">
-      주문내역
-    </div>
-    <select v-model="sortMethod" @change="sortOrders">
-      <option value="default">
-        기본
-      </option>
-      <option value="userName">
-        이름순
-      </option>
-      <option value="menuName">
-        메뉴순
-      </option>
-    </select>
-  </div>
-
-  <!-- 주문내역 -->
-  <div class="content">
-    <div class="order-list">
-      <div v-for="(participantOrders, participantName) in groupedOrders" :key="participantName" class="participant">
-        <div class="participant-name">
-          <input v-model="participantOrders[0].paid" type="checkbox" @change="toggleCheck(participantOrders)">
-          {{ participantName }}
-        </div>
-
-        <hr>
-        <div v-for="(order, index) in participantOrders" :key="index" class="order" :class="{ checked: order.checked }">
-          <div class="item" :class="{ checked: order.checked }">
-            <div class="menu-name">
-              {{ order.menu.name }}
-            </div>
-            <div class="menu-price">
-              {{ order.menu.price }}원
-            </div>
-          </div>
-          <div v-for="optionCategory in order.option_categories" :key="optionCategory.id" class="option">
-            <div
-              v-for="option in optionCategory.options" :key="option.id" class="menu-option"
-              :class="{ checked: order.checked }"
-            >
-              ㄴ<div class="option-name">
-                {{ option.name }}
-              </div>
-              <div class="option-price">
-                {{ option.price }}원
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 총 주문 금액 -->
-    <div class="footer">
-      <div class="total">
-        <div>총 주문금액</div>
-        <div class="total-price">
-          {{ calculateTotalPrice() }}원
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .checkbox {
   margin-left: 10px;
 }
-
 .item.checked .menu-name,
 .item.checked .menu-price {
   color: red;
-  text-decoration: line-through;
-  /* 취소선 적용 */
+  text-decoration: line-through; /* 취소선 적용 */
 }
 
 .menu-option.checked .option-name,
 .menu-option.checked .option-price {
   color: red;
-  text-decoration: line-through;
-  /* 취소선 적용 */
+  text-decoration: line-through; /* 취소선 적용 */
 }
 
 .menu-name {
@@ -205,7 +215,6 @@ select {
   font-size: 16px;
   font-weight: bold;
 }
-
 option {
   font-size: 16px;
   font-weight: bold;
@@ -228,6 +237,12 @@ option {
   font-size: 18px;
   font-weight: bold;
   text-align: center;
+}
+
+hr {
+  border: 0;
+  height: 3px;
+  background-color: #1e293b;
 }
 
 /* 주문 내역 스타일 */
@@ -257,7 +272,7 @@ option {
 }
 
 .menu-name {
-  width: 300px;
+  width: 260px;
 }
 
 .participant-name {
@@ -275,6 +290,7 @@ input {
 .menu-price {
   color: #00a5e7;
   margin-left: 10px;
+  width: 30%;
 }
 
 .option {
@@ -309,8 +325,7 @@ input {
 }
 
 .order-list {
-  overflow-y: auto;
-  /* 주문 목록이 넘칠 경우 스크롤 생성 */
+  overflow-y: auto; /* 주문 목록이 넘칠 경우 스크롤 생성 */
   height: 550px;
 }
 
@@ -339,7 +354,6 @@ input {
   display: flex;
   gap: 20px;
 }
-
 .total-price {
   color: #00a5e7;
 }
