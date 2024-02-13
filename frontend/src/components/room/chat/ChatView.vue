@@ -80,6 +80,11 @@ export default {
       const socket = new WebSocket(serverURL)
       stompClient = Stomp.over(socket)
       // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+
+      stompClient.debug = function (str) {
+                if (str.includes("ERROR")) console.log(str);
+      };
+            
       stompClient.connect(
         {},
         (frame) => {

@@ -53,4 +53,21 @@ function deleteOrderMenu(code, id, success, fail) {
   local.delete(`${url}/${code}/order-menus/${id}`).then(success).catch(fail)
 }
 
-export { createParty, getParty, getPartiesToday, getOrderList, createOrder, deleteOrderMenu }
+// 총무 : 주문요청 배달부 선정결과
+function sendCarrierResult(code, success, fail) {
+  local.post(`${url}/${code}/today-carriers`).then(success).catch(fail)
+}
+
+// 총무 : 알림보내기
+function orderDelivered(code, success, fail) {
+  local.post(`${url}/${code}`).then(success).catch(fail)
+}
+  
+
+// 총무 : 송금요청 알림보내기
+function giveMeMoney(code, success, fail) {
+  local.post(`${url}/${code}`).then(success).catch(fail)
+}
+
+
+export { createParty, getParty, getPartiesToday, getOrderList, createOrder, deleteOrderMenu, sendCarrierResult, orderDelivered, giveMeMoney }
