@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { io } from 'socket.io-client'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
 
-import ModalComponent from '@/components/modal/ModalComponent.vue'
+import ModalComponent from '@/components/manager/ManagerModal.vue'
 
 // 모달 컴포넌트를 가져옵니다.
 
