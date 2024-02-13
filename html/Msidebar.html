@@ -24,6 +24,7 @@
     .sidebar li {
         padding: 15px;
         cursor: pointer;
+        text-align: center;
     }
 
     .sidebar a {
@@ -32,8 +33,28 @@
     }
 
     .sidebar li:hover {
-        background-color: gray;
+        background-color: rgb(199, 199, 199);
         border-radius: 5px;
+    }
+
+    /* 비활성화된 탭의 스타일 */
+    .tab {
+        background-color: #97AFBA; /* 기본 배경색 */
+        /* 기타 스타일 */
+    }
+
+    /* 활성화된 탭의 스타일 */
+    .tab.active {
+        background-color: rgb(114, 114, 114); /* 활성화된 탭의 배경색 */
+        color: white;
+        border-radius: 5px;
+        /* 기타 스타일 */
+    }
+
+    /* 마우스 오버시 탭의 스타일 */
+    .tab:hover {
+        background-color: #e0e0e0; /* 마우스 오버시 배경색 */
+        /* 기타 스타일 */
     }
 
 </style>
@@ -43,10 +64,10 @@
 
     <div class="sidebar">
         <ul>
-            <li><a href="#">홈</a></li>
-            <li><a href="#">가게 수정</a></li>
-            <li><a href="#">메뉴 관리</a></li>
-            <li><a href="#">옵션 관리</a></li>
+            <li class="tab active" onclick="selectTab(this);"><a href="#">홈</a></li>
+            <li class="tab" onclick="selectTab(this);"><a href="#">가게 수정</a></li>
+            <li class="tab" onclick="selectTab(this);"><a href="#">메뉴 관리</a></li>
+            <li class="tab" onclick="selectTab(this);"><a href="#">옵션 관리</a></li>
         </ul>
     </div>
 
@@ -54,6 +75,17 @@
         fetch('./MHeader.html')
             .then(response => response.text())
             .then(text => document.getElementById('header-placeholder').innerHTML = text);
+
+        function selectTab(selectedTab) {
+            // 모든 탭에서 'active' 클래스 제거
+            var tabs = document.querySelectorAll('.tab');
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            
+            // 선택된 탭에 'active' 클래스 추가
+            selectedTab.classList.add('active');
+        }
     </script>
 </body>
 </html>
