@@ -12,6 +12,7 @@ export default {
     calculateTotalOrderPrice() {
       return this.orderList.reduce((total, order) => total + this.calculateTotalPrice(order), 0)
     },
+
   },
 
   methods: {
