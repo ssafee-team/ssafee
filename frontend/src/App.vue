@@ -3,8 +3,9 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <!-- router view 설정 -->
-  <RouterView />
+  <Suspense>
+    <RouterView />
+  </Suspense>
 </template>
 
 <style scoped></style>

@@ -1,9 +1,14 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
+import { useRouter } from 'vue-router'
 import { createParty } from '@/api/party'
-import { getLocalStorageToken } from '@/api/oauth2'
 
+const router = useRouter()
 const headerHeight = ref('72px') // 예시로 100px를 기본값으로 설정
+const token = useLocalStorage('user-token', null)
+if (token.value === null)
+  await router.push('/')
 
 const form = ref({
   roomTitle: '',
@@ -55,8 +60,7 @@ function submitForm() {
   else {
     // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
     modalOpen()
-    const token = getLocalStorageToken()
-    createParty(token, partyData.value, onSuccess, onFailure)
+    createParty(token.value, partyData.value, onSuccess, onFailure)
   }
 
   let isValid = true
