@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import MainHeader from '@/components/common/MainHeader.vue'
 import ChatView from '@/components/room/chat/ChatView.vue'
 import AfterCart from '@/components/after/AfterCart.vue'
-import { getOrderList, getParty } from '@/api/party'
+import { getOrderList, getParty, giveMeMoney, orderDelivered, sendCarrierResult } from '@/api/party'
 import CarrierList from '@/components/after/CarrierList.vue'
 import { getParticipants } from '@/api/after'
 
@@ -50,8 +50,15 @@ function updateHeaderHeight() {
   headerHeight.value = `${document.querySelector('header').offsetHeight}px`
 }
 
+// 스크립트 섹션 안에서
+const isUserLoggedIn = ref(false)
+
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
+  // 로컬 스토리지에서 "user-token"을 가져와서 확인
+  const userToken = localStorage.getItem('user-token')
+  isUserLoggedIn.value = !!userToken
+
   updateHeaderHeight()
   window.addEventListener('resize', updateHeaderHeight)
   updateRemainingTime() // 페이지 로드시 남은시간 계산
@@ -163,6 +170,43 @@ function getCarrierList() {
     },
   )
 }
+
+function goDelivery() {
+  // 총무가 주문완료를 알리는 함수 호출
+  orderDelivered(
+    code.value,
+    () => {
+      console.log('주문완료 알림을 보냈습니다.')
+    },
+    (error) => {
+      console.error('주문완료 알림을 보내는 중 오류가 발생했습니다.', error)
+    },
+  )
+}
+
+function goMoney() {
+  // 총무가 송금요청을 보내는 함수 호출
+  giveMeMoney(
+    code.value,
+    () => {
+      console.log('송금요청 알림을 보냈습니다.')
+    },
+    (error) => {
+      console.error('송금요청 알림을 보내는 중 오류가 발생했습니다.', error)
+    },
+  )
+}
+function DeliveryAlert() {
+  sendCarrierResult(
+    code.value,
+    () => {
+      console.log('배달부 알림을 보냈습니다.')
+    },
+    (error) => {
+      console.error('배달부 알림을 보내는 중 오류가 발생했습니다.', error)
+    },
+  )
+}
 </script>
 
 <template>
@@ -186,9 +230,9 @@ function getCarrierList() {
               </div>
             </div>
             <div class="row">
-              <div class="account-logo">
+              <!-- <div class="account-logo">
                 logo
-              </div>
+              </div> -->
               <div class="account-num">
                 {{ partyInfo.creator.account }}
               </div>
@@ -211,6 +255,17 @@ function getCarrierList() {
         </head>
 
         <body>
+          <div v-if="isUserLoggedIn" class="btn-order">
+            <button class="delivery-alert" @click="DeliveryAlert()">
+              배달알림
+            </button>
+            <button class="delivery-success" @click="goDelivery()">
+              배달완료
+            </button>
+            <button class="money-request" @click="goMoney()">
+              송금요청
+            </button>
+          </div>
           <div class="body-container">
             <div class="left-panel">
               <!-- <div>메뉴가 들어갈 부분</div> -->
@@ -264,7 +319,7 @@ head {
   display: flex;
   font-size: 20px;
   margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   border: 3px solid #1e293b;
   justify-content: space-between;
   align-items: center;
@@ -353,8 +408,32 @@ button {
   color: #00a7d0;
   font-size: 18px;
   font-weight: bold;
-  text-decoration: underline;
+  /* text-decoration: underline; */
   cursor: pointer;
+}
+
+.btn-order{
+  display: flex;
+  justify-content: right;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.delivery-alert,
+.delivery-success,
+.money-request{
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #1e293b;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  color: #ffffff;
+}
+
+.delivery-alert:hover,
+.delivery-success:hover,
+.money-request:hover{
+  background-color: #343844;
 }
 
 .btn-roomlist,

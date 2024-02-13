@@ -54,23 +54,27 @@ function deleteOrderMenu(code, id, success, fail) {
 }
 
 // 총무 : 주문요청 생성
-function orderRequest(code, success, fail) {
-  local.post(`${url}/${code}/order`).then(success).catch(fail)
+function orderRequest(code, token, success, fail) {
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  local.post(`${url}/${code}/order`, null, config).then(success).catch(fail)
 }
 
 // 총무 : 주문요청 배달부 선정결과
-function sendCarrierResult(code, success, fail) {
-  local.post(`${url}/${code}/today-carriers`).then(success).catch(fail)
+function sendCarrierResult(code, token, success, fail) {
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  local.post(`${url}/${code}/today-carriers`, null, config).then(success).catch(fail)
 }
 
 // 총무 : 알림보내기
-function orderDelivered(code, success, fail) {
-  local.post(`${url}/${code}`).then(success).catch(fail)
+function orderDelivered(code, token, success, fail) {
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  local.post(`${url}/${code}/notice`, null, config).then(success).catch(fail)
 }
 
 // 총무 : 송금요청 알림보내기
-function giveMeMoney(code, success, fail) {
-  local.post(`${url}/${code}`).then(success).catch(fail)
+function giveMeMoney(code, token, success, fail) {
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  local.post(`${url}/${code}/give-me-money`, null, config).then(success).catch(fail)
 }
 
 export { createParty, getParty, getPartiesToday, getOrderList, createOrder, deleteOrderMenu, sendCarrierResult, orderDelivered, giveMeMoney, orderRequest }

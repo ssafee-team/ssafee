@@ -337,12 +337,13 @@ export default {
   margin: 5px;
   box-sizing: inherit;
   /* box-sizing: border-box; */
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .menu-categories>div.selected {
   background-color: #343844;
+  color: #ffffff;
   width: auto;
   // box-sizing: inherit;
   border-radius: 10px;
@@ -481,6 +482,7 @@ input[type="checkbox"] {
 
 .drink-item:hover {
   background-color: #343844;
+  color: #ffffff;
   /* 호버 시 배경색 변경 */
   border-radius: 5px;
 }

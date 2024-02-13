@@ -55,8 +55,15 @@ function updateHeaderHeight() {
   headerHeight.value = `${document.querySelector('header').offsetHeight}px`
 }
 
+// 스크립트 섹션 안에서
+const isUserLoggedIn = ref(false)
+
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
+  // 로컬 스토리지에서 "user-token"을 가져와서 확인
+  const userToken = localStorage.getItem('user-token')
+  isUserLoggedIn.value = !!userToken
+
   updateHeaderHeight()
   window.addEventListener('resize', updateHeaderHeight)
   updateRemainingTime() // 페이지 로드시 남은시간 계산
@@ -68,7 +75,7 @@ onMounted(() => {
   addToOrderList()
   setTimeout(() => {
     isLoading.value = false
-  }, 1000)
+  }, 500)
 })
 
 onUnmounted(() => {
@@ -207,9 +214,9 @@ function goOrder() {
               </div>
             </div>
             <div class="row">
-              <div class="account-logo">
+              <!-- <div class="account-logo">
                 logo
-              </div>
+              </div> -->
               <div class="account-num">
                 {{ partyInfo.creator.account }}
               </div>
@@ -230,18 +237,17 @@ function goOrder() {
             </div>
           </div>
         </head>
-
         <body>
+          <div v-if="isUserLoggedIn" class="btn-order">
+            <button class="order-request" @click="goOrder()">
+              주문요청
+            </button>
+          </div>
           <!-- <div class="center-content">
             <button class="btn-roomlist" @click="goMain">방목록</button>
             <button class="btn-curorder" @click="openOrderListModal">현재 주문현황 확인하기</button>
           </div> -->
           <div class="body-container">
-            <div>
-              <button class="order-request" @click="goOrder()">
-                주문요청
-              </button>
-            </div>
             <div class="left-panel">
               <MenuList :shop-id="1" :code="code" @order-cart="addToCart" />
             </div>
@@ -263,6 +269,7 @@ function goOrder() {
 
 <style scoped>
 body {
+
   font-family: "Arial", sans-serif;
 }
 
@@ -290,7 +297,7 @@ head {
   display: flex;
   font-size: 20px;
   margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   border: 3px solid #1e293b;
   justify-content: space-between;
   align-items: center;
@@ -379,13 +386,32 @@ button {
   color: #00a7d0;
   font-size: 18px;
   font-weight: bold;
-  text-decoration: underline;
+  /* text-decoration: underline; */
   cursor: pointer;
 }
 
 .btn-roomlist,
 .btn-create {
   color: #344a53;
+}
+
+.btn-order{
+  display: flex;
+  justify-content: right;
+  margin-bottom: 10px;
+}
+
+.order-request{
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #1e293b;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  color: #ffffff;
+
+}
+.order-request:hover{
+  background-color: #343844;
 }
 
 .body-container {
