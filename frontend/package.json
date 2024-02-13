@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@vueuse/core": "^10.7.2",
     "axios": "^1.6.7",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",

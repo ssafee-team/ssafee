@@ -1,24 +1,16 @@
 <script setup>
-import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getOAuth2Callback } from '@/api/oauth2'
+import { useFetch } from '@vueuse/core'
 
-onMounted(async () => {
-  try {
-    const route = useRoute()
-    const registrationId = route.params.registrationId
-    const queryPrams = new URLSearchParams(window.location.search)
+const route = useRoute()
+const registration = route.params.registration
+const query = new URLSearchParams(route.query)
+const url = `/api/v1/oauth2/callback/${registration}?${query}`
 
-    const response = await getOAuth2Callback(registrationId, Object.fromEntries(queryPrams))
-    const token = response.headers.getAuthorization().replace('Bearer ', '')
-    window.opener.postMessage({ token }, window.location.origin)
-  }
-  catch (error) {
-    console.error('Auth process failed:', error)
-  }
-})
+useFetch(url)
+  .onFetchResponse((response) => {
+    const token = response.headers.get('Authorization').replace('Bearer ', '')
+    window.opener.postMessage({ token }, window.origin)
+    window.close()
+  })
 </script>
-
-<template>
-  <div>Authenticating...</div>
-</template>
