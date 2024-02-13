@@ -7,13 +7,7 @@ const url = '/api/v1/shops'
 
 function getShops(param, success, fail) {
   local.get(`${url}`, { param }).then(success).catch(fail)
-  // console.log("가져올게욧");
 }
-
-// function getShops(param, success, fail) {
-//   local.get(`${url}/api/v1/shops`, { param }).then(success).catch(fail);
-//   console.log("가져올게욧");
-// }
 
 // 메뉴 카테고리 조회
 function getMenuCategories(id, success, fail) {
