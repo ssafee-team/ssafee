@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: Manager Main ::</title>
+</head>
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 20px; /* 각 메시지 사이의 간격 */
+        color: gray;
+    }
+</style>
+
+<body>
+    <div class="header" id="header-placeholder">
+    </div>
+
+    <div class="main-container">
+        <div class="main-message">
+            <h1>😂 아직은 G5에서 파티가 생성되지 않았어요 😂</h1>
+            <h3>SSAFEE 를 위한 “프로모션”을 진행하면 주문빈도가 증가할지도..?</h3>
+        </div>
+
+        <div class="main-message">
+            <h1>😥 지금은 운영시간이 아니에요 ㅠㅠ 😥</h1>
+            <h3>운영시간을 변경하시려면 상단 “설정” 을 이용해 주세요</h3>
+        </div>
+
+        <div class="main-message">
+            <h1>😍 G5가 단체주문방을 만들었어요 😍</h1>
+            <h3>[마감시간] 에 주문 내역이 도착하니 기대해주세요 !</h3>
+        </div>
+    </div>
+
+    <script>
+        // header를 가져오는 자바스크립트.. 추후 컴포넌트로 변경 필요
+        fetch('./MHeader.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('header-placeholder').innerHTML = text);
+
+        // WebSocket을 통한 서버 설정
+        // 1. WebSocket 서버설정 (Node.js + Socket.IO)
+        // 2. 사용자A(총무) 의 클라이언트 구현 (HTML + JavaScript)
+        
+
+    </script>
+    <!-- 3. 사용자B(사장) 의 클라이언트  -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket =io('http://localhost:3000');
+        socket.on('receiveAlert', () => {
+            alert('Alert from User A');
+            // 소리 재생로직
+            const audio = new Audio('alert_sount.mp3'); // 예시 소리 파일
+            audio.play();
+        })
+    </script>
+</body>
+</html>

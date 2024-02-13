@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: Manager Info ::</title>
+</head>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .shop-name {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 5px;
+    }
+
+    .change-pw1 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 5px;
+    }
+
+    .change-pw2 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 5px;
+    }
+
+    .btn-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        padding: 5px;
+    }
+
+    .btn-section button {
+        color: white;
+        border-radius: 25px;
+        font-size: 25px;
+        border: none;
+    }
+
+    button:hover {
+        background-color: rgb(0, 0, 0);
+        cursor: pointer;
+    }
+
+    input {
+        height: 30px;
+        width: 350px;
+        font-size: 25px;
+        margin-left: 10px;
+        text-align: center;
+        border-radius: 25px;
+        border: solid black 1px;
+    }
+
+    span {
+        font-size: 25px;
+    }
+
+</style>
+<body>
+    <div class="header" id="header-placeholder">
+    </div>
+
+    <div class="manager-info">
+        <div class="shop-name">
+            <span>가게명</span>
+            <input placeholder="컴포즈커피_광주장덕수완점" type="text" readonly>
+        </div>
+        <div class="change-pw1">
+            <span>비밀번호 변경</span>
+            <input type="password">
+        </div>
+        <div class="change-pw2">
+            <span>비밀번호 확인</span>
+            <input type="password">
+        </div>
+        <div class="btn-section">
+            <button id="btn-apply" type="submit" style="background-color: #296A84; margin: 3px;">적용</button>
+            <button id="btn-cancel" style="background-color: #EB4E5A; margin: 3px;">취소</button>
+        </div>
+    </div>
+
+    <script>
+        // header를 가져오는 자바스크립트.. 추후 컴포넌트로 변경 필요
+        fetch('./MHeader.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('header-placeholder').innerHTML = text);
+    </script>
+</body>
+</html>

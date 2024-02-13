@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: sideMenuBar ::</title>
+</head>
+<style>
+    .sidebar {
+        position: fixed;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #97AFBA;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .sidebar ul {
+        padding-top: 10px;
+    }
+
+    .sidebar li {
+        padding: 15px;
+        cursor: pointer;
+    }
+
+    .sidebar a {
+        text-decoration-line: none;
+        color: black;
+    }
+
+    .sidebar li:hover {
+        background-color: gray;
+        border-radius: 5px;
+    }
+
+</style>
+<body>
+    <div class="header" id="header-placeholder">
+    </div>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="#">홈</a></li>
+            <li><a href="#">가게 수정</a></li>
+            <li><a href="#">메뉴 관리</a></li>
+            <li><a href="#">옵션 관리</a></li>
+        </ul>
+    </div>
+
+    <script>
+        fetch('./MHeader.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('header-placeholder').innerHTML = text);
+    </script>
+</body>
+</html>
