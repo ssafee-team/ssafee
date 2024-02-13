@@ -21,9 +21,9 @@ export default {
         SSAFEE®
       </div>
     </div>
-    <div class="greeting">
+    <!-- <div class="greeting">
       {{ name }}님 안녕하세요
-    </div>
+    </div> -->
   </header>
 </template>
 
