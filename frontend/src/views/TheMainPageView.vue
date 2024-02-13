@@ -11,8 +11,11 @@ const { data: shops } = await useFetch('/api/v1/shops').get().json()
 const shopRecord = shops.value.reduce((acc, shop) => ({ ...acc, [shop.id]: shop }), {})
 
 function isPartyOpened(party) {
-  const now = new Date()
-  return now < new Date(party.last_order_time)
+  const [hours, minutes] = party.last_order_time.split(':')
+  const lastOrderTime = new Date()
+  lastOrderTime.setHours(hours)
+  lastOrderTime.setMinutes(minutes)
+  return new Date() < lastOrderTime
 }
 
 function handleAuth() {
