@@ -3,7 +3,7 @@ package coffee.ssafy.ssafee.domain.party.controller;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyOrderService;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
-import coffee.ssafy.ssafee.domain.party.service.PartySocketIoService;
+import coffee.ssafy.ssafee.domain.party.service.PartySocketIOService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PartyOrderController {
 
-    private final PartySocketIoService partySocketIoService;
+    private final PartySocketIOService partySocketIoService;
     private final PartyOrderService partyOrderService;
     private final PartyService partyService;
 
@@ -30,6 +30,7 @@ public class PartyOrderController {
         partySocketIoService.sendOrderNotification(partyId);
         if (!partyOrderService.existsCarrier(partyId)) {
             partyOrderService.pickCarrier(partyId);
+            partyOrderService.sendCarrierResult(accessCode);
         }
         return ResponseEntity.ok().build();
     }
@@ -64,6 +65,15 @@ public class PartyOrderController {
                                               @PathVariable("access_code") String accessCode) {
         partyService.validateUser(accessCode, principal.userId());
         partyOrderService.sendAdvertise(accessCode);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/today-carriers")
+    @Operation(summary = "총무 : 배달부선정결과 알림보내기", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> sendCarrierResult(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                                  @PathVariable("access_code") String accessCode) {
+        partyService.validateUser(accessCode, principal.userId());
+        partyOrderService.sendCarrierResult(accessCode);
         return ResponseEntity.ok().build();
     }
 

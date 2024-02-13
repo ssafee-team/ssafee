@@ -1,140 +1,140 @@
+<script setup>
+import { useRouter } from 'vue-router'
+import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
+import { jwtDecode } from 'jwt-decode'
+import { onMounted, ref } from 'vue'
+import CreateHeader from '@/components/common/CreateHeader.vue'
+
+const location = useBrowserLocation()
+const router = useRouter()
+const token = useLocalStorage('user-token', null)
+const { data: parties } = await useFetch('/api/v1/parties').get().json()
+const { data: shops } = await useFetch('/api/v1/shops').get().json()
+const shopRecord = shops.value.reduce((acc, shop) => ({ ...acc, [shop.id]: shop }), {})
+
+function isPartyOpened(party) {
+  const [hours, minutes] = party.last_order_time.split(':')
+  const lastOrderTime = new Date()
+  lastOrderTime.setHours(hours)
+  lastOrderTime.setMinutes(minutes)
+
+  return new Date() < lastOrderTime
+}
+
+function handleAuth() {
+  const navigateToCreate = () => router.push('/CreateRoomView')
+  if (token.value !== null) {
+    const decoded = jwtDecode(token.value)
+    if (Date.now() < decoded.exp * 1000)
+      return navigateToCreate()
+    token.value = null
+  }
+
+  const registraion = 'google'
+  const url = `/api/v1/oauth2/authorization/${registraion}?redirect_uri=${location.value.origin}/login/oauth2/redirect/${registraion}`
+  const width = 600
+  const height = 600
+  const left = (window.innerWidth - width) / 2
+  const top = (window.innerHeight - height) / 2
+  window.open(url, 'OAuth2 Login', `toolbar=no, menubar=no, width=${width}, height=${height}, top=${top}, left=${left}`)
+  window.addEventListener('message', (event) => {
+    token.value = event.data.token
+    navigateToCreate()
+  })
+}
+// 현재 날짜와 시간을 저장하는 변수
+const currentDate = ref('')
+const currentDayOfWeek = ref('')
+const currentTime = ref('')
+
+// 컴포넌트가 처음으로 렌더링될 때 현재 시간을 설정하는 함수
+onMounted(() => {
+  // 현재 날짜와 시간을 업데이트하는 함수
+  function updateCurrentDateTime() {
+    const now = new Date()
+    currentDate.value = now.toLocaleDateString()
+    currentDayOfWeek.value = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()]
+    currentTime.value = now.toLocaleTimeString()
+  }
+
+  // 매 초마다 현재 시간을 업데이트하는 작업을 수행
+  setInterval(updateCurrentDateTime, 1000)
+
+  // 컴포넌트가 처음으로 렌더링될 때 현재 시간 설정
+  updateCurrentDateTime()
+})
+</script>
+
 <template>
   <div id="app">
-    <header :style="{ height: headerHeight }">
-      <p class="bannarname">현재 개설된 방</p>
-    </header>
-    <div class="link-container">
-      <!-- <RouterLink :to="'/room/' + room.access_code" v-for="room in rooms" :key="room.access_code"> -->
-      <!-- <RouterLink :to="'/room/' + 'Gqe3GwHFoK'"> -->
-      <div>
-        <button v-for="room in rooms" :key="room">
-          {{ room }}
-        </button>
-        <!-- </RouterLink> -->
+    <CreateHeader />
+    <div class="content">
+      <div class="time-info">
+        <div>
+          {{ currentDate }} ({{ currentDayOfWeek }})
+        </div>
+        <div>{{ currentTime }}</div>
       </div>
-    </div>
+      <div class="link-info">
+        <div class="link-container">
+          <button v-for="party in parties" :key="party.id" class="party-button">
+            <div class="last-order">
+              <div>마감시간 {{ party.last_order_time }}</div>
+            </div>
+            <div> {{ shopRecord[party.shop_id].name }} </div>
+            <div> {{ party.name }} </div>
 
-    <div class="link-container">
-      <button @click="handleAuth" class="plusbutton plusbutton:hover">+</button>
-    </div>
-    <div class="link-container">
-      <!-- <router-link :to="{ name: 'After', params: { access_code: 'dKrOpvDFvS' } }"> -->
-      <!-- <button>After</button> -->
-      <!-- </router-link> -->
-      <!-- <RouterLink to="After">
-      <button > After</button>
-    </RouterLink> -->
+            <div class="order-info">
+              <div class="order-status" :class="{ blue: isPartyOpened(party), red: !isPartyOpened(party) }">
+                {{ isPartyOpened(party) ? '주문 중' : '주문 마감' }}
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div class="create-party">
+          <button class="plusbutton plusbutton:hover dis" @click="handleAuth">
+            파티 생성
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from "vue";
-import { getPartiesToday } from "@/api/party";
-import { useRouter } from "vue-router";
-import { OAUTH2_URLS, getLocalStorageToken, setLocalStorageToken } from "@/api/oauth2";
-
-// 방을 생성하려면 구글 로그인을 통해 토큰을 발급해야 합니다.
-const router = useRouter();
-const handleAuth = () => {
-  const routePushCreateRoom = () => router.push("/CreateRoomView");
-
-  // 1. 로컬스토리지에 만료되지 않은 토큰이 있다면 방 생성 페이지로 이동합니다.
-  const token = getLocalStorageToken();
-  if (token) {
-    routePushCreateRoom();
-    return;
-  }
-
-  // 2. 토큰이 없거나 만료됐을 경우 구글 로그인 팝업을 생성합니다.
-  const width = 600, height = 600;
-  const left = (window.innerWidth - width) / 2;
-  const top = (window.innerHeight - height) / 2;
-  const popup = window.open(OAUTH2_URLS.google, "Login OAuth2 Google", `toolbar=no, menubar=no, width=${width}, height=${height}, top=${top}, left=${left}`);
-
-  // 3. 구글 로그인 팝업에서 토큰을 받아오면 로컬스토리지에 저장하고 방 생성 페이지로 이동합니다.
-  window.addEventListener("message", (event) => {
-    if (event.origin != window.location.origin) {
-      return;
-    }
-    const { token } = event.data;
-    if (token) {
-      setLocalStorageToken(token);
-      popup.close()
-      routePushCreateRoom();
-    }
-  }, false);
-}
-
-// createapp, mount함수는 진입점(index.js, main.js)에서 사용함
-
-// console.log(getPartiesToday())
-const queryParams = {
-  date: "2024-01-31",
-};
-const rooms = ref([]);
-// 성공 콜백 함수를 정의합니다.
-function onSuccess(response) {
-  // 서버 응답의 data 속성에 접근합니다.
-  const responseData = response.data;
-  // console.log(response);
-  // 이후 responseData를 사용하여 필요한 처리를 수행합니다.
-  // 예: responseData가 배열인 경우, 각 요소를 출력
-  if (Array.isArray(responseData)) {
-    responseData.forEach((item) => {
-      rooms.value.push(item.name);
-      // console.log(item.name);
-    });
-  } else {
-    // responseData가 객체 또는 다른 형태인 경우의 처리
-    // console.log(responseData);
-  }
-}
-
-// 실패 콜백 함수를 정의합니다.
-function onFailure(error) {
-  console.error("실패:", error);
-}
-
-// getPartiesToday 함수를 호출합니다.
-getPartiesToday(queryParams, onSuccess, onFailure);
-
-//fetch로
-function getParties() {
-  fetch("/api/v1/parties")
-    .then((response) => {
-      // 응답 헤더에서 Location에 접근
-      const location = response.headers.get("Location");
-      // console.log("Location:", location);
-      // console.log(response);
-      return response.json(); // 또는 적절한 응답 처리
-    })
-    .then((data) => {
-      // console.log("Received data:", data);
-    })
-    .catch((error) => {
-      console.error("An error occurred:", error);
-    });
-}
-
-onMounted(() => {
-  getParties();
-});
-
-const headerHeight = ref("72px"); // 예시로 100px를 기본값으로 설정
-</script>
-
 <style scoped>
-/* header {
-    background-color: #344a53;
-    color: #e9fcff;
-    padding: 10px;
-    height: 77px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  } */
-#app > span {
+.content{
+  display: flex;
+  flex-direction: row;
+
+}
+
+.time-info{
+  display: flex;
+  width: 20%;
+  border-radius: 10px;
+  flex-direction: column;
+  border: 3px solid #1E293B;
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-right: 40px;
+  font-weight: bold;
+  font-size: 20px;
+  align-items: center;
+  height: 200px;
+  justify-content: center;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+
+}
+
+.link-info{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+#app>span {
   font-size: 30px;
   background-color: black;
   display: flex;
@@ -146,70 +146,118 @@ const headerHeight = ref("72px"); // 예시로 100px를 기본값으로 설정
 
 .link-container {
   display: flex;
-  justify-content: center;
-  width: 100%; /* 전체 너비를 차지하도록 설정 */
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 20px;
+  border: 3px solid #1E293B;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  border-radius: 10px;
+  height: 400px;
+  max-height: 400px;
+  overflow-y: auto;
+  /* 전체 너비를 차지하도록 설정 */
+}
+.link-container::-webkit-scrollbar{
+  display: none;
+}
+
+.last-order {
+  width: 100%;
+  text-align: left;
+  margin-left: 10px;
 }
 
 button {
-  font-size: 20px; /* 폰트 크기 설정 */
-  background-color: #f5f5f5; /* 배경색 설정 */
-  color: #344a53; /* 글자색 설정 */
-  padding: 10px 20px; /* 상하, 좌우 패딩 설정 */
-  border: none; /* 테두리 제거 */
-  border-radius: 5px; /* 테두리 둥글게 */
+  font-size: 20px;
+  /* 폰트 크기 설정 */
+  background-color: #ffffff;
+  /* background-color: #f5f5f5; */
+  /* 배경색 설정 */
+  color: #344a53;
   width: 800px;
-  display: flex;
-  margin-top: 20px;
-  justify-content: center;
   font-weight: bold;
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
-  border: 1px solid #f5f5f5;
+
+}
+
+.party-button {
+  align-items: center;
+  border-radius: 10px;
+  margin: 20px;
+  border: 3px solid ;
+  display: flex;
+  flex-direction: column;
+}
+
+.party-button div{
+  width: 100%;
+}
+
+.create-party{
+  display: flex;
 }
 
 .plusbutton {
-  font-size: 20px; /* 폰트 크기 설정 */
-  background-color: #f5f5f5; /* 배경색 설정 */
-  color: #344a53; /* 글자색 설정 */
-  padding: 10px 20px; /* 상하, 좌우 패딩 설정 */
-  border: none; /* 테두리 제거 */
-  border-radius: 5px; /* 테두리 둥글게 */
-  cursor: pointer; /* 커서 모양을 손가락 모양으로 */
+  font-size: 20px;
+  /* 폰트 크기 설정 */
+  /* background-color: #f5f5f5; */
+  /* 배경색 설정 */
+  color: #344a53;
+  /* 글자색 설정 */
+  padding: 10px 20px;
+  /* 상하, 좌우 패딩 설정 */
+  border: 3px solid #1E293B;
+  /* 테두리 제거 */
+  border-radius: 25px;
+  /* 테두리 둥글게 */
+  cursor: pointer;
+  /* 커서 모양을 손가락 모양으로 */
   width: 800px;
   display: flex;
-  margin-top: 20px;
+  margin-top: 10px;
   justify-content: center;
 }
 
 .plusbutton:hover {
-  background-color: #344a53; /* 버튼에 마우스를 올렸을 때 배경색 변경 */
+  background-color: #1E293B;
+  /* 버튼에 마우스를 올렸을 때 배경색 변경 */
   color: white;
 }
 
 .link-container a {
-  text-decoration: none; /* 밑줄 제거 */
+  text-decoration: none;
+  /* 밑줄 제거 */
+}
+.order-status {
+  text-align: right;
+  margin-right: 10px;
 }
 
-header {
-  background-color: #344a53;
-  color: #e9fcff;
-  min-height: 70px;
-  display: flex;
-  font-size: 24px;
-  justify-content: space-between;
-  align-items: center;
+.blue {
+  color: #00A7D0;
 }
+
+.red {
+  color: #EB4E5A;
+}
+
 /* 화면 폭이 768px 미만일 때 */
 @media screen and (max-width: 768px) {
   header {
-    font-size: 18px; /* 화면이 작을 때 텍스트 크기 조절 */
+    font-size: 18px;
+    /* 화면이 작을 때 텍스트 크기 조절 */
   }
+
   button {
     width: 600px;
   }
+
   .plusbutton {
     width: 600px;
   }
 }
+
 .bannarname {
   display: flex;
   /* font-size: 30px; */

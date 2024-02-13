@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: Manager-Main ::</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-weight: bold;
+            color: black;
+        }
+
+        .manager-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between; /* 이 부분을 추가합니다 */
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .manager-header ul {
+            display: flex;
+            flex-direction: row;
+            margin-left: auto;
+        }
+
+        .nav-item {
+            margin: 10px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        .ssafee-icon {
+            cursor: pointer;
+            font-size: 30px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        img {
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="manager-header" style="background-color: white;">
+        <div>
+            <a class="ssafee-icon">
+                <img src="../assets/img/LOGO.png">
+                <span style="margin-left: 15px;">SSAFEE</span>
+            </a>
+        </div>
+        <div>
+            <ul>
+                <li class="nav-item">
+                    <a>컴포즈커피-광주장덕수완점 (주문대기화면)</a>
+                </li>
+                <li class="nav-item">
+                    <a>내 가게 편집</a>
+                </li>
+                <li class="nav-item">
+                    <a>개인정보수정</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</body>
+</html>

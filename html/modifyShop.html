@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:: modify shop ::</title>
+</head>
+<style>
+    input {
+        height: 30px;
+        border-radius: 25px;
+        border: solid black 1px;
+        padding-left: 15px;
+    }
+
+    .content {
+        position: fixed;
+        left: 250px;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+
+    .shop-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .shop-info>.btn-section {
+        justify-content: flex-end;
+    }
+
+    .btn-section {
+        display: flex;
+        flex-direction: row;
+        margin-top: 20px;
+    }
+
+    .btn-section>.btn {
+        margin-left: 0.5rem;
+    }
+
+    .btn {
+        color: white;
+        border-radius: 25px;
+        font-size: 25px;
+        border: none;
+    }
+
+    .btn:hover {
+        background-color: rgb(0, 0, 0);
+        cursor: pointer;
+    }
+
+    .shop-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+
+    .item-left {
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+        width: 200px;
+        margin-right: 10px;
+    }
+
+    .item-right {
+        width: 100%;
+    }
+
+    .item-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .item-row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .input-text {
+        width: 100%;
+        font-size: 20px;
+    }
+
+    .input-btn {
+        width: 100%;
+        font-size: 25px;
+    }
+
+    .input-img {
+        width: 100px;
+    }
+
+    .btn-blue {
+        /* background-color: #296A84; */
+        background-color: #00A7D0;
+    }
+
+    .btn-red {
+        background-color: #EB4E5A;
+    }
+    #upload-img {
+        display: none;
+    }
+    .input-info{
+        color: red;
+        font-size: 12px;
+        padding-left: 150px;
+    }
+    .btnOn {
+        background-color: #97AFBA;        ;
+    }
+    .btnOff{
+        background-color: #97AFBA;
+    }
+</style>
+
+<body>
+    <div class="header" id="header-placeholder">
+    </div>
+    <div class="sidebar" id="sidebar">
+    </div>
+    <div class="content">
+        <div class="shop-info">
+            <div class="shop-item">
+                <label class="item-left" for="id">로고</label>
+                <div class="item-right">
+                    <div class="item-col">
+                        <img class="input-img" id="shop-logo"
+                            src="https://img.ssafy.coffee/1/02c725dc7afdf889440688026b9f78b6253678ff41842dafe976c7beb37d0057.jpg">
+                        <div class="btn-section">
+                            <input type="file" id="upload-img" onchange="changeImg()">
+                            <button class="btn btn-blue" onclick="uploadImg()">변경</button>
+                            <!-- <button class="btn btn-red">삭제</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="shop-item">
+                <label class="item-left" for="name">가게명</label>
+                <div class="item-right">
+                    <input class="input-text" type="text" id="name" name="name" value="컴포즈커피_광주장덕수완점" readonly>
+                </div>
+            </div>
+            <div class="shop-item">
+                <label class="item-left" for="phone">대표전화번호</label>
+                <div class="item-right">
+                    <input class="input-text" type="text" id="phone" name="phone" placeholder="062-710-4090">
+                </div>
+            </div>
+            <div class="input-info">* -을 포함하여 입력하세요.</div>
+            <div class="shop-item">
+                <label class="item-left" for="address">주소</label>
+                <div class="item-right">
+                    <input class="input-text" type="text" id="address" name="address" placeholder="광주 광산구 풍영로 329번길 19">
+                </div>
+            </div>
+            <div class="shop-item">
+                <label class="item-left" for="phone">임시휴업</label>
+                <div class="item-right">
+                    <div class="item-row">
+                        <input class="input-btn" type="button" id="opend" name="opend" value="ON" onclick="btnOnOff(this)">
+                        <input class="input-btn" type="button" id="closed" name="closed" value="OFF" onclick="btnOnOff(this)">
+                    </div>
+                </div>
+            </div>
+            <div class="input-info">* 해당 기능을 ON으로 선택해두시면 가게노출이 잠시 중단됩니다.</div>
+            <div class="shop-item">
+                <label class="item-left" for="minimun_price">최소주문금액</label>
+                <div class="item-right">
+                    <input class="input-text" type="number" id="minimun_price" name="minimun_price">
+                </div>
+            </div>
+            <div class="input-info">* 배달 주문을 시작할 최소 금액을 입력합니다.</div>
+            <div class="btn-section">
+                <button class="btn btn-blue" id="btn-apply" type="submit">적용</button>
+                <button class="btn btn-red" id="btn-cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        fetch('./MHeader.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('header-placeholder').innerHTML = text);
+        fetch('./Msidebar.html')
+            .then(response => response.text())
+            .then(text => document.getElementById('sidebar').innerHTML = text);
+
+        function uploadImg() {
+            document.getElementById('upload-img').click();
+            return changeImg();
+        }
+        function changeImg() {
+            let currentImg = document.getElementById('shop-logo');
+            let file = document.getElementById('upload-img').files[0];
+            let reader = new FileReader();
+
+            reader.onloadend = function() {
+                currentImg.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                currentImg.src = "https://img.ssafy.coffee/1/02c725dc7afdf889440688026b9f78b6253678ff41842dafe976c7beb37d0057.jpg";
+            }
+        }
+        function btnOnOff(btn) {
+            let btnOn = document.getElementById('opend');
+            let btnOff = document.getElementById('closed');
+
+            if (btn.value == "ON") {
+                btnOn.className = "input-btn btnOn";
+                btnOff.className = "input-btn";
+            } else {
+                btnOff.className = "input-btn btnOff";
+                btnOn.className = "input-btn";
+            }
+        }
+    </script>
+</body>
+
+</html>

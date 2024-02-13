@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Notification Example</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+<script>
+    const socket = io('http://localhost:3000'); // Adjust the server address as needed
+    const audio = new Audio('notification.mp3'); // Specify the path to your audio file
+
+    socket.on('confirmed', function (partyId) {
+        audio.play();
+        alert('Notification received!');
+        audio.pause();
+        audio.currentTime = 0; // Reset audio playback to the start
+    });
+</script>
+
+</body>
+</html>
+<!--
+    Alert 창을 활용한 방법
+    단, alert 함수가 동기적인 특성때문에 직접적으로 구현하기 어려움
+    alert가 실행되는 동안에는 스크립트 실행을 멈춰버리기 때문에 alert가 켜지기 전에 알림음악을 재생하고 alert를 켜고
+    alert를 종료하면 음악을 중단하는 script를 사용해서 재생을 멈춰야함
+-->

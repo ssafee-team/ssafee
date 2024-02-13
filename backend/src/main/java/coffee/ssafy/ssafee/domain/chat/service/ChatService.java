@@ -6,7 +6,6 @@ import coffee.ssafy.ssafee.domain.chat.entity.Chat;
 import coffee.ssafy.ssafee.domain.chat.mapper.ChatMapper;
 import coffee.ssafy.ssafee.domain.chat.repository.ChatRepository;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
-import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +20,26 @@ public class ChatService {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final PartyService partyService;
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
 
     @Transactional
-    public void createChat(Long partyId, ChatRequest chatRequest) {
-        Chat chat = Chat.builder()
-                .content(chatRequest.content())
-                .name("")
-                .party(entityManager.getReference(Party.class, partyId))
-                .build();
-        chatRepository.save(chat);
-    }
-
-    @Transactional
-    public List<ChatResponse> getChats(Long partyId) {
+    public List<ChatResponse> findChats(Long partyId) {
         return chatRepository.findAllByPartyId(partyId).stream()
                 .map(chatMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public ChatResponse createChat(Long partyId, ChatRequest chatRequest) {
+        Party partyReference = entityManager.getReference(Party.class, partyId);
+        Chat chat = Chat.builder()
+                .name("")
+                .content(chatRequest.content())
+                .party(partyReference)
+                .build();
+        chatRepository.save(chat);
+        return chatMapper.toDto(chat);
     }
 
 }

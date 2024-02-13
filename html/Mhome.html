@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>:: manager home ::</title>
+    <style>
+      .content {
+        position: fixed;
+        left: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* justify-content: center; */
+        /* text-align: center; */
+        /* align-content: center; */
+        /* justify-items: center; */
+        height: 100vh;
+        width: 95%;
+        margin: 15px;
+        box-sizing: border-box;
+      }
+      .quarter-infos {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-right: 250px;
+        box-sizing: inherit;
+        /* text-align: center; */
+        /* align-items: center; */
+      }
+
+      .quarter-info {
+        width: 400px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+        border-radius: 5px;
+        padding: 10px;
+        display: inline-block;
+      }
+      .quarter-info:hover {
+        background-color: #f0f0f0;
+      }
+      .calendar-popup {
+        position: absolute;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding: 10px;
+        display: none;
+      }
+      .calendar-popup .calendar {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .calendar-popup .month {
+        width: calc(100% / 3);
+        border: 1px solid #ccc;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .calendar-popup .month h3 {
+        margin-top: 0;
+      }
+      .calendar-popup .month ul {
+        list-style: none;
+        padding: 0;
+      }
+      .calendar-popup .month ul li {
+        margin-bottom: 5px;
+      }
+      .order-stats {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-right: 250px;
+        padding: 0 10px;
+        flex-direction: column;
+        width: 70%;
+        box-sizing: inherit;
+      }
+      .order-infos {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        box-sizing: border-box;
+      }
+
+      .order-count,
+      .total-sales {
+        margin: 10px;
+        font-size: 20px;
+      }
+      .order-count-num,
+      .total-sales-num {
+        box-sizing: inherit;
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+        width: 250px;
+        height: 60px;
+        font-size: 20px;
+        border-radius: 5px;
+      }
+      .order-history {
+        display: flex;
+        margin: 10px;
+        flex-direction: column;
+      }
+      .order-history-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .order-item {
+        height: 300px;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-y: auto;
+      }
+      .order-item::-webkit-scrollbar {
+        display: none;
+      }
+
+      .order-date {
+        font-size: 20px;
+      }
+
+      .order-details {
+        background-color: #f1f1f1;
+        padding: 10px;
+      }
+      .toggle-details {
+        cursor: pointer;
+        /* color: black; */
+      }
+      .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .order-id {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .order-table th,
+      .order-table td {
+        padding: 8px;
+        text-align: center;
+      }
+
+      .order-table th {
+        text-align: center;
+      }
+      .order-table tr:hover {
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header" id="header-placeholder"></div>
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="content">
+      <div class="quarter-infos" id="quarter-infos">
+        <select class="quarter-info" id="quarter-info">
+          <option value="1">📅 2024년 1분기(1.1 ~ 3.31)</option>
+          <option value="2">📅 2024년 2분기(4.1 ~ 6.30)</option>
+          <option value="3">📅 2024년 3분기(7.1 ~ 9.30)</option>
+          <option value="4">📅 2024년 4분기(10.1 ~ 12.31)</option>
+        </select>
+      </div>
+      <div class="calendar-popup" id="calendar-popup">
+        <div class="calendar" id="quarter-calendar">gdgdgd</div>
+      </div>
+
+      <div class="order-stats">
+        <div class="order-infos">
+          <div class="order-count">
+            <div class="order-count-title">주문 수</div>
+            <div class="order-count-num">55회</div>
+          </div>
+          <div class="total-sales">
+            <div class="total-sales-title">총 매출</div>
+            <div class="total-sales-num">1,543,100원</div>
+          </div>
+        </div>
+        <div class="order-history">
+          <div class="order-history-title">주문기록</div>
+          <div class="order-item">
+            <table class="order-table">
+              <thead>
+                <tr>
+                  <th>주문번호</th>
+                  <th>주문시간</th>
+                  <th>주문내역</th>
+                  <th>주문금액</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr class="toggle-details">
+                  <td class="order-id">
+                    <div>🔻</div>
+                    1
+                  </td>
+
+                  <td class="order-time">11:31:42</td>
+                  <td class="order-menu">카페라떼 외 13건</td>
+                  <td class="order-amount">104,000원</td>
+                </tr>
+                <tr class="toggle-details">
+                  <td class="order-id">
+                    <div>🔻</div>
+                    1
+                  </td>
+
+                  <td class="order-time">11:31:42</td>
+                  <td class="order-menu">카페라떼 외 13건</td>
+                  <td class="order-amount">104,000원</td>
+                </tr>
+                <tr class="toggle-details">
+                  <td class="order-id">
+                    <div>🔻</div>
+                    1
+                  </td>
+
+                  <td class="order-time">11:31:42</td>
+                  <td class="order-menu">카페라떼 외 13건</td>
+                  <td class="order-amount">104,000원</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      fetch("./MHeader.html")
+        .then((response) => response.text())
+        .then((text) => (document.getElementById("header-placeholder").innerHTML = text));
+      fetch("./Msidebar.html")
+        .then((response) => response.text())
+        .then((text) => (document.getElementById("sidebar").innerHTML = text));
+
+      // 분기 달력 생성
+      function createQuarterCalendar(year, quarter) {
+        const calendarDiv = document.getElementById("quarter-calendar");
+        calendarDiv.innerHTML = ""; // 기존 달력 비우기
+
+        const startMonth = (quarter - 1) * 3 + 1;
+        const endMonth = startMonth + 2;
+        const quarterString = `${year}년 ${quarter}분기(${startMonth}.1 ~ ${endMonth}.31)`;
+
+        const monthList = document.createElement("ul");
+        for (let i = startMonth; i <= endMonth; i++) {
+          const listItem = document.createElement("li");
+          listItem.textContent = `${year}년 ${i}월`;
+          monthList.appendChild(listItem);
+        }
+
+        const monthContainer = document.createElement("div");
+        monthContainer.classList.add("month");
+        monthContainer.innerHTML = `<h3>${quarterString}</h3>`;
+        monthContainer.appendChild(monthList);
+
+        calendarDiv.appendChild(monthContainer);
+      }
+
+      // 초기 달력 생성 (현재 년도, 1분기 기준)
+      const currentYear = new Date().getFullYear();
+      createQuarterCalendar(currentYear, 1);
+
+      const quarterInfo = document.getElementById("quarter-info");
+      const calendarPopup = document.getElementById("calendar-popup");
+
+      // 분기 선택 시 해당 분기 달력 생성
+      quarterInfo.addEventListener("change", function () {
+        const selectedQuarter = parseInt(quarterInfo.value);
+        createQuarterCalendar(currentYear, selectedQuarter);
+      });
+    </script>
+  </body>
+</html>
