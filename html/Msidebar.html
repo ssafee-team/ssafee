@@ -6,58 +6,36 @@
     <title>:: sideMenuBar ::</title>
 </head>
 <style>
-    body {
-        position: absolute;
-        left: 0;
-    }
-
-    .header {
-        display: flex;
-        flex-direction: row;
-        color: black;
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0px;
-        margin: 0px;
-        width: 300px;
-        background: #020817;
-        height: 100%;
+    .sidebar {
         position: fixed;
-    }
-
-    li a {
-        text-decoration: none;
-        font-size: 25px;
-        padding: 10px;
-        display: block;
-        color: #ffffff;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #97AFBA;
+        color: white;
+        font-size: 20px;
         font-weight: bold;
     }
 
-    li a:hover {
-        background: #333;
-        color: #fff;
-        border-radius: 25px;
-    }
-
-    .sidebar {
-        display: flex;
-        flex-direction: column;
-
-    }
-
     .sidebar ul {
-        flex-direction: column;
+        padding-top: 10px;
     }
 
-    .sidebar li{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        list-style-type: none;
+    .sidebar li {
+        padding: 15px;
+        cursor: pointer;
     }
+
+    .sidebar a {
+        text-decoration-line: none;
+        color: black;
+    }
+
+    .sidebar li:hover {
+        background-color: gray;
+        border-radius: 5px;
+    }
+
 </style>
 <body>
     <div class="header" id="header-placeholder">
