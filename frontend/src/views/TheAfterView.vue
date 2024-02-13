@@ -139,7 +139,7 @@ function addToOrderList() {
               participant_id: participant ? participant.id : null, // Add participant_id or null if participant not found
             }
           })
-          console.log('주문 현황 불러오기: ', orderList.value)
+          // console.log('주문 현황 불러오기: ', orderList.value)
         },
         (error) => {
           console.error('주문 현황 조회 실패: ', error)
