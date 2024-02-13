@@ -3,12 +3,11 @@ package coffee.ssafy.ssafee.domain.party.controller;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyOrderService;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
-import coffee.ssafy.ssafee.domain.party.service.PartySocketIoService;
+import coffee.ssafy.ssafee.domain.party.service.PartySocketIOService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.PartitionKey;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PartyOrderController {
 
-    private final PartySocketIoService partySocketIoService;
+    private final PartySocketIOService partySocketIoService;
     private final PartyOrderService partyOrderService;
     private final PartyService partyService;
 

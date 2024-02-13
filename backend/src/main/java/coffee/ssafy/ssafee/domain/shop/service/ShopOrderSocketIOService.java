@@ -6,28 +6,28 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ShopOrderSocketIoService {
+public class ShopOrderSocketIOService {
 
-    private final SocketIOServer server;
+    private final SocketIOServer socketIOServer;
 
     // 주문수락알림 전송
     public void sendConfirmNotification(Long partyId) {
-        server.getBroadcastOperations().sendEvent("confirmed", partyId);
+        socketIOServer.getBroadcastOperations().sendEvent("confirmed", partyId);
     }
 
     // 주문거절알림 전송
     public void sendRejectNotification(Long partyId) {
-        server.getBroadcastOperations().sendEvent("rejected", partyId);
+        socketIOServer.getBroadcastOperations().sendEvent("rejected", partyId);
     }
 
     // 제조완료알림 전송
     public void sendMadeNotification(Long partyId) {
-        server.getBroadcastOperations().sendEvent("made", partyId);
+        socketIOServer.getBroadcastOperations().sendEvent("made", partyId);
     }
 
     // 배달시작알림 전송
     public void sendStartDeliveryNotification(Long partyId) {
-        server.getBroadcastOperations().sendEvent("startDelivery", partyId);
+        socketIOServer.getBroadcastOperations().sendEvent("startDelivery", partyId);
     }
 
 }

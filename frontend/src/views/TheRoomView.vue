@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 // import func from '../../vue-temp/vue-editor-bridge'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
-import ChatView from '@/components/room/chat/ChatView.vue'
+import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
 import { getOrderList, getParty, orderRequest } from '@/api/party'
 
@@ -250,7 +250,7 @@ function goOrder() {
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
-              <ChatView />
+              <Chat />
             </div>
           </div>
         </body>
@@ -404,7 +404,7 @@ button {
 }
 
 .center-panel {
-  flex: 2.5;
+  flex: 3;
   margin-left: 20px;
   /* margin-bottom: 20px; */
   /* height: 700px; */
@@ -416,10 +416,13 @@ button {
 }
 
 .right-panel {
-  flex: 2.5;
+  flex: 2;
   margin-left: 20px;
   /* height: 700px; */
+  border: 3px solid #1e293b;
+  border-radius: 5px;
   box-sizing: inherit;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 /* 화면 폭이 768px 미만일 때 */

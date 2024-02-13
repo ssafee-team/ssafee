@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PartySocketIoService {
+public class PartySocketIOService {
 
     private final SocketIOServer server;
 
