@@ -79,6 +79,12 @@ export default {
       // const serverURL = "/ws";
       const socket = new WebSocket(serverURL)
       stompClient = Stomp.over(socket)
+
+      // 콘솔에 채팅 관련 로그 없애는 함수(에러만 표시)
+      // stompClient.debug = function (str) {
+      //     if (str.includes("ERROR")) console.log(str);
+      // };
+
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
       stompClient.connect(
         {},
