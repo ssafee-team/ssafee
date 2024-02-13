@@ -1,19 +1,5 @@
-<template>
-  <div class="modal">
-    <div class="modal-content">
-      <div class="modal-title">주문하기</div>
-      <hr />
-      <input type="text" v-model="nameInput" placeholder="이름을 입력하세요" />
-      <div class="modal-buttons">
-        <button @click="closeModal" class="close">취소</button>
-        <button @click="confirmOrder" class="confirm">확인</button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
-import { createOrder } from "@/api/party";
+import { createOrder } from '@/api/party'
 
 export default {
   props: {
@@ -24,22 +10,22 @@ export default {
   },
   data() {
     return {
-      nameInput: "",
+      nameInput: '',
       // partyCode: "Gqe3GwHFoK",
-    };
+    }
   },
   methods: {
     closeModal() {
-      this.$emit("close");
+      this.$emit('close')
     },
     confirmOrder() {
       if (!this.nameInput.trim()) {
-        alert("이름을 입력하세요.");
-        return;
+        alert('이름을 입력하세요.')
+        return
       }
 
       // 주문 정보를 저장할 배열 초기화
-      const ordersData = [];
+      const ordersData = []
 
       // 모든 주문에 대한 정보 추출
       this.orders.forEach((order) => {
@@ -47,12 +33,12 @@ export default {
           menu_id: order.menuId,
           participant_name: this.nameInput,
           option_categories: order.option_categories,
-        };
+        }
 
         // 주문 정보를 배열에 추가
         // ordersData.push(orderData);
-        createOrder(this.code, orderData, this.handleOrderSuccess, this.handleOrderFail);
-      });
+        createOrder(this.code, orderData, this.handleOrderSuccess, this.handleOrderFail)
+      })
 
       // 최종 주문 정보 객체 생성
       // const orderInfo = {
@@ -66,18 +52,38 @@ export default {
       // createOrder(this.code, orderInfo, this.handleOrderSuccess, this.handleOrderFail);
 
       // 모달 닫기
-      this.closeModal();
+      this.closeModal()
     },
     handleOrderSuccess(response) {
       // console.log("주문 성공: ", response);
-      window.location.reload();
+      window.location.reload()
     },
     handleOrderFail(error) {
-      console.error("주문 실패:", error);
+      console.error('주문 실패:', error)
     },
   },
-};
+}
 </script>
+
+<template>
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-title">
+        주문하기
+      </div>
+      <hr>
+      <input v-model="nameInput" type="text" placeholder="이름을 입력하세요">
+      <div class="modal-buttons">
+        <button class="close" @click="closeModal">
+          취소
+        </button>
+        <button class="confirm" @click="confirmOrder">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .modal {
@@ -162,9 +168,11 @@ input {
   .modal-title {
     font-size: 16px;
   }
+
   input {
     font-size: 14px;
   }
+
   .close,
   .confirm {
     width: 100px;

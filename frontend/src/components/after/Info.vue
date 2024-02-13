@@ -1,12 +1,38 @@
+<script>
+export default {
+  props: {
+    creator: Object,
+  },
+  data() {
+    return {
+      isOpened: false,
+      isSelected: false,
+    }
+  },
+  computed: {},
+  methods: {
+    onMoloo(event) {
+      // console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account);
+      this.isOpened = true
+      event.target.innerText = '!'
+    },
+    offMoloo(event) {
+      this.isOpened = false
+      event.target.innerText = '?'
+    },
+  },
+}
+</script>
+
 <template>
   <div>
-    <div class="tooltip-bg-black" v-if="isOpened == true">
+    <div v-if="isOpened" class="tooltip-bg-black">
       <div class="tooltip-bg-white">
         <div class="tooptip-body">
-          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br />
+          전체 주문 현황 상단은 배달 인원으로 선정된 명단입니다.<br>
           배달 인원은 6잔 당 1명씩 추가됩니다.
         </div>
-        <div class="tooltip-tail"></div>
+        <div class="tooltip-tail" />
       </div>
     </div>
 
@@ -18,7 +44,7 @@
           배달 인원은 6잔 당 1명씩 추가됩니다.
         </div> -->
     <!-- <div class="tooltip-tail"></div>
-			</div> -->
+      </div> -->
     <!-- <div class="black-bg"> -->
     <!-- </div> -->
     <div id="info">
@@ -27,42 +53,15 @@
         <span>농협 302-0051-8244-01</span>
         <span>전상혁</span> -->
         <span>입금계좌: &nbsp; &nbsp;</span>
-        <span>{{ this.creator.bank }} &nbsp; {{ this.creator.account }} &nbsp;&nbsp;</span>
-        <span>{{ this.creator.name }}</span>
+        <span>{{ creator.bank }} &nbsp; {{ creator.account }} &nbsp;&nbsp;</span>
+        <span>{{ creator.name }}</span>
       </div>
-      <div @mouseover="onMoloo" @mouseout="offMoloo" id="moloo">?</div>
+      <div id="moloo" @mouseover="onMoloo" @mouseout="offMoloo">
+        ?
+      </div>
     </div>
-    
   </div>
 </template>
-
-<script>
-import { ref } from "vue";
-
-export default {
-  props: {
-    creator: Object,
-  },
-  data() {
-    return {
-      isOpened: false,
-      isSelected: false,
-    };
-  },
-  computed: {},
-  methods: {
-    onMoloo(event) {
-      // console.log(this.creator.id, this.creator.name, this.creator.bank, this.creator.account);
-      this.isOpened = true;
-      event.target.innerText = "!";
-    },
-    offMoloo(event) {
-      this.isOpened = false;
-      event.target.innerText = "?";
-    },
-  },
-};
-</script>
 
 <style>
 span {
@@ -77,10 +76,12 @@ span {
   justify-content: space-between;
   overflow: visible;
 }
+
 .accountinfo {
   /* font-size: 16px; */
   margin-left: 2rem;
 }
+
 #moloo {
   line-height: 46px;
   font-size: 22px;
@@ -99,6 +100,7 @@ span {
 .dv {
   box-sizing: border-box;
 }
+
 .tooltip-bg-black {
   width: 80%;
   /* height: 45px; */
