@@ -131,7 +131,7 @@ export default {
             {{ order.menu.name }}
           </div>
           <div class="menu-price">
-            {{ order.menu.price }}원
+            {{ order.menu.price }}
           </div>
           <span class="remove" @click="removeOrder(order.id)">X</span>
         </div>
@@ -199,11 +199,11 @@ option {
 /* 주문 내역 스타일 */
 .order {
   /* color: #FFFFFF; */
-  height: 20%;
-  max-height: 20%;
+
+  max-height: 70%;
   margin-top: 10px;
   /* margin-left: 10px; */
-  box-sizing: border-box;
+  box-sizing: inherit;
 }
 
 .item {
@@ -213,6 +213,7 @@ option {
   font-size: 18px;
   font-weight: bold;
   display: flex;
+  box-sizing: border-box;
   /* justify-content: space-between; */
 }
 
@@ -231,6 +232,7 @@ option {
 }
 
 .menu-price {
+  width: 50px;
   color: #00a5e7;
   margin-left: 10px;
 }
@@ -242,6 +244,7 @@ option {
 
 .menu-option {
   display: flex;
+  box-sizing: inherit;
 }
 
 .option-name {

@@ -170,7 +170,7 @@ onUnmounted(() => {
 
 .send {
   display: flex;
-  width: 60px;
+  width: 70px;
   cursor: pointer;
   background-color: #00a5e7;
   /* background-color: #020817; */
@@ -180,7 +180,7 @@ onUnmounted(() => {
   font-size: 16px;
   margin: 10px;
   border-radius: 10px;
-  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  /* box-shadow: 2px 2px 2px 2px rgb(227, 226, 226); */
   justify-content: center;
 }
 </style>

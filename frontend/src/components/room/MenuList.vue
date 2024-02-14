@@ -54,10 +54,10 @@ export default {
   methods: {
 
     openModal() {
-      console.log('모달열어')
+      // console.log('모달열어')
       // 모달을 열기 위한 메서드
       this.showModal = true
-      console.log(this.showModal)
+      // console.log(this.showModal)
     },
 
     closeModal() {
@@ -137,12 +137,12 @@ export default {
       this.selectedDrinkIndex = index
 
       const selectedDrink = this.selectedDrinks[index]
-      console.log(selectedDrink.name, selectedDrink.price)
+      // console.log(selectedDrink.name, selectedDrink.price)
       const menuId = selectedDrink.id
-      console.log('선택한메뉴아이디확인', menuId)
+      // console.log('선택한메뉴아이디확인', menuId)
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId]
-        console.log(this.optionCategories, 'dd')
+        // console.log(this.optionCategories, 'dd')
       }
       else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
@@ -165,7 +165,7 @@ export default {
     handleOptionCategorySuccess(response) {
       // 모달이 열릴 때마다 옵션 카테고리 데이터 업데이트
       this.optionCategories = response.data
-      console.log('옵션가져올게요', this.optionCategories)
+      // console.log('옵션가져올게요', this.optionCategories)
       if (this.optionCategories)
         this.options = this.optionCategories[0].options
     },
