@@ -61,7 +61,8 @@ function updateHeaderHeight() {
 
 // 주문 요청하기 버튼 표시 여부
 const isUserLoggedIn = ref(false)
-const canPlaceOrder = computed(() => token.value !== null && remainingTime.value !== '주문중')
+// const canPlaceOrder = computed(() => token.value !== null && remainingTime.value !== '주문중')
+const canPlaceOrder = computed(() => token.value !== null)
 
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
@@ -246,7 +247,7 @@ function goOrder() {
         </head>
 
         <body>
-          <div v-if="canPlaceOrder" class="btn-order">
+          <div class="btn-order">
             <button class="order-request" @click="goOrder()">
               주문요청
             </button>

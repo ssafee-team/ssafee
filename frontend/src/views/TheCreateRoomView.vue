@@ -34,7 +34,7 @@ const formErrors = ref({
   bankName: false,
   accountNumber: false,
   phoneNumber: false,
-  webhook_url: false,
+  // webhook_url: false,
 })
 
 const shops = ref([])
@@ -89,7 +89,8 @@ Object.keys(form.value).forEach((key) => {
 // 기존에 정의된 함수들...
 
 function submitForm() {
-  const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time', 'creator']
+  const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time']
+  const creatorRequiredFields = ['name', 'bank', 'account'];
   const isAnyFieldEmpty = requiredFields.some(
     field =>
       (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '')
@@ -97,7 +98,9 @@ function submitForm() {
       && Object.values(partyData.value[field]).some(val => val.trim() === '')),
   )
 
-  if (isAnyFieldEmpty) {
+  const isCreatorEmpty = creatorRequiredFields.some(field => !partyData.value.creator[field].trim());
+
+  if (isAnyFieldEmpty || isCreatorEmpty) {
     // 필드가 비어있으면 경고 메시지 띄우기
     EmptyModal.value = true
   }
