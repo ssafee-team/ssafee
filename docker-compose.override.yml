@@ -59,7 +59,7 @@ services:
       - TZ=Asia/Seoul
       - SERVER_PORT=8082
       - SPRING_PROFILE=prod
-      - DEV_ORIGIN
+      - ORIGIN=${DEV_ORIGIN}
       - DEV_DB_URL=jdbc:mysql://mysql-dev:3307/${DEV_DB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
       - DEV_DB_USERNAME
       - DEV_DB_PASSWORD

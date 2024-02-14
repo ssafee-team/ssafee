@@ -57,7 +57,7 @@ services:
       - TZ=Asia/Seoul
       - SERVER_PORT=8081
       - SPRING_PROFILE=prod
-      - PROD_ORIGIN
+      - ORIGIN=${PROD_ORIGIN}
       - PROD_DB_URL=jdbc:mysql://mysql:3306/${PROD_DB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
       - PROD_DB_USERNAME
       - PROD_DB_PASSWORD
