@@ -24,6 +24,8 @@ const client = new Client({
   },
 })
 
+// function showModal
+
 onMounted(() => {
   client.activate()
 })
@@ -36,12 +38,12 @@ onUnmounted(() => {
 <template>
   <ManagerHeader />
   <div class="main-container">
-    <div class="main-message">
+    <div v-if="!showModal" class="main-message">
       <h1>😥 주문대기 중이에요 😥</h1>
       <h3>주문이 도착하면 알려드릴게요 !</h3>
     </div>
     <!-- 모달 컴포넌트를 조건부로 렌더링합니다. -->
-    <ManagerModal v-if="showModal" :party-id="partyId" @close="showModal = false" />
+    <ManagerModal v-if="showModal" :party-id="partyId" style="margin: 30px;" @close="showModal = false" />
     <!-- <div class="main-message">
       <h1>😂 아직은 G5에서 파티가 생성되지 않았어요 😂</h1>
       <h3>SSAFEE 를 위한 “프로모션”을 진행하면 주문빈도가 증가할지도..?</h3>

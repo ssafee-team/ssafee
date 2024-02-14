@@ -1,8 +1,10 @@
 <script setup lang="ts">
-// import { defineEmits, defineProps } from 'vue'
+import { defineEmits, defineProps, onMounted } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import axios from 'axios'
 import router from '@/router'
+
+import music from '@/assets/music.mp3'
 
 // const props = defineProps({
 //   partyId: {
@@ -10,56 +12,87 @@ import router from '@/router'
 //     default: null,
 //   },
 // })
-// const emit = defineEmits(['close'])
+const emit = defineEmits(['close'])
 
 const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
 const partyId = 10 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
 const managerToken = useLocalStorage('manager-token', null)
+const audio = new Audio(music)
+
+// TODO: Chrome 정책 상 오디오 자동재생이 사용자경험에 악영향을 끼친다고해서 갑자기 에러터질 때가 있음. 사용자에게 "허용하시겠습니까?" 영구동의 받으면 에러 안생김
+// TODO: 나중에 구현해야할 듯. 관련 에러는 다음과 같음 (Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first)
+
+onMounted(() => {
+  // audio.muted: true;
+  audio.play()
+})
 
 async function onConfirm() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
   await axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/confirm`, null, config)
+  audio.pause()
   router.push('/m-order-list')
 }
 
 async function onReject() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
   await axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/reject`, null, config)
-  // emit('close')
+  audio.pause()
+  emit('close')
 }
 </script>
 
 <template>
-  <div class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container">
-        <div class="modal-header">
-          <slot name="header">
-            기본 헤더
-          </slot>
-        </div>
+  <div class="modal">
+    <div class="modal-mask">
+      <slot name="header">
+        <span style="font-size: 25px; font-weight: bold;">🔔 알 림 🔔</span>
+      </slot>
+    </div>
 
-        <div class="modal-body">
-          <slot name="body">
-            모달의 내용을 여기에 넣으세요.
-          </slot>
-        </div>
+    <slot class="modal-body">
+      <slot name="body">
+        <span style="font-size: 30px; font-weight: bold;">주문금액 : 130,000 원</span>
+        <br>
+        <span style="font-size: 30px;">총 N 잔</span>
+      </slot>
+    </slot>
 
-        <div class="modal-footer">
-          <slot name="footer">
-            <button @click="onConfirm">
-              수락
-            </button>
-            <button class="modal-default-button" @click="onReject">
-              거절
-            </button>
-          </slot>
-        </div>
-      </div>
+    <div class="modal-footer">
+      <slot name="footer">
+        <button style="background-color: #00A5E7;" @click="onConfirm">
+          접수
+        </button>
+        <button class="modal-default-button" style="background-color: #EB4E5A;" @click="onReject">
+          거절
+        </button>
+      </slot>
     </div>
   </div>
 </template>
 
 <style scoped>
 /* 여기에 모달 컴포넌트의 스타일을 추가하세요. */
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 500px;
+  height: 300px;
+  background-color: #020817;
+  color: white;
+  border-radius: 25px;
+}
+
+button {
+  margin: 10px;
+  border-radius: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: white;
+}
 </style>
