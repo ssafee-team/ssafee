@@ -133,7 +133,7 @@ function updateRemainingTime() {
     // 마감시간 지난 경우
     // go("/after")화면으로
     remainingTime.value = '마감'
-    console.log(window.location.href)
+    // console.log(window.location.href)
     // console.log(code.value);
     setTimeout(() => {
       window.location.href = `/after/${code.value}`
@@ -176,7 +176,7 @@ function goCreate() {
 function goOrder() {
   orderRequest(
     code.value,
-    console.log(code.value),
+    // console.log(code.value),
     () => {
       console.log('주문이 요청되었습니다.')
       // 주문이 요청되면 할 일을 추가할 수 있습니다.

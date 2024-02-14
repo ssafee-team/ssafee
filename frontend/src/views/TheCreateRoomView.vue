@@ -38,7 +38,7 @@ const formErrors = ref({
 const shops = ref([])
 
 onMounted(() => {
-  console.log('시작')
+  // console.log('시작')
   getShopList()
 })
 
@@ -48,7 +48,7 @@ function getShopList(param) {
     param,
 
     ({ data }) => {
-      console.log('가져온 데이터: ', data)
+      // console.log('가져온 데이터: ', data)
       shops.value.push(data)
     },
     (error) => {
@@ -220,7 +220,7 @@ function classValidation() {
   const numericValue = Number.parseInt(form.value.class, 10)
 
   if (numericValue < 1 || numericValue > 7) {
-    console.log(numericValue)
+    // console.log(numericValue)
     // 범위를 벗어난 경우 경고 표시 및 입력값 초기화
     window.alert('입력값은 확인')
     form.value.class = ''
@@ -313,8 +313,8 @@ function modalOpen() {
 
 // 성공 콜백 함수를 정의합니다.
 function onSuccess(response) {
-  console.log('성공:', response)
-  console.log(response.headers.location)
+  // console.log('성공:', response)
+  // console.log(response.headers.location)
   // const responseObject = response.data.headers.location
   const locationPath = response.headers.location
   const parts = locationPath.split('/') // '/'를 기준으로 문자열을 분할
