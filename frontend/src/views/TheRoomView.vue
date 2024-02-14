@@ -21,7 +21,7 @@ const partyInfo = ref({
   name: '',
   generation: '',
   classroom: '',
-  last_order_time: '24:00',
+  last_order_time: '',
   created_time: '',
   shop_id: '',
   creator: {
@@ -37,7 +37,6 @@ const orderList = ref([])
 
 function addToCart(order) {
   orderList.value.push(order)
-  console.log(orderList)
 }
 
 // 파티 객체 정보의 shop_id 추출
@@ -92,7 +91,7 @@ function getPartyInfo() {
       partyInfo.value.name = data.name
       partyInfo.value.generation = data.generation
       partyInfo.value.classroom = data.classroom
-      // partyInfo.value.last_order_time = data.last_order_time;
+      partyInfo.value.last_order_time = data.last_order_time
       partyInfo.value.created_time = data.created_time
       partyInfo.value.shop_id = data.shop_id
       partyInfo.value.creator = data.creator

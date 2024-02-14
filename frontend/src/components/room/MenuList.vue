@@ -5,9 +5,6 @@ import { createOrder } from '@/api/party'
 
 export default {
 
-  components: {
-    OrderSummary,
-  },
   props: {
     shopId: {
       required: true,
@@ -31,6 +28,8 @@ export default {
       selectedDrinkIndex: null, // 선택한 음료의 인덱스를 기억하는 데이터 추가
       orderList: [], // 주문 내역을 담을 배열 추가
       showOptions: false, // 옵션화면 상태변수
+      showModal: false,
+      participantName: '',
     }
   },
 
@@ -50,9 +49,29 @@ export default {
 
     // 페이지 렌더링 시 첫 번째 카테고리를 선택하지 않고 기본적으로 보여줌
     this.selectCategory(0)
-    console.log('22', this.code)
+    // console.log('22', this.code)
   },
   methods: {
+
+    openModal() {
+      console.log('모달열어')
+      // 모달을 열기 위한 메서드
+      this.showModal = true
+      console.log(this.showModal)
+    },
+
+    closeModal() {
+      // 모달을 닫기 위한 메서드
+      this.showModal = false
+    },
+
+    confirmOrder() {
+      // 모달에서 주문하기 버튼을 누르면 호출되는 메서드
+      // 주문하기 버튼 클릭 시 모달을 닫고, 주문 정보를 서버로 전송
+      this.addOrder()
+      this.closeModal()
+    },
+
     toggleOptions(index) {
       if (event.target.closest('.drink-item'))
         this.setSelectedDrinkIndex(index)
@@ -64,7 +83,7 @@ export default {
       this.selectedOptions = [] // 선택한 옵션 초기화
       this.optionCategories = [] // 메뉴의 옵션카테고리 초기화
       this.showOptions = !this.showOptions
-      console.log(this.showOptions, '닫')
+      // console.log(this.showOptions, '닫')
     },
 
     handleSuccess(response) {
@@ -83,7 +102,7 @@ export default {
       this.optionCategoriesMap = {}
 
       this.showOptions = false
-      console.log(this.showOptions, 'zk')
+      // console.log(this.showOptions, 'zk')
       // this.selectedDrinkIndex = null;
       this.selectedOptions = []
       // 카테고리 선택시 실행
@@ -166,7 +185,7 @@ export default {
     },
 
     addOrder() {
-      console.log('담기클릭')
+      // console.log('담기클릭')
       const selectedDrink = this.selectedDrinks[this.selectedDrinkIndex]
       const selectedDrinkId = selectedDrink.id // 선택한 음료의 ID 가져오기
 
@@ -207,7 +226,7 @@ export default {
       // 주문 정보를 서버로 보내기 위해 데이터 형식 맞춰주기 (백단에 보내는 용도)
       const orderData = {
         menu_id: order.menuId,
-        participant_name: '전상', // 주문자 이름
+        participant_name: this.participantName, // 주문자 이름
         option_categories: order.option_categories.map((category) => {
           return {
             option_category_id: category.option_category_id,
@@ -304,16 +323,92 @@ export default {
             {{ calculateTotalPrice() }}
           </div>
         </div>
-        <button class="add" @click="addOrder">
+        <button class="add" @click="openModal">
           주문하기
         </button>
       </div>
     </div>
   </div>
-  <!-- <order-summary :order-list="orderList" :code="code"></order-summary> -->
+  <!-- 모달 창 -->
+  <div v-if="showModal" class="modal">
+    <div class="modal-content">
+      <span class="close" @click="closeModal">&times;</span>
+
+      <input v-model="participantName" type="text" placeholder="이름을 입력하세요">
+      <button class="confirmOrder" @click="confirmOrder">
+        주문하기
+      </button>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+/* 모달 스타일 */
+.modal {
+
+  position: fixed;
+  z-index: 1; /* 모달을 다른 요소들 위에 표시 */
+  left: 0;
+  top: 0;
+  width: 100%; /* 화면 전체 너비 */
+  height: 100%; /* 화면 전체 높이 */
+  overflow: auto; /* 스크롤이 필요한 경우 스크롤바 표시 */
+  background-color: rgb(0, 0, 0); /* 반투명 검은 배경 */
+  background-color: rgba(0, 0, 0, 0.4); /* 반투명 검은 배경 (투명도 조절) */
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: center;
+  background-color: #343844; /* 모달 내용 배경색 */
+  margin: 15% auto; /* 중앙 정렬 */
+  padding: 20px;
+
+  border-radius: 15px;
+  width: 50%; /* 모달 내용 너비 */
+  height: 20%;
+}
+
+.modal-content input{
+  font-weight: bold;
+  font-size: 16px;
+  height: 30px;
+  margin-bottom: 10px;
+}
+
+.confirmOrder{
+  cursor: pointer;
+  background-color: #00a5e7;
+  // background-color: #020817;
+  border: 0px;
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+}
+
+/* 닫기 버튼 스타일 */
+.close {
+  width: 100%;
+  text-align: right;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .menu-categories {
   display: flex;
   flex-wrap: wrap;
