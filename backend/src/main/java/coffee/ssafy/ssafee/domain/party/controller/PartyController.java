@@ -4,7 +4,6 @@ import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
-import coffee.ssafy.ssafee.domain.party.service.PartySocketIOService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +22,6 @@ import java.util.List;
 public class PartyController {
 
     private final PartyService partyService;
-    private final PartySocketIOService partySocketIoService;
 
     @PostMapping
     @Operation(summary = "파티 생성", security = @SecurityRequirement(name = "access-token"))

@@ -36,18 +36,18 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/TheRoomView.vue'),
+      component: () => import('@/views/TheRoomView.vue'),
       // props: true, //route props로 코드 전달
     },
     {
       path: '/CreateRoomView',
       name: 'CreateRoomView',
-      component: () => import('../views/TheCreateRoomView.vue'),
+      component: () => import('@/views/TheCreateRoomView.vue'),
     },
     {
       path: '/after/:code',
       name: 'after',
-      component: () => import('../views/TheAfterView.vue'),
+      component: () => import('@/views/TheAfterView.vue'),
       props: true,
     },
     {

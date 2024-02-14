@@ -1,4 +1,4 @@
-package coffee.ssafy.ssafee.domain.party.dto.response;
+package coffee.ssafy.ssafee.domain.party.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -13,7 +13,8 @@ import static coffee.ssafy.ssafee.common.DateUtils.LOCAL_DATETIME_PATTERN;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record PartyStatusResponse(
+public record PartyStatusInfo(
+        String accessCode,
         @JsonFormat(pattern = LOCAL_DATETIME_PATTERN)
         @Schema(implementation = String.class, example = LOCAL_DATETIME_EXAMPLE)
         LocalDateTime confirmedTime,

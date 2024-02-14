@@ -18,9 +18,10 @@ spring:
             redirect-uri: ${GOOGLE_REDIRECT_URI:{baseUrl}/api/v1/login/oauth2/redirect/{registrationId}}
             scope:
               - email
-  h2:
-    console:
-      enabled: false
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
 
 server:
   port: ${SERVER_PORT:80}
@@ -65,6 +66,9 @@ spring:
     password: ${LOCAL_DB_PASSWORD:ssafy}
   jpa:
     show-sql: true
+  h2:
+    console:
+      enabled: false
 
 ---
 
@@ -76,3 +80,6 @@ spring:
     url: ${PROD_DB_URL}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
+  h2:
+    console:
+      enabled: false

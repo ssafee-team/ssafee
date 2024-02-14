@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useLocalStorage } from '@vueuse/core'
 import MainHeader from '@/components/common/MainHeader.vue'
 import Chat from '@/components/room/Chat.vue'
 import AfterCart from '@/components/after/AfterCart.vue'
@@ -13,6 +14,7 @@ import { getParticipants } from '@/api/after'
 const route = useRoute()
 const router = useRouter()
 const code = ref('') // 파티 코드
+const token = useLocalStorage('user-token', null)
 
 const partyInfo = ref({
   id: '',
@@ -175,9 +177,7 @@ function goDelivery() {
   // 총무가 주문완료를 알리는 함수 호출
   orderDelivered(
     code.value,
-    () => {
-      console.log('주문완료 알림을 보냈습니다.')
-    },
+    token.value,
     (error) => {
       console.error('주문완료 알림을 보내는 중 오류가 발생했습니다.', error)
     },

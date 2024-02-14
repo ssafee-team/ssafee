@@ -1,18 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { useBrowserLocation, useFetch } from '@vueuse/core'
+import { useBrowserLocation } from '@vueuse/core'
 import { Client } from '@stomp/stompjs'
 
 const location = useBrowserLocation()
-const accessCode = location.value.pathname.split('/').pop()
+const accessCode = location.value.pathname?.split('/').pop()
 const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
 const wsEndpoint = '/ws'
 const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
 
 const chatListRef = ref()
 const chats = ref(await (await fetch(`/api/v1/parties/${accessCode}/chats`)).json())
-const content = defineModel()
-const error = ref()
+const content = ref()
+// const error = ref()
 
 const client = new Client({
   brokerURL: wsUrl,

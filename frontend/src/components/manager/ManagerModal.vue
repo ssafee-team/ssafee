@@ -1,17 +1,31 @@
-<script setup>
-import { defineEmits, defineProps } from 'vue'
+<script setup lang="ts">
+// import { defineEmits, defineProps } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
+import axios from 'axios'
+import router from '@/router'
 
-const props = defineProps({
-  partyId: {
-    type: [Number, String],
-    default: null,
-  },
-})
+// const props = defineProps({
+//   partyId: {
+//     type: [Number, String],
+//     default: null,
+//   },
+// })
+// const emit = defineEmits(['close'])
 
-const emit = defineEmits(['close'])
+const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+const partyId = 10 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+const managerToken = useLocalStorage('manager-token', null)
 
-function closeModal() {
-  emit('close')
+async function onConfirm() {
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  await axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/confirm`, null, config)
+  router.push('/m-order-list')
+}
+
+async function onReject() {
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  await axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/reject`, null, config)
+  // emit('close')
 }
 </script>
 
@@ -33,8 +47,11 @@ function closeModal() {
 
         <div class="modal-footer">
           <slot name="footer">
-            <button class="modal-default-button" @click="closeModal">
-              닫기
+            <button @click="onConfirm">
+              수락
+            </button>
+            <button class="modal-default-button" @click="onReject">
+              거절
             </button>
           </slot>
         </div>

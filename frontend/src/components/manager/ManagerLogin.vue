@@ -1,34 +1,33 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import ManagerHeader from '@/components/common/ManagerHeader.vue'
-import { managerLogin } from '@/api/manager'
+import axios from 'axios'
+import { useLocalStorage } from '@vueuse/core'
 
 const router = useRouter()
-
+const managerToken = useLocalStorage<string>('manager-token', null)
 const info = ref({
   id: '',
   password: '',
 })
+const err = ref('')
 
-function handleSuccess() {
-  router.push({ name: '/m-main' })
-}
-
-function handleFail(error) {
-  // alert(`로그인 실패: ${error.message}`) // 실패 이유를 알려주는 간단한 알림, 실제 상황에 맞게 조정이 필요할 수 있습니다.
-  location.reload()
-}
-
-function login() {
-  managerLogin({ id: info.value.id, password: info.value.password }, handleSuccess, handleFail)
+async function login() {
+  try {
+    const response = await axios.post(`/api/v1/managers/login`, info.value)
+    managerToken.value = response.headers.authorization.replace('Bearer ', '')
+    router.push('/m-main')
+  }
+  catch {
+    err.value = '아이디 또는 비밀번호가 일치하지 않습니다.'
+  }
 }
 </script>
 
 <template>
   <!-- <ManagerHeader /> -->
   <div id="app">
-    <div class="login" style="margin-top: 400px;">
+    <div class="login" style="margin-top: 400px;" @keyup.enter="login">
       <div class="manager-login">
         <span>ID</span>
         <input v-model="info.id" type="text" placeholder="아이디를 입력하세요">
@@ -39,12 +38,15 @@ function login() {
       </div>
       <div class="event-area" style="display: flex; flex-direction: column; align-items: center;">
         <div class="event-area">
-          <button type="submit" @click="login()">
+          <button type="submit" @click="login">
             로그인
           </button>
         </div>
         <div class="event-area" style="margin-top: 10px;">
           <!-- <a href="#">비밀번호 찾기</a> -->
+        </div>
+        <div v-if="err" style="color: red; font-size: 16px; margin-bottom: 10px;">
+          {{ err }}
         </div>
       </div>
     </div>
