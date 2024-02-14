@@ -84,6 +84,7 @@ public class Party extends BaseTimeEntity {
         this.user = user;
         this.creator = Creator.builder()
                 .name(creatorRequest.name())
+                .email(creatorRequest.email())
                 .bank(creatorRequest.bank())
                 .account(creatorRequest.account())
                 .party(this)

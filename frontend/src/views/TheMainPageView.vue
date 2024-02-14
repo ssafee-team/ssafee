@@ -154,7 +154,6 @@ onMounted(() => {
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 10px;
   height: 400px;
-  width: 900px;
   max-height: 400px;
   overflow-y: auto;
   /* 전체 너비를 차지하도록 설정 */

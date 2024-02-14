@@ -112,6 +112,7 @@ CREATE TABLE `parties` (
 
 CREATE TABLE `creators` (
     `creator_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL,
     `name` VARCHAR(8) NOT NULL,
     `bank` VARCHAR(32) NOT NULL,
     `account` VARCHAR(32) NOT NULL,

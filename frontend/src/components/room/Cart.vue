@@ -124,9 +124,6 @@ export default {
       <div v-for="(order, index) in sortedOrders" :key="index" class="order">
         <!-- 선택한 메뉴와 가격 -->
         <div class="item">
-          <div class="participant-name">
-            {{ order.participant_name }}
-          </div>
           <div class="menu-name">
             {{ order.menu.name }}
           </div>
@@ -220,10 +217,6 @@ option {
   margin-left: 30px;
   cursor: pointer;
   color: red;
-}
-
-.participant-name{
- width: 100px;
 }
 
 .menu-name {
