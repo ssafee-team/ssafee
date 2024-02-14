@@ -10,6 +10,10 @@ export default {
     code: {
       required: true,
     },
+    isOrdering: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
@@ -24,13 +28,13 @@ export default {
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-      // console.log("정렬전, ", orders);
+      
       // 정렬 방식에 따라 주문 목록을 정렬
       if (this.sortMethod === 'userName') {
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
       }
       else if (this.sortMethod === 'menuName') {
-        // console.log("ㅇㅇㅇㅇ");
+        
         orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
       }
 
@@ -61,6 +65,12 @@ export default {
     },
 
     removeOrder(orderId) {
+      // 주문중인 경우 삭제 불가
+      if(this.isOrdering){
+        alert('이미 주문이 진행중입니다.')
+        return
+      }
+
       // 선택한 주문을 삭제
       const index = this.orders.findIndex(order => order.id === orderId)
       if (index !== -1) {

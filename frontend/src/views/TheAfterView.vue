@@ -142,21 +142,11 @@ function getCarrierList() {
   )
 }
 
-function goDelivery() {
-  // 총무가 주문완료를 알리는 함수 호출
-  orderDelivered(
-    code.value,
-    token.value,
-    (error) => {
-      console.error('주문완료 알림을 보내는 중 오류가 발생했습니다.', error)
-    },
-  )
-}
-
 function goMoney() {
   // 총무가 송금요청을 보내는 함수 호출
   giveMeMoney(
     code.value,
+    token.value,
     () => {
       console.log('송금요청 알림을 보냈습니다.')
     },
@@ -166,8 +156,9 @@ function goMoney() {
   )
 }
 function DeliveryAlert() {
-  sendCarrierResult(
+  orderDelivered(
     code.value,
+    token.value,
     () => {
       console.log('배달부 알림을 보냈습니다.')
     },
@@ -226,9 +217,6 @@ function DeliveryAlert() {
           <div v-if="isUserLoggedIn" class="btn-order">
             <button class="delivery-alert" @click="DeliveryAlert()">
               배달알림
-            </button>
-            <button class="delivery-success" @click="goDelivery()">
-              배달완료
             </button>
             <button class="money-request" @click="goMoney()">
               송금요청

@@ -17,6 +17,7 @@ const router = useRouter()
 const code = ref(route.params.code)
 const isLoading = ref(true) // 로딩 상태 변수
 const token = useLocalStorage('user-token', null)
+const isOrdering = ref(false)
 
 const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json()
 
@@ -36,6 +37,8 @@ const partyInfo = ref({
     account: '',
   },
 })
+
+const minimum_price = ref('')
 
 const orderList = ref([])
 
@@ -254,10 +257,10 @@ function goOrder() {
           </div> -->
           <div class="body-container">
             <div class="left-panel">
-              <MenuList :shop-id="1" :code="code" @order-cart="addToCart" />
+              <MenuList :shop-id="1" :code="code" @order-cart="addToCart" :isOrdering="isOrdering"/>
             </div>
             <div class="center-panel">
-              <Cart :orders="orderList" :code="code" />
+              <Cart :orders="orderList" :code="code" :isOrdering="isOrdering"/>
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
