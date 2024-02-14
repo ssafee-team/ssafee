@@ -32,7 +32,7 @@ public class PartyOrderController {
         if (!partyOrderService.existsCarrier(partyOrderCreateInfo.partyId())) {
             partyOrderService.pickCarrier(partyOrderCreateInfo.partyId());
         }
-        partyOrderService.sendCarrierResult(accessCode);
+        partyOrderService.sendCarrierResult(accessCode); // TODO: 별도 API 분리 필요
         messagingTemplate.convertAndSend("/sub/shop/" + partyOrderCreateInfo.shopId() + "/order",
                 PartyOrderCreateResponse.builder()
                         .partyId(partyOrderCreateInfo.partyId())

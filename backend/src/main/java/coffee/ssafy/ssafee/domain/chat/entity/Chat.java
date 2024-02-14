@@ -2,6 +2,7 @@ package coffee.ssafy.ssafee.domain.chat.entity;
 
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,9 +23,11 @@ public class Chat {
     @Column(name = "chat_id", nullable = false, updatable = false)
     private Long id;
 
+    @NotNull
     @Column(nullable = false, updatable = false)
     private String name;
 
+    @NotNull
     @Column(nullable = false, updatable = false)
     private String content;
 

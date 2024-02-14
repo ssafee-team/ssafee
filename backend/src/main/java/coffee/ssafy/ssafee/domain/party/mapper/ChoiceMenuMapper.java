@@ -12,11 +12,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ChoiceMenuMapper {
 
-    @Mapping(target = "id", source = "choiceMenu.id")
     @Mapping(target = "participantName", source = "participant.name")
-    @Mapping(target = "menu", source = "menu")
     @Mapping(target = "optionCategories", source = "choiceMenuOptionCategories")
-    ChoiceMenuResponse toDto(ChoiceMenu choiceMenu);
+    ChoiceMenuResponse toResponse(ChoiceMenu choiceMenu);
 
     @Mapping(target = "id", source = "optionCategory.id")
     @Mapping(target = "name", source = "optionCategory.name")

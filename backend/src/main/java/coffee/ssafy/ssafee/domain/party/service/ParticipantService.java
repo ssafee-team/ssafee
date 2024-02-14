@@ -20,9 +20,10 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final ParticipantMapper participantMapper;
 
+    @Transactional(readOnly = true)
     public List<ParticipantResponse> findParticipants(Long partyId) {
         return participantRepository.findAllByPartyId(partyId).stream()
-                .map(participantMapper::toDto)
+                .map(participantMapper::toResponse)
                 .toList();
     }
 

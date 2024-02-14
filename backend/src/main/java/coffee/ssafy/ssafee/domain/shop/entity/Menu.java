@@ -49,12 +49,10 @@ public class Menu {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "menu_category_id", nullable = false)
-    @Setter
     private MenuCategory menuCategory;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false)
-    @Setter
     private Shop shop;
 
     @ManyToMany(fetch = FetchType.LAZY)

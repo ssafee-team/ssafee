@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,28 +27,32 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;
 
-    public List<OptionResponse> getOptionsByCategory(Long shopId, Long optionCategoryId) {
+    @Transactional(readOnly = true)
+    public List<OptionResponse> getOptionsByCategory(long shopId, long optionCategoryId) {
         return optionRepository.findAllByShopIdAndOptionCategoryId(shopId, optionCategoryId).stream()
                 .map(optionMapper::optionToOptionResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public Long createOption(Long shopId, Long optionCategoryId, OptionRequest optionRequest) {
-        Option option = optionMapper.toEntity(optionRequest);
-        option.setOptionCategory(entityManager.getReference(OptionCategory.class, optionCategoryId));
-        option.setShop(entityManager.getReference(Shop.class, shopId));
+    public long createOption(long shopId, long optionCategoryId, OptionRequest optionRequest) {
+        Option option = Option.builder()
+                .name(optionRequest.name())
+                .price(optionRequest.price())
+                .optionCategory(entityManager.getReference(OptionCategory.class, optionCategoryId))
+                .shop(entityManager.getReference(Shop.class, shopId))
+                .build();
         optionRepository.save(option);
         return option.getId();
     }
 
-    public void updateOption(Long shopId, Long optionCategoryId, Long optionId, OptionRequest optionRequest) {
-        optionRepository.findByShopIdAndId(shopId, optionId)
+    public void updateOption(long id, long shopId, long optionCategoryId, OptionRequest optionRequest) {
+        optionRepository.findByIdAndShopIdAndOptionCategoryId(id, shopId, optionCategoryId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_OPTION_CATEGORY))
                 .update(optionRequest);
     }
 
-    public void deleteOption(Long shopId, Long optionCategoryId, Long optionId) {
-        optionRepository.deleteByShopIdAndId(shopId, optionId);
+    public void deleteOption(long shopId, long optionCategoryId, long id) {
+        optionRepository.deleteByIdAndShopIdAndOptionCategoryId(id, shopId, optionCategoryId);
     }
 
 }

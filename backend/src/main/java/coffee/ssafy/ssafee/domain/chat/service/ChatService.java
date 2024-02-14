@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ChatService {
 
@@ -23,14 +24,13 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ChatResponse> findChats(Long partyId) {
         return chatRepository.findAllByPartyId(partyId).stream()
-                .map(chatMapper::toDto)
+                .map(chatMapper::toResponse)
                 .toList();
     }
 
-    @Transactional
     public ChatResponse createChat(Long partyId, ChatRequest chatRequest) {
         Party partyReference = entityManager.getReference(Party.class, partyId);
         Chat chat = Chat.builder()
@@ -39,7 +39,7 @@ public class ChatService {
                 .party(partyReference)
                 .build();
         chatRepository.save(chat);
-        return chatMapper.toDto(chat);
+        return chatMapper.toResponse(chat);
     }
 
 }

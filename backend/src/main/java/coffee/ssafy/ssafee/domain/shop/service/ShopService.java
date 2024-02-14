@@ -23,15 +23,17 @@ public class ShopService {
     private final ShopMapper shopMapper;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
     public ShopDetailResponse findShopById(Long id) {
         return shopRepository.findById(id)
-                .map(shopMapper::toDetailDto)
+                .map(shopMapper::toDetailResponse)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
     }
 
+    @Transactional(readOnly = true)
     public List<ShopResponse> findShops() {
         return shopRepository.findAll().stream()
-                .map(shopMapper::toDto)
+                .map(shopMapper::toResponse)
                 .toList();
     }
 

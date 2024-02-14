@@ -29,16 +29,22 @@ public class MenuService {
     private final MenuMapper menuMapper;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
     public List<MenuDetailResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
         return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
-                .map(menuMapper::toDetailDto)
+                .map(menuMapper::toDetailResponse)
                 .toList();
     }
 
     public Long createMenu(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
-        Menu menu = menuMapper.toEntity(menuRequest);
-        menu.setMenuCategory(entityManager.getReference(MenuCategory.class, menuCategoryId));
-        menu.setShop(entityManager.getReference(Shop.class, shopId));
+        Menu menu = Menu.builder()
+                .name(menuRequest.name())
+                .description(menuRequest.description())
+                .price(menuRequest.price())
+                .soldout(menuRequest.soldout())
+                .menuCategory(entityManager.getReference(MenuCategory.class, menuCategoryId))
+                .shop(entityManager.getReference(Shop.class, shopId))
+                .build();
         menuRepository.save(menu);
         return menu.getId();
     }

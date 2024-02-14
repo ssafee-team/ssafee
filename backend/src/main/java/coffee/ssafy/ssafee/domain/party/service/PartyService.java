@@ -48,27 +48,31 @@ public class PartyService {
         return accessCode;
     }
 
+    @Transactional(readOnly = true)
     public List<PartyResponse> findParties(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             startDate = endDate = LocalDate.now();
         }
         return partyRepository.findAllByCreatedTimeBetween(startDate, endDate).stream()
-                .map(partyMapper::toDto)
+                .map(partyMapper::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public PartyDetailResponse findParty(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
-                .map(partyMapper::toDetailDto)
+                .map(partyMapper::toDetailResponse)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 
+    @Transactional(readOnly = true)
     public Long findPartyId(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY))
                 .getId();
     }
 
+    @Transactional(readOnly = true)
     public void validateUser(String accessCode, Long userId) {
         if (!partyRepository.existsByAccessCodeAndUserId(accessCode, userId)) {
             throw new PartyException(PartyErrorCode.UNAUTHORIZED_USER);

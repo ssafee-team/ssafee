@@ -36,10 +36,10 @@ public class PartyOrderService {
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 마감시간 전인가 후인가?
-        party.realOrder();
+        party.updateRealOrder();
 
         // 3. 최소주문금액을 넘었는가?
-        Integer minimumPrice = party.getShop().getMinimumPrice();
+        int minimumPrice = party.getShop().getMinimumPrice();
         int total = 0;
         for (ChoiceMenu menu : party.getChoiceMenus()) {
             total += menu.getMenu().getPrice();
@@ -53,12 +53,14 @@ public class PartyOrderService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public PartyStatusResponse getOrderStatus(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
                 .map(partyOrderMapper::toResponse)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 
+    @Transactional(readOnly = true)
     public PartyStatusInfo getOrderStatus(Long partyId) {
         return partyRepository.findById(partyId)
                 .map(partyOrderMapper::toInfo)
@@ -71,7 +73,7 @@ public class PartyOrderService {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         // TODO: 배달시작 필드가 null인지 검사
-        party.deliver();
+        party.updateDeliver();
         if (party.getCreator().getWebhookUrl() != null) {
             StringBuilder sb = new StringBuilder();
             sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
@@ -84,43 +86,46 @@ public class PartyOrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public void giveMeMoney(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
-        if (party.getCreator().getWebhookUrl() != null) {
-            List<Participant> participants = party.getParticipants();
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("### :loopy: SSAFEE NOTICE :loopy: \n\n");
-            sb.append("#### 파티명: " + party.getName() + "\n\n");
-            sb.append("@here \n");
-            sb.append("#### 송금 바랍니다 \n");
-            sb.append("#### " + party.getCreator().getBank() + "(" + party.getCreator().getName() + "): " + party.getCreator().getAccount() + "\n\n");
-            sb.append("| 이름 | 주문메뉴 | 금액 |\n");
-            sb.append("|:-----------:|:-----------:|:-----------:|\n");
-
-            for (Participant p : participants) {
-                Integer price = p.getChoiceMenus().stream()
-                        .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
-                                .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
-                                .mapToInt(choiceOption -> choiceOption.getOption().getPrice())
-                                .sum())
-                        .sum();
-                if (!p.getPaid()) {
-                    sb.append("| ");
-                    sb.append(p.getName());
-                    sb.append(" | ");
-                    sb.append(p.getChoiceMenus().stream().map(choiceMenu -> choiceMenu.getMenu().getName()).collect(Collectors.joining(", ")));
-                    sb.append(" | ");
-                    sb.append(price);
-                    sb.append(" |\n");
-                }
-            }
-            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+        if (party.getCreator().getWebhookUrl() == null) {
+            return;
         }
+        List<Participant> participants = party.getParticipants();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("### :loopy: SSAFEE NOTICE :loopy: \n\n");
+        sb.append("#### 파티명: " + party.getName() + "\n\n");
+        sb.append("@here \n");
+        sb.append("#### 송금 바랍니다 \n");
+        sb.append("#### " + party.getCreator().getBank() + "(" + party.getCreator().getName() + "): " + party.getCreator().getAccount() + "\n\n");
+        sb.append("| 이름 | 주문메뉴 | 금액 |\n");
+        sb.append("|:-----------:|:-----------:|:-----------:|\n");
+
+        for (Participant p : participants) {
+            Integer price = p.getChoiceMenus().stream()
+                    .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
+                            .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
+                            .mapToInt(choiceOption -> choiceOption.getOption().getPrice())
+                            .sum())
+                    .sum();
+            if (!p.getPaid()) {
+                sb.append("| ");
+                sb.append(p.getName());
+                sb.append(" | ");
+                sb.append(p.getChoiceMenus().stream().map(choiceMenu -> choiceMenu.getMenu().getName()).collect(Collectors.joining(", ")));
+                sb.append(" | ");
+                sb.append(price);
+                sb.append(" |\n");
+            }
+        }
+        matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
     }
 
+    @Transactional(readOnly = true)
     public void sendAdvertise(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
@@ -140,6 +145,7 @@ public class PartyOrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public void sendCarrierResult(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
@@ -166,11 +172,12 @@ public class PartyOrderService {
 
     public void pickCarrier(Long partyId) {
         List<Participant> participants = participantRepository.findAllByPartyId(partyId);
-        int carrierCount = (participants.size() + 5) / 6;
+        Integer carrierCount = (participants.size() + 5) / 6;
         Collections.shuffle(participants);
         participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsCarrier(Long partyId) {
         return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
     }

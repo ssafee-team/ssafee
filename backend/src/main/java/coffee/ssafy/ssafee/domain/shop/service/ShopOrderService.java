@@ -30,32 +30,19 @@ public class ShopOrderService {
     private final PartyRepository partyRepository;
     private final ShopOrderMapper shopOrderMapper;
 
+    @Transactional(readOnly = true)
     public List<PartyInfoForManagerResponse> getShopHistories(Long shopId) {
         return shopOrderRepository.findAllByShopIdAndDeliveredTimeIsNotNull(shopId).stream()
                 .filter(party -> party.getDeliveredTime() != null)
-                .map(this::convertToPartyInfoForManagerResponse)
+                .map(shopOrderMapper::toResponse)
                 .toList();
     }
 
-    private PartyInfoForManagerResponse convertToPartyInfoForManagerResponse(Party party) {
-        return new PartyInfoForManagerResponse(
-                party.getId(),
-                party.getName(),
-                party.getShop().getId()
-        );
-    }
-
+    @Transactional(readOnly = true)
     public List<PartyDetailForManagerResponse> getShopHistoriesDetail(Long shopId, Long partyId) {
         return shopOrderRepository.findAllById(partyId).stream()
-                .map(this::convertToPartyDetailForManagerResponse)
+                .map(shopOrderMapper::toDetailResponse)
                 .toList();
-    }
-
-    private PartyDetailForManagerResponse convertToPartyDetailForManagerResponse(Party party) {
-        return new PartyDetailForManagerResponse(
-                party.getId(),
-                party.getChoiceMenus()
-        );
     }
 
     public void orderConfirm(Long shopId, Long partyId) {
@@ -67,7 +54,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: Rejected field == null?
         // 3. confirmed_time 을 현재 시간으로 업데이트
-        party.confirm();
+        party.updateConfirm();
         partyRepository.save(party);
     }
 
@@ -81,7 +68,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: confirmed field == null?
         // 3. rejected_time 을 현재 시간으로 업데이트
-        party.reject();
+        party.updateReject();
         partyRepository.save(party);
     }
 
@@ -95,7 +82,7 @@ public class ShopOrderService {
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
         // TODO: confirmed field == null?
         // 3. made_time 을 현재 시간으로 업데이트
-        party.make();
+        party.updateMake();
         partyRepository.save(party);
     }
 

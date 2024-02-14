@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.config;
 
+import coffee.ssafy.ssafee.common.OriginProps;
 import coffee.ssafy.ssafee.jwt.JwtAuthenticationFilter;
 import coffee.ssafy.ssafee.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import coffee.ssafy.ssafee.oauth.OAuth2CustomAuthenticationSuccessHandler;
@@ -39,6 +40,7 @@ public class SecurityConfig {
     private final OAuth2CustomAuthenticationSuccessHandler oAuth2CustomAuthenticationSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final OriginProps originProps;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -76,8 +78,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://ssafy.coffee", "https://dev.ssafy.coffee"));
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
+        configuration.setAllowedOrigins(List.of(originProps.allowed()));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
@@ -91,9 +92,7 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver() {
         OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
-                clientRegistrationRepository,
-                "/api/v1/oauth2/authorization"
-        );
+                clientRegistrationRepository, "/api/v1/oauth2/authorization");
         return new OAuth2CustomAuthorizationRequestResolver(defaultAuthorizationRequestResolver);
     }
 

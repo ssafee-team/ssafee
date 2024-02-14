@@ -8,8 +8,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ShopMapper {
 
-    ShopDetailResponse toDetailDto(Shop shop);
+    ShopResponse toResponse(Shop shop);
 
-    ShopResponse toDto(Shop shop);
+    ShopDetailResponse toDetailResponse(Shop shop);
 
 }

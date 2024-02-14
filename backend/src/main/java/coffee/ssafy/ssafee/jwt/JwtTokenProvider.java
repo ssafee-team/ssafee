@@ -24,13 +24,23 @@ public class JwtTokenProvider {
 
     private static final String CLAIMS_ID = "id";
     private static final String CLAIMS_SHOP_ID = "shop_id";
+    private static final String CLAIMS_EMAIL = "email";
     private static final String CLAIMS_ROLE = "role";
     private final JwtProps jwtProps;
 
-    public String issueAccessToken(JwtPrincipalInfo principal) {
+    public String issueManagerAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
                 .add(CLAIMS_ID, principal.id())
                 .add(CLAIMS_SHOP_ID, principal.shopId())
+                .add(CLAIMS_ROLE, principal.role())
+                .build();
+        return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
+    }
+
+    public String issueUserAccessToken(JwtPrincipalInfo principal) {
+        Claims claims = Jwts.claims()
+                .add(CLAIMS_ID, principal.id())
+                .add(CLAIMS_EMAIL, principal.email())
                 .add(CLAIMS_ROLE, principal.role())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
@@ -44,7 +54,7 @@ public class JwtTokenProvider {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
                 .id(claims.get(CLAIMS_ID, String.class))
-                .shopId(claims.get(CLAIMS_SHOP_ID, Long.class))
+                .info(claims.get(CLAIMS_SHOP_ID, String.class))
                 .role(claims.get(CLAIMS_ROLE, String.class))
                 .build();
         List<GrantedAuthority> authorities = List.of(() -> claims.get(CLAIMS_ROLE, String.class));

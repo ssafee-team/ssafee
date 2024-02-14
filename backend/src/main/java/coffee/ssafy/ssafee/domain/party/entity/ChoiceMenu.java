@@ -32,7 +32,6 @@ public class ChoiceMenu extends BaseTimeEntity {
     @JoinColumn(name = "party_id", nullable = false, updatable = false)
     private Party party;
 
-    @Setter
     @OneToMany(mappedBy = "choiceMenu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChoiceMenuOptionCategory> choiceMenuOptionCategories;
 

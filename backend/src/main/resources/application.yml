@@ -39,6 +39,9 @@ s3:
   endpoint: ${S3_ENDPOINT:https://dcfbfd9f489ad8a785c3cdb81469e07d.r2.cloudflarestorage.com}
   public-access-domain: ${S3_PUBLIC_ACCESS_DOMAIN}
 
+origin:
+  allowed: ${ORIGIN:http://localhost:3000}
+
 ---
 
 spring:

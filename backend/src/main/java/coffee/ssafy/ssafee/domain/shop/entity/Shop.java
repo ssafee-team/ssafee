@@ -40,9 +40,11 @@ public class Shop {
     @Column(nullable = false)
     private Boolean enabledOrder;
 
+    @NotNull
     @Column(nullable = false)
     private Integer minimumPrice;
 
+    @NotNull
     @Column(nullable = false)
     private Boolean closed;
 

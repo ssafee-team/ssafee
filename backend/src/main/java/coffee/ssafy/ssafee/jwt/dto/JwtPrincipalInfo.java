@@ -13,12 +13,24 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record JwtPrincipalInfo(
         String id,
-        Long shopId,
+        String info,
         String role
 ) implements UserDetails {
 
     public Long userId() {
         return Long.valueOf(id);
+    }
+
+    public String managerId() {
+        return id;
+    }
+
+    public Long shopId() {
+        return Long.valueOf(info);
+    }
+
+    public String email() {
+        return info;
     }
 
     @Override

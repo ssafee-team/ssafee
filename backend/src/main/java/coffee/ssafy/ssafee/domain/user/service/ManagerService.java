@@ -15,26 +15,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ManagerService {
 
-    private static final String ROLE_MANAGER = "ROLE_MANAGER";
     private final ManagerRepository managerRepository;
     private final ManagerMapper managerMapper;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public String login(ManagerLoginRequest managerLoginRequest) {
         Manager manager = managerRepository.findByIdAndPassword(managerLoginRequest.id(), managerLoginRequest.password())
                 .orElseThrow(() -> new ManagerException(ManagerErrorCode.INVALID_ID_OR_PASSWORD));
-        return jwtTokenProvider.issueAccessToken(JwtPrincipalInfo.builder()
+        return jwtTokenProvider.issueManagerAccessToken(JwtPrincipalInfo.builder()
                 .id(manager.getId())
-                .shopId(manager.getShop().getId())
-                .role(ROLE_MANAGER)
+                .info(String.valueOf(manager.getShop().getId()))
+                .role("ROLE_MANAGER")
                 .build());
     }
 
-    @Transactional
     public void updateManager(String id, ManagerUpdateRequest managerUpdateRequest) {
         managerRepository.save(Manager.builder()
                 .id(id)
@@ -42,13 +41,14 @@ public class ManagerService {
                 .build());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ManagerResponse findManager(String id) {
         return managerRepository.findById(id)
-                .map(managerMapper::toDto)
+                .map(managerMapper::toResponse)
                 .orElseThrow(() -> new ManagerException(ManagerErrorCode.NOT_FOUND_MANAGER));
     }
 
+    @Transactional(readOnly = true)
     public void validateShop(JwtPrincipalInfo principal, Long shopId) {
         if (!principal.shopId().equals(shopId)) {
             throw new ManagerException(ManagerErrorCode.UNAUTHORIZED_SHOP);
