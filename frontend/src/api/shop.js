@@ -28,4 +28,9 @@ function getOptionCategory(shop_id, option_category_id, success, fail) {
   local.get(`${url}/${shop_id}/option-categories/${option_category_id}`).then(success).fail(fail)
 }
 
-export { getShops, getShop, getMenuCategories, getMenusByCategory, getOptionCategory }
+// 매니저 : 주문기록 조회
+function getOrder(shop_id, success, fail){
+  local.get(`${url}/${shop_id}/orders/`).then(success).catch(fail)
+}
+
+export { getShops, getShop, getMenuCategories, getMenusByCategory, getOptionCategory, getOrder }
