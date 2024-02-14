@@ -54,10 +54,26 @@ export default {
   methods: {
 
     openModal() {
-      // console.log('모달열어')
-      // 모달을 열기 위한 메서드
+      // 필수 옵션 카테고리가 선택되었는지 확인
+      const requiredOptionCategories = this.optionCategories.filter(category => category.required)
+      const hasMissingRequiredOptions = requiredOptionCategories.some(category => !this.selectedOptions.some(option => category.options.map(option => option.id).includes(option)))
+
+      if (hasMissingRequiredOptions) {
+        // 필수 옵션 카테고리가 선택되지 않았을 경우 알림 처리 혹은 사용자에게 메시지 표시
+        alert('필수 옵션을 선택하세요.')
+        return
+      }
+
+      // 최대 선택 가능한 옵션 개수를 초과하지 않았는지 확인
+      const exceedingMaxCountCategories = this.optionCategories.filter(category => category.max_count !== null && this.selectedOptions.filter(option => category.options.map(option => option.id).includes(option)).length > category.max_count)
+
+      if (exceedingMaxCountCategories.length > 0) {
+        // 최대 선택 가능한 옵션 개수를 초과한 경우 알림 처리 혹은 사용자에게 메시지 표시
+        alert('최대 선택 가능한 옵션 개수를 초과했습니다.')
+        return
+      }
+
       this.showModal = true
-      // console.log(this.showModal)
     },
 
     closeModal() {
@@ -139,10 +155,10 @@ export default {
       const selectedDrink = this.selectedDrinks[index]
       // console.log(selectedDrink.name, selectedDrink.price)
       const menuId = selectedDrink.id
-      // console.log('선택한메뉴아이디확인', menuId)
+      console.log('선택한메뉴아이디확인', menuId)
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId]
-        // console.log(this.optionCategories, 'dd')
+        console.log(this.optionCategories, 'dd')
       }
       else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
@@ -302,7 +318,11 @@ export default {
           :key="optionCategory.id"
           class="options-info"
         >
-          <p>{{ optionCategory.name }}</p>
+          <div class="option-category">
+            <p>{{ optionCategory.name }}</p>
+            <div>{{ optionCategory.required ? ' *' : '' }}</div>
+          </div>
+
           <div class="choice">
             <div v-for="option in optionCategory.options" :key="option.id" class="row">
               <label>
@@ -501,6 +521,19 @@ export default {
 
 .options-info {
   justify-content: center;
+}
+
+.option-category{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.option-category div{
+  font-size: 24px;
+  font-weight: bold;
+  color: red;
 }
 
 .options-footer {
