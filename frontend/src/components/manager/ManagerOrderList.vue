@@ -1,9 +1,24 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { useLocalStorage } from '@vueuse/core'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
 
 // orderList의 참조를 생성합니다.
 const orderList = ref(null)
+const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+const partyId = 10 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+const managerToken = useLocalStorage('manager-token', null)
+
+function onMade() {
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/made`, null, config)
+}
+
+function onStartDevlivery() {
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/start-delivery`, null, config)
+}
 
 // 컴포넌트가 마운트된 후에 이벤트 리스너를 추가합니다.
 onMounted(() => {
@@ -52,7 +67,9 @@ onMounted(() => {
         <div class="status-made">
           <span>제조완료 | </span>
           <span>12:19:10</span>
-          <button>제조 완료</button>
+          <button @click="onMade">
+            제조 완료
+          </button>
         </div>
         <div class="direction">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼
@@ -61,7 +78,9 @@ onMounted(() => {
           <span>배달출발 | </span>
           <span style="color: gray;">이전 단계를 완료하세요.</span>
           <span>12:25:54</span>
-          <button>배달 출발</button>
+          <button @click="onStartDevlivery">
+            배달 출발
+          </button>
         </div>
         <div class="direction">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼

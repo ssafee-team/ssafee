@@ -1,5 +1,4 @@
 <script>
-import OrderSummary from './OrderSummary.vue'
 import { getMenuCategories, getMenusByCategory, getOptionCategory } from '@/api/shop'
 import { createOrder } from '@/api/party'
 

@@ -1,35 +1,35 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { io } from 'socket.io-client'
+import { useBrowserLocation } from '@vueuse/core'
+import { Client } from '@stomp/stompjs'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
+import ManagerModal from '@/components/manager/ManagerModal.vue'
 
-import ModalComponent from '@/components/manager/ManagerModal.vue'
+const location = useBrowserLocation()
+const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
+const wsEndpoint = '/ws'
+const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
 
-// 모달 컴포넌트를 가져옵니다.
-
-const socket = io('http://localhost:3000') // 백엔드 서버의 주소와 포트 번호입니다.
-const showModal = ref(false)
 const partyId = ref(null)
+const showModal = ref(false)
+const shopId = '1' // 임시로 1로 설정
 
-// WebSocket 연결을 설정합니다.
-onMounted(() => {
-  // 'orderRequest' 이벤트를 수신할 리스너를 등록합니다.
-  socket.on('orderRequest', (id) => {
-    partyId.value = id
-    showModal.value = true // 모달을 표시합니다.
-  })
-
-  // 'completeDelivery' 이벤트를 수신할 리스너를 등록합니다.
-  socket.on('completeDelivery', (id) => {
-    partyId.value = id
-    showModal.value = true // 모달을 표시합니다.
-  })
+const client = new Client({
+  brokerURL: wsUrl,
+  onConnect: () => {
+    client.subscribe(`/sub/shop/${shopId}/order`, (message) => {
+      partyId.value = JSON.parse(message.body).party_id
+      showModal.value = true
+    })
+  },
 })
 
-// 컴포넌트가 언마운트될 때 리스너를 제거합니다.
+onMounted(() => {
+  client.activate()
+})
+
 onUnmounted(() => {
-  socket.off('orderRequest')
-  socket.off('completeDelivery')
+  client.deactivate()
 })
 </script>
 
@@ -41,7 +41,7 @@ onUnmounted(() => {
       <h3>주문이 도착하면 알려드릴게요 !</h3>
     </div>
     <!-- 모달 컴포넌트를 조건부로 렌더링합니다. -->
-    <ModalComponent v-if="showModal" :party-id="partyId" @close="showModal = false" />
+    <ManagerModal v-if="showModal" :party-id="partyId" @close="showModal = false" />
     <!-- <div class="main-message">
       <h1>😂 아직은 G5에서 파티가 생성되지 않았어요 😂</h1>
       <h3>SSAFEE 를 위한 “프로모션”을 진행하면 주문빈도가 증가할지도..?</h3>

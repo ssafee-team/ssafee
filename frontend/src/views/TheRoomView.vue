@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // import func from '../../vue-temp/vue-editor-bridge'
+import { useFetch, useLocalStorage } from '@vueuse/core'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
@@ -13,8 +14,11 @@ import { getOrderList, getParty, orderRequest } from '@/api/party'
 
 const route = useRoute()
 const router = useRouter()
-const code = ref('') // 파티 코드
+const code = ref(route.params.code)
 const isLoading = ref(true) // 로딩 상태 변수
+const token = useLocalStorage('user-token', null)
+
+const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json()
 
 const partyInfo = ref({
   id: '',
@@ -59,16 +63,11 @@ const isUserLoggedIn = ref(false)
 
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
-  // 로컬 스토리지에서 "user-token"을 가져와서 확인
-  const userToken = localStorage.getItem('user-token')
-  isUserLoggedIn.value = !!userToken
-
   updateHeaderHeight()
   window.addEventListener('resize', updateHeaderHeight)
   updateRemainingTime() // 페이지 로드시 남은시간 계산
   // 1초마다 남은시간 갱신
   setInterval(updateRemainingTime, 1000)
-  code.value = route.params.code
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo()
   addToOrderList()
@@ -176,7 +175,7 @@ function goCreate() {
 function goOrder() {
   orderRequest(
     code.value,
-    // console.log(code.value),
+    token.value,
     () => {
       console.log('주문이 요청되었습니다.')
       // 주문이 요청되면 할 일을 추가할 수 있습니다.
@@ -236,8 +235,9 @@ function goOrder() {
             </div>
           </div>
         </head>
+
         <body>
-          <div v-if="isUserLoggedIn" class="btn-order">
+          <div v-if="token" class="btn-order">
             <button class="order-request" @click="goOrder()">
               주문요청
             </button>
@@ -394,13 +394,13 @@ button {
   color: #344a53;
 }
 
-.btn-order{
+.btn-order {
   display: flex;
   justify-content: right;
   margin-bottom: 10px;
 }
 
-.order-request{
+.order-request {
   border-radius: 10px;
   font-weight: bold;
   font-size: 16px;
@@ -409,7 +409,8 @@ button {
   color: #ffffff;
 
 }
-.order-request:hover{
+
+.order-request:hover {
   background-color: #343844;
 }
 

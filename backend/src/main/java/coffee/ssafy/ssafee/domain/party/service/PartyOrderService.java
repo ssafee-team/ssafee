@@ -1,12 +1,14 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.dto.PartyOrderCreateInfo;
+import coffee.ssafy.ssafee.domain.party.dto.PartyStatusInfo;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyOrderMapper;
 import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +27,9 @@ public class PartyOrderService {
     private final MatterMostService matterMostService;
     private final PartyRepository partyRepository;
     private final ParticipantRepository participantRepository;
-    private final PartyMapper partyMapper;
+    private final PartyOrderMapper partyOrderMapper;
 
-    public Long createOrder(String accessCode) {
+    public PartyOrderCreateInfo createOrder(String accessCode) {
         // 검증
         // 1. 유효한 엑세스 코드인가?
         Party party = partyRepository.findByAccessCode(accessCode)
@@ -45,12 +47,21 @@ public class PartyOrderService {
         if (total < minimumPrice) {
             throw new PartyException(PartyErrorCode.THE_ORDER_AMOUNT_IS_LESS_THAN_THE_MINIMUM_ORDER);
         }
-        return party.getId();
+        return PartyOrderCreateInfo.builder()
+                .partyId(party.getId())
+                .shopId(party.getShop().getId())
+                .build();
     }
 
-    public PartyStatusResponse getOrders(String accessCode) {
+    public PartyStatusResponse getOrderStatus(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
-                .map(partyMapper::toPartyStatus)
+                .map(partyOrderMapper::toResponse)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+    }
+
+    public PartyStatusInfo getOrderStatus(Long partyId) {
+        return partyRepository.findById(partyId)
+                .map(partyOrderMapper::toInfo)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 

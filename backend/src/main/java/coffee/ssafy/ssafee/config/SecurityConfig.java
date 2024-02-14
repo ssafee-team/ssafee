@@ -45,9 +45,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties", "/api/v1/parties/*/order/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties", "/api/v1/parties/*/order/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**", "/api/v1/managers/me").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").hasRole("MANAGER")
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
