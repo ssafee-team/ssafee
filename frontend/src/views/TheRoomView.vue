@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // import func from '../../vue-temp/vue-editor-bridge'
@@ -8,7 +8,7 @@ import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
-import { getOrderList, getParty, orderRequest, getOrders } from '@/api/party'
+import { getOrderList, getOrders, getParty, orderRequest } from '@/api/party'
 
 // const roomCode = ref("");
 
@@ -62,23 +62,23 @@ const canPlaceOrder = computed(() => token.value !== null && remainingTime.value
 
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
-  if(token.value){
-    getOrders( //주문현황조회
+  if (token.value) {
+    getOrders( // 주문현황조회
       code.value,
       token.value,
-      ({ data}) => {
-        console.log(data);
-        if (data.real_ordered_time !== null){
+      ({ data }) => {
+        console.log(data)
+        if (data.real_ordered_time !== null) {
           remainingTime.value = '주문중'
-          
-        }else{
+        }
+        else {
           updateRemainingTime() // 페이지 로드시 남은시간 계산
           // 1초마다 남은시간 갱신
           setInterval(updateRemainingTime, 1000)
         }
       },
       (error) => {
-        console.error("주문현황 조회 실패: ", error)
+        console.error('주문현황 조회 실패: ', error)
       },
     )
   }
@@ -180,11 +180,11 @@ function goOrder() {
     token.value,
     () => {
       console.log('주문이 요청되었습니다.')
-      remainingTime.value = '마감';
+      remainingTime.value = '마감'
 
       setTimeout(() => {
-      window.location.href = `/after/${code.value}`
-    }, 100)
+        window.location.href = `/after/${code.value}`
+      }, 100)
     },
     (error) => {
       console.error('주문 요청에 실패했습니다:', error)
@@ -192,9 +192,6 @@ function goOrder() {
     },
   )
 }
-
-
-
 </script>
 
 <template>
@@ -268,8 +265,6 @@ function goOrder() {
             </div>
           </div>
         </body>
-
-        
       </div>
     </main>
   </div>

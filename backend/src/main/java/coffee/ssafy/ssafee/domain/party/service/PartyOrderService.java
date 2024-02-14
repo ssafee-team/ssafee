@@ -73,7 +73,14 @@ public class PartyOrderService {
         // TODO: 배달시작 필드가 null인지 검사
         party.deliver();
         if (party.getCreator().getWebhookUrl() != null) {
-            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), "@here @고영훈 커피 배달 완료");
+            StringBuilder sb = new StringBuilder();
+            sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
+            sb.append("@here \n");
+            sb.append("#### 주문하신 음료가 도착했습니다. \n");
+            sb.append("#### 파티명: " + party.getName() + "\n");
+            sb.append("#### 총  무: " + party.getCreator().getName() + " \n\n");
+            sb.append("#### 본인의 음료를 수령해주세요");
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
     }
 
