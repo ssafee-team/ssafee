@@ -15,6 +15,7 @@ public class MatterMostService {
     }
 
     public void sendMMNotification(String webhookUrl, String message) {
+        System.out.println("응ㅁㄹㄴ옮맨ㅁㅁㄴㅇㅍㅁㄴㅇㅍㅁㄴㅇㄹ");
 //        webClient.post()  -> POST 요청 시작
 //                .uri(webhookUrl) -> 요청할 URL 설정
 //                .bodyValue("{\"text\": \"" + message + "\"}") -> 요청 분문에 전송할 데이터를 JSON형식으로 설정

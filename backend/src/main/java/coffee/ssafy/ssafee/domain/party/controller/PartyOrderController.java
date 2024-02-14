@@ -29,6 +29,7 @@ public class PartyOrderController {
                                             @PathVariable("access_code") String accessCode) {
         partyService.validateUser(accessCode, principal.userId());
         PartyOrderCreateInfo partyOrderCreateInfo = partyOrderService.createOrder(accessCode);
+        partyOrderService.sendAdvertise(accessCode);
         if (!partyOrderService.existsCarrier(partyOrderCreateInfo.partyId())) {
             partyOrderService.pickCarrier(partyOrderCreateInfo.partyId());
             partyOrderService.sendCarrierResult(accessCode);

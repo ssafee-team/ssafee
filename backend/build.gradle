@@ -56,6 +56,10 @@ dependencies {
     // https://developers.cloudflare.com/r2/api/s3/
     implementation platform('software.amazon.awssdk:bom:2.23.+')
     implementation 'software.amazon.awssdk:s3'
+
+    // Dependency use for WebSocket (MM WebHook 관련... 삭제금지)
+    implementation 'com.corundumstudio.socketio:netty-socketio:2.0.8'
+
 }
 
 tasks.named('test') {

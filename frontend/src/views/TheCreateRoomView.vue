@@ -22,6 +22,7 @@ const form = ref({
   bankName: '',
   accountNumber: '',
   phoneNumber: '',
+  webhook_url: '',
 })
 
 const formErrors = ref({
@@ -33,6 +34,7 @@ const formErrors = ref({
   bankName: false,
   accountNumber: false,
   phoneNumber: false,
+  webhook_url: false,
 })
 
 const shops = ref([])
@@ -185,7 +187,7 @@ const partyData = computed(() => ({
     email: 'skip',
     bank: form.value.bankName,
     account: form.value.accountNumber,
-    webhook_url: 'skip',
+    webhook_url: form.value.webhook_url,
   },
 }))
 
@@ -492,9 +494,9 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="hook">WebHook_URL</label>
+          <label for="hook">WebHook URL</label>
           <div class="input-with-error">
-            <input id="hook" v-model="form.hook" type="text">
+            <input id="hook" v-model="form.webhook_url" type="text">
           </div>
         </div>
         <!-- <div class="form-field">

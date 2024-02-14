@@ -34,7 +34,6 @@ public class Creator {
     @Column(nullable = false)
     private String account;
 
-    @Null
     @Column(nullable = true)
     private String webhookUrl;
 

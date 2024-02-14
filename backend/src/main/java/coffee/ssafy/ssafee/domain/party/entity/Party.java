@@ -87,6 +87,7 @@ public class Party extends BaseTimeEntity {
                 .email(creatorRequest.email())
                 .bank(creatorRequest.bank())
                 .account(creatorRequest.account())
+                .webhookUrl(creatorRequest.webhookUrl())
                 .party(this)
                 .build();
     }
