@@ -60,9 +60,9 @@ services:
       - SERVER_PORT=8082
       - SPRING_PROFILE=prod
       - ORIGIN=${DEV_ORIGIN}
-      - DEV_DB_URL=jdbc:mysql://mysql-dev:3307/${DEV_DB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
-      - DEV_DB_USERNAME
-      - DEV_DB_PASSWORD
+      - PROD_DB_URL=jdbc:mysql://mysql-dev:3307/${DEV_DB_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
+      - PROD_DB_USERNAME=${DEV_DB_USERNAME}
+      - PROD_DB_PASSWORD=${DEV_DB_PASSWORD}
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
       - GOOGLE_REDIRECT_URI
