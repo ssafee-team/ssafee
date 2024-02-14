@@ -198,11 +198,7 @@ option {
 
 /* 주문 내역 스타일 */
 .order {
-  /* color: #FFFFFF; */
-
-  max-height: 70%;
   margin-top: 10px;
-  /* margin-left: 10px; */
   box-sizing: inherit;
 }
 
@@ -303,5 +299,25 @@ option {
 
 .total-price {
   color: #00a5e7;
+}
+
+@media screen and (max-width: 768px) {
+  .item{
+    font-size: 16px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .menu-option{
+    font-size: 14px;
+  }
+
+  .footer{
+    margin-top: 5px;
+  }
+  .total, .tab{
+    font-size: 16px;
+  }
+
 }
 </style>

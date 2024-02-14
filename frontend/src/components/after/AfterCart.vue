@@ -371,4 +371,25 @@ input {
 .total-price {
   color: #00a5e7;
 }
+@media screen and (max-width: 768px) {
+  .participant-name{
+    font-size: 16px;
+  }
+
+  .item{
+    font-size: 16px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .menu-option{
+    font-size: 14px;
+  }
+  .total, .tab{
+    font-size: 16px;
+  }
+
+  .footer{
+    margin-top: 5px;
+  }
+}
 </style>

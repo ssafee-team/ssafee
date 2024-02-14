@@ -273,16 +273,17 @@ body {
 }
 
 main {
+
   display: flex;
   flex-direction: column;
   height: auto;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 
   /* box-sizing: border-box; */
   justify-content: center;
   align-items: center;
   /* height: 878px; */
-  overflow: hidden;
+
 }
 
 .container {
@@ -367,6 +368,7 @@ head {
   width: 20%;
   height: 70px;
   border-radius: 5px;
+
 }
 
 .center-content {
@@ -430,10 +432,11 @@ button {
 }
 
 .center-panel {
-  flex: 3;
+  flex: 2.5;
   margin-left: 20px;
   /* margin-bottom: 20px; */
   /* height: 700px; */
+  max-width: 345px;
   /* height: 645px; */
   border: 3px solid #1e293b;
   border-radius: 5px;
@@ -442,7 +445,7 @@ button {
 }
 
 .right-panel {
-  flex: 2;
+  flex: 2.5;
   margin-left: 20px;
   /* height: 700px; */
   border: 3px solid #1e293b;
@@ -454,18 +457,47 @@ button {
 /* 화면 폭이 768px 미만일 때 */
 @media screen and (max-width: 768px) {
   head {
-    font-size: 18px;
+    font-size: 12px;
+    box-sizing: inherit;
     /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+
+  .line, .center-title, .timeline{
+    flex-direction: column;
+    justify-content: center;
+
+  }
+
+  .order-request{
+    font-size: 12px;
+  }
+
+  .party-name{
+    text-align: center;
+  }
+
+  .row{
+    display: block;
+  }
+
+  .time{
+    margin: 0px;
   }
 
   .body-container {
     flex-direction: column;
   }
 
-  /* .right-panel {
+  .center-panel{
+    margin-left: 0px;
+    margin-top: 20px;
+    max-width: none;
+  }
+
+  .right-panel {
     margin-left: 0;
     margin-top: 20px;
-  } */
+  }
 
   .btn-curorder,
   .btn-roomlist {
