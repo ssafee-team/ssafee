@@ -1,6 +1,7 @@
 <script>
-import { getMenuCategories, getMenusByCategory, getOptionCategory } from '@/api/shop'
+import { getMenuCategories, getMenusByCategory, getOptionCategory, getShop } from '@/api/shop'
 import { createOrder } from '@/api/party'
+import { tr } from 'vuetify/locale'
 
 export default {
 
@@ -12,6 +13,10 @@ export default {
       type: String,
       required: true,
     },
+    isOrdering: {
+      type: Boolean,
+      required: true,
+    }
   },
   emits: ['orderCart'],
 
@@ -30,6 +35,7 @@ export default {
       showOptions: false, // 옵션화면 상태변수
       showModal: false,
       participantName: '',
+      
     }
   },
   computed: {
@@ -53,6 +59,7 @@ export default {
   methods: {
 
     openModal() {
+
       // 필수 옵션 카테고리가 선택되었는지 확인
       const requiredOptionCategories = this.optionCategories.filter(category => category.required)
       const hasMissingRequiredOptions = requiredOptionCategories.some(category => !this.selectedOptions.some(option => category.options.map(option => option.id).includes(option)))
@@ -88,6 +95,13 @@ export default {
     },
 
     toggleOptions(index) {
+      console.log(this.isOrdering)
+      //주문중인지 상태 확인
+      if(this.isOrdering){
+        alert('이미 주문이 진행중입니다.')
+        return
+      }
+
       if (event.target.closest('.drink-item'))
         this.setSelectedDrinkIndex(index)
 
@@ -100,6 +114,7 @@ export default {
       this.showOptions = !this.showOptions
       // console.log(this.showOptions, '닫')
     },
+
 
     handleSuccess(response) {
       // 데이터를 비동기적으로 불러올 경우, response 받아서 response.data로 세팅하기
