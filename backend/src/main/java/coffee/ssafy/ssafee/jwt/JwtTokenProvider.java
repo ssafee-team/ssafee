@@ -52,10 +52,12 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
+        String role = claims.get(CLAIMS_ROLE, String.class);
+        String info = role.equals("ROLE_USER") ? claims.get(CLAIMS_EMAIL, String.class) : String.valueOf(claims.get(CLAIMS_SHOP_ID, Long.class));
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
                 .id(claims.get(CLAIMS_ID, String.class))
-                .info(claims.get(CLAIMS_SHOP_ID, String.class))
-                .role(claims.get(CLAIMS_ROLE, String.class))
+                .info(info)
+                .role(role)
                 .build();
         List<GrantedAuthority> authorities = List.of(() -> claims.get(CLAIMS_ROLE, String.class));
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
