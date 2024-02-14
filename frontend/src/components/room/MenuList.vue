@@ -13,6 +13,7 @@ export default {
       required: true,
     },
   },
+  emits: ['orderCart'],
 
   data() {
     return {
@@ -31,7 +32,6 @@ export default {
       participantName: '',
     }
   },
-
   computed: {
     selectedDrinks() {
       // console.log(this.categories[this.selectedCategory], "선택");
@@ -154,10 +154,10 @@ export default {
       const selectedDrink = this.selectedDrinks[index]
       // console.log(selectedDrink.name, selectedDrink.price)
       const menuId = selectedDrink.id
-      console.log('선택한메뉴아이디확인', menuId)
+      // console.log('선택한메뉴아이디확인', menuId)
       if (this.optionCategoriesMap[menuId]) {
         this.optionCategories = this.optionCategoriesMap[menuId]
-        console.log(this.optionCategories, 'dd')
+        // console.log(this.optionCategories, 'dd')
       }
       else {
         // 저장된 데이터가 없을 경우 API를 통해 불러옴
@@ -254,7 +254,7 @@ export default {
       // createOrder(this.code, orderData, this.handleOrderSuccess, this.handleOrderFail);
       createOrder(this.code, orderData, this.handleOrderSuccess, this.handleOrderFail)
 
-      console.log(order)
+      // console.log(order)
       // console.log("전체 주문 목록", this.orderList);
 
       // 주문 정보를 orderList에 추가
@@ -353,7 +353,7 @@ export default {
     <div class="modal-content">
       <span class="close" @click="closeModal">&times;</span>
 
-      <input v-model="participantName" type="text" placeholder="이름을 입력하세요">
+      <input v-model="participantName" class="modal-input" type="text" placeholder="이름을 입력하세요">
       <button class="confirmOrder" @click="confirmOrder">
         주문하기
       </button>
@@ -387,7 +387,7 @@ export default {
   padding: 20px;
 
   border-radius: 15px;
-  width: 50%; /* 모달 내용 너비 */
+  width: 30%; /* 모달 내용 너비 */
   height: 20%;
 }
 
@@ -408,7 +408,7 @@ export default {
   font-size: 20px;
   margin: 10px;
   border-radius: 10px;
-  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  // box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
 /* 닫기 버튼 스타일 */
@@ -551,7 +551,8 @@ export default {
 
 hr {
   width: 100%;
-  // background-color: #1e293b
+  height: 3px;
+  background-color: #1e293b;
 }
 
 .menu-price,
@@ -572,6 +573,10 @@ hr {
 
 input[type="checkbox"] {
   accent-color: #00a5e7;
+}
+
+.modal-input{
+  border-radius: 5px;
 }
 
 .add {
@@ -687,7 +692,7 @@ p {
   }
 
   .menu-categories>div {
-    font-size: 14px;
+    font-size: 12px;
     /* 작은 화면에 맞게 메뉴 카테고리 텍스트 크기 조정 */
     font-weight: bold;
   }

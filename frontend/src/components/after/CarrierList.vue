@@ -66,4 +66,9 @@ export default {
 .carrier {
   margin-top: 10px;
 }
+@media screen and (max-width: 768px) {
+  .title, .content, .footer{
+    font-size: 16px;
+  }
+}
 </style>

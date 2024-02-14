@@ -159,11 +159,14 @@ onUnmounted(() => {
 .chat-input {
   display: flex;
   width: 100%;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #ffffff;
   border: none;
-  background: transparent;
+  /* background: transparent; */
+  background-color: #999999;
+  margin-left: 5px;
+  border-radius: 5px;
   outline: none;
   padding-left: 10px;
 }
@@ -182,5 +185,11 @@ onUnmounted(() => {
   border-radius: 10px;
   /* box-shadow: 2px 2px 2px 2px rgb(227, 226, 226); */
   justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .footer{
+    margin-top: 5px;
+  }
 }
 </style>
