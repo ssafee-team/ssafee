@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // import func from '../../vue-temp/vue-editor-bridge'
@@ -8,7 +8,7 @@ import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
-import { getOrderList, getParty, orderRequest } from '@/api/party'
+import { getOrderList, getParty, orderRequest, getOrders } from '@/api/party'
 
 // const roomCode = ref("");
 
@@ -46,8 +46,6 @@ function addToCart(order) {
 // 파티 객체 정보의 shop_id 추출
 const shopId = partyInfo.value.shop_id
 
-const isOrderListModalOpen = ref(false)
-
 const remainingTime = ref('') // 남은시간
 
 // 헤더 높이를 저장하는 변수
@@ -58,16 +56,38 @@ function updateHeaderHeight() {
   headerHeight.value = `${document.querySelector('header').offsetHeight}px`
 }
 
-// 스크립트 섹션 안에서
+// 주문 요청하기 버튼 표시 여부
 const isUserLoggedIn = ref(false)
+const canPlaceOrder = computed(() => token.value !== null && remainingTime.value !== '주문중')
 
 // 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
 onMounted(() => {
+  if(token.value){
+    getOrders( //주문현황조회
+      code.value,
+      token.value,
+      ({ data}) => {
+        console.log(data);
+        if (data.real_ordered_time !== null){
+          remainingTime.value = '주문중'
+          
+        }else{
+          updateRemainingTime() // 페이지 로드시 남은시간 계산
+          // 1초마다 남은시간 갱신
+          setInterval(updateRemainingTime, 1000)
+        }
+      },
+      (error) => {
+        console.error("주문현황 조회 실패: ", error)
+      },
+    )
+  }
+
   updateHeaderHeight()
   window.addEventListener('resize', updateHeaderHeight)
-  updateRemainingTime() // 페이지 로드시 남은시간 계산
-  // 1초마다 남은시간 갱신
-  setInterval(updateRemainingTime, 1000)
+  // updateRemainingTime() // 페이지 로드시 남은시간 계산
+  // // 1초마다 남은시간 갱신
+  // setInterval(updateRemainingTime, 1000)
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo()
   addToOrderList()
@@ -134,9 +154,9 @@ function updateRemainingTime() {
     remainingTime.value = '마감'
     // console.log(window.location.href)
     // console.log(code.value);
-    setTimeout(() => {
-      window.location.href = `/after/${code.value}`
-    }, 100)
+    // setTimeout(() => {
+    //   window.location.href = `/after/${code.value}`
+    // }, 100)
   }
 }
 
@@ -154,31 +174,17 @@ function addToOrderList() {
   )
 }
 
-function closeOrderModal() {
-  isOrderListModalOpen.value = false
-}
-// const checkOrderStatus = () => {
-//   // 주문 현황 확인 로직을 추가할 수 있습니다.
-//   console.log("주문 현황 확인하기 버튼이 클릭되었습니다.");
-// };
-
-// 마감시간 시 After 창으로 이동하는 코드
-
-function goMain() {
-  router.push({ name: 'main' })
-}
-
-function goCreate() {
-  router.push({ name: 'CreateRoomView' })
-}
-
 function goOrder() {
   orderRequest(
     code.value,
     token.value,
     () => {
       console.log('주문이 요청되었습니다.')
-      // 주문이 요청되면 할 일을 추가할 수 있습니다.
+      remainingTime.value = '마감';
+
+      setTimeout(() => {
+      window.location.href = `/after/${code.value}`
+    }, 100)
     },
     (error) => {
       console.error('주문 요청에 실패했습니다:', error)
@@ -186,6 +192,9 @@ function goOrder() {
     },
   )
 }
+
+
+
 </script>
 
 <template>
@@ -237,7 +246,7 @@ function goOrder() {
         </head>
 
         <body>
-          <div v-if="token" class="btn-order">
+          <div v-if="canPlaceOrder" class="btn-order">
             <button class="order-request" @click="goOrder()">
               주문요청
             </button>
@@ -260,7 +269,7 @@ function goOrder() {
           </div>
         </body>
 
-        <!-- <OrderListModal v-if="isOrderListModalOpen" @close="closeOrderListModal" /> -->
+        
       </div>
     </main>
   </div>

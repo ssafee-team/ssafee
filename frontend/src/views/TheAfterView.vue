@@ -42,7 +42,7 @@ const shopId = partyInfo.value.shop_id
 
 const isOrderListModalOpen = ref(false)
 
-const remainingTime = ref('') // 남은시간
+const orderStatus = ref("주문 요청 완료") // 남은시간
 
 // 헤더 높이를 저장하는 변수
 const headerHeight = ref('')
@@ -63,9 +63,8 @@ onMounted(() => {
 
   updateHeaderHeight()
   window.addEventListener('resize', updateHeaderHeight)
-  updateRemainingTime() // 페이지 로드시 남은시간 계산
-  // 1초마다 남은시간 갱신
-  setInterval(updateRemainingTime, 1000)
+  
+  
   code.value = route.params.code
   // console.log("현재 방 코드: ", code.value);
   getPartyInfo()
@@ -99,37 +98,7 @@ function getPartyInfo() {
   )
 }
 
-// 남은시간 갱신하는 함수 호출
-function updateRemainingTime() {
-  const now = new Date() // 현재시간 변수
-  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
 
-  // console.log(deadlineTime);
-
-  const deadlineTime = new Date()
-  const [hours, minutes] = partyInfo.value.last_order_time.split(':').map(Number)
-
-  deadlineTime.setHours(hours, minutes, 0)
-  // deadlineTime.setHours(11, 48, 0);
-
-  // 마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTime - now
-  //   console.log(diff);
-  //   console.log(code.value);
-
-  if (diff > 0) {
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    remainingTime.value = `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes
-      } : ${seconds < 10 ? `0${seconds}` : seconds}`
-  }
-  else if (diff <= 0) {
-    // 마감시간 지난 경우
-    remainingTime.value = '마감'
-  }
-}
 
 function addToOrderList() {
   // 주문 목록 조회
@@ -240,9 +209,8 @@ function DeliveryAlert() {
           </div>
           <img src="@/assets/img/logo_compose.png" alt="">
           <div class="timeline">
-            <div>잔여시간</div>
             <div style="color: red" class="time">
-              {{ remainingTime }}
+              {{ orderStatus }}
             </div>
           </div>
           <div class="timeline">
