@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted } from 'vue'
+import { defineEmits, onMounted } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import axios from 'axios'
 import router from '@/router'
