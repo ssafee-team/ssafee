@@ -22,6 +22,7 @@ const form = ref({
   bankName: '',
   accountNumber: '',
   phoneNumber: '',
+  webhook_url: '',
 })
 
 const formErrors = ref({
@@ -87,6 +88,7 @@ Object.keys(form.value).forEach((key) => {
 // 기존에 정의된 함수들...
 
 function submitForm() {
+  console.log(partyData.value);
   const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time', 'creator']
   const isAnyFieldEmpty = requiredFields.some(
     field =>
@@ -101,25 +103,26 @@ function submitForm() {
   }
   else {
     // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
+    
     modalOpen()
     createParty(token.value, partyData.value, onSuccess, onFailure)
   }
 
-  let isValid = true
-  for (const [key, value] of Object.entries(form.value)) {
-    if (!value) {
-      formErrors.value[key] = true
-      isValid = false
-    }
-    else {
-      formErrors.value[key] = false
-    }
-  }
+  // let isValid = true
+  // for (const [key, value] of Object.entries(form.value)) {
+  //   if (!value) {
+  //     formErrors.value[key] = true
+  //     isValid = false
+  //   }
+  //   else {
+  //     formErrors.value[key] = false
+  //   }
+  // }
 
-  if (!isValid) {
-    // alert('빈 항목을 채워주세요.');
+  // if (!isValid) {
+  //   // alert('빈 항목을 채워주세요.');
 
-  }
+  // }
 
   // 유효한 경우, 폼 제출 로직을 여기에 추가합니다.
   // 예: createParty(...)
@@ -185,7 +188,7 @@ const partyData = computed(() => ({
     email: 'skip',
     bank: form.value.bankName,
     account: form.value.accountNumber,
-    webhook_url: 'skip',
+    webhook_url: form.value.webhook_url,
   },
 }))
 
@@ -319,7 +322,7 @@ function onSuccess(response) {
   const locationPath = response.headers.location
   const parts = locationPath.split('/') // '/'를 기준으로 문자열을 분할
   const roomcode = parts[parts.length - 1]
-  window.location.href = `/room/${roomcode}`
+  // window.location.href = `/room/${roomcode}`
 }
 
 // 실패 콜백 함수를 정의합니다.
@@ -494,7 +497,7 @@ function formatTime() {
         <div class="form-field">
           <label for="hook">WebHook_URL</label>
           <div class="input-with-error">
-            <input id="hook" v-model="form.hook" type="text">
+            <input id="hook" v-model="form.webhook_url" type="text">
           </div>
         </div>
         <!-- <div class="form-field">
