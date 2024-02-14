@@ -53,6 +53,12 @@ function deleteOrderMenu(code, id, success, fail) {
   local.delete(`${url}/${code}/order-menus/${id}`).then(success).catch(fail)
 }
 
+// 총무 : 주문현황조회
+function getOrders(code, token, success, fail){
+  const config = { headers: { Authorization: `Bearer ${token}` } }
+  local.get(`${url}/${code}/order`, config).then(success).catch(fail)
+}
+
 // 총무 : 주문요청 생성
 function orderRequest(code, token, success, fail) {
   const config = { headers: { Authorization: `Bearer ${token}` } }
@@ -77,4 +83,4 @@ function giveMeMoney(code, token, success, fail) {
   local.post(`${url}/${code}/give-me-money`, null, config).then(success).catch(fail)
 }
 
-export { createParty, getParty, getPartiesToday, getOrderList, createOrder, deleteOrderMenu, sendCarrierResult, orderDelivered, giveMeMoney, orderRequest }
+export { createParty, getParty, getPartiesToday, getOrders, getOrderList, createOrder, deleteOrderMenu, sendCarrierResult, orderDelivered, giveMeMoney, orderRequest }
