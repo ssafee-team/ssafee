@@ -20,16 +20,12 @@ function onStartDevlivery() {
   axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/start-delivery`, null, config)
 }
 
-// 컴포넌트가 마운트된 후에 이벤트 리스너를 추가합니다.
+//
 onMounted(() => {
-  // orderList의 참조가 있을 때만 작업을 수행합니다.
   if (orderList.value) {
-    // orderList의 자식인 모든 ul 요소를 선택합니다.
     const listItems = orderList.value.querySelectorAll('ul')
-    // 각 ul 요소에 클릭 이벤트 리스너를 추가합니다.
     listItems.forEach((ul) => {
       ul.addEventListener('click', function () {
-        // 'highlight' 클래스를 토글합니다.
         this.classList.toggle('highlight')
       })
     })
