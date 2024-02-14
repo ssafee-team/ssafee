@@ -54,11 +54,6 @@ public class ShopOrderService {
     private PartyDetailForManagerResponse convertToPartyDetailForManagerResponse(Party party) {
         return new PartyDetailForManagerResponse(
                 party.getId(),
-                party.getName(),
-                party.getShop().getId(),
-                party.getRealOrderedTime(),
-                party.getDeliveredTime(),
-                party.getCreator().getName(),
                 party.getChoiceMenus()
         );
     }

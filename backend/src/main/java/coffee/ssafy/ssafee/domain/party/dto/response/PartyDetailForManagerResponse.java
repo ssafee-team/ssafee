@@ -10,11 +10,6 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PartyDetailForManagerResponse(
         Long partyId,
-        String partyName,
-        Long shopId,
-        LocalDateTime realOrderTime,
-        LocalDateTime deliveredTime,
-        String creatorName,
         List<ChoiceMenu> choiceMenus
 ) {
 
