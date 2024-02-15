@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { useBrowserLocation } from '@vueuse/core'
+import { useBrowserLocation, useLocalStorage } from '@vueuse/core'
 import { Client } from '@stomp/stompjs'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
 import ManagerModal from '@/components/manager/ManagerModal.vue'
@@ -12,25 +12,56 @@ const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
 
 const partyId = ref(null)
 const showModal = ref(false)
-const shopId = '1' // 임시로 1로 설정
+const shopId = ref(null)
 
 const client = new Client({
   brokerURL: wsUrl,
   onConnect: () => {
-    client.subscribe(`/sub/shop/${shopId}/order`, (message) => {
+    client.subscribe(`/sub/shop/${shopId.value}/order`, (message) => {
       partyId.value = JSON.parse(message.body).party_id
+      
       showModal.value = true
     })
   },
 })
 
+function setShopId() {
+  // manager-token 가져오기
+  const managerToken = useLocalStorage('manager-token')
+  // console.log(managerToken.value)
+  
+  // manager-token이 존재하는 경우에만 요청 보내기
+  if (managerToken.value) {
+    fetch(`/api/v1/managers/me`, {
+      headers: {
+        Authorization : `Bearer ${managerToken.value}`
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      
+      shopId.value = data.shop_id
+      
+      client.activate()
+    })
+    .catch(error => {
+      console.error('Error fetching shopId:', error)
+    })
+  } else {
+    console.error('Manager token not found.')
+  }
+}
+
 onMounted(() => {
-  client.activate()
+  setShopId()
+  
 })
 
 onUnmounted(() => {
   client.deactivate()
 })
+
+
 </script>
 
 <template>
@@ -41,7 +72,7 @@ onUnmounted(() => {
       <h3>주문이 도착하면 알려드릴게요 !</h3>
     </div>
     <!-- 모달 컴포넌트를 조건부로 렌더링합니다. -->
-    <ManagerModal v-if="showModal" :party-id="partyId" style="margin: 30px;" @close="showModal = false" />
+    <ManagerModal v-if="showModal" :party-id="partyId" :shop-id="shopId" style="margin: 30px;" @close="showModal = false" />
     <!-- <div class="main-message">
       <h1>😂 아직은 G5에서 파티가 생성되지 않았어요 😂</h1>
       <h3>SSAFEE 를 위한 “프로모션”을 진행하면 주문빈도가 증가할지도..?</h3>

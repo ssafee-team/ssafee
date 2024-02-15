@@ -8,7 +8,7 @@ import ManagerHeader from '@/components/common/ManagerHeader.vue'
 const route = useRoute()
 // orderList의 참조를 생성합니다.
 const orderList = ref([])
-const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+const shopId = ref(null) 
 // partyId를 반응형 참조로 선언
 const partyId = ref(null)
 const managerToken = useLocalStorage('manager-token', null)
@@ -23,7 +23,7 @@ async function fetchOrderDetails() {
   // console.log(partyId, '하')
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
   try {
-    const response = await axios.get(`/api/v1/shops/${shopId}/orders`, config)
+    const response = await axios.get(`/api/v1/shops/${shopId.value}/orders`, config)
     // API 응답을 기반으로 orderList 업데이트
     // console.log(response)
     orderList.value = response.data.filter(order => order.party_id === numericPartyId)
@@ -58,31 +58,25 @@ watchEffect(() => {
 
 function onMade() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  axios.post(`/api/v1/shops/${shopId}/orders/${partyId.value}/made`, null, config)
+  axios.post(`/api/v1/shops/${shopId.value}/orders/${partyId.value}/made`, null, config)
 }
 
 function onStartDevlivery() {
   // console.log(partyId.value)
   // console.log(shopId)
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  axios.post(`/api/v1/shops/${shopId}/orders/${partyId.value}/start-delivery`, null, config)
+  axios.post(`/api/v1/shops/${shopId.value}/orders/${partyId.value}/start-delivery`, null, config)
 }
 
 //
 onMounted(() => {
   partyId.value = route.query.partyId
+  shopId.value = route.query.shopId
   // console.log(partyId.value)
+  // console.log(shopId.value)
   if (partyId.value)
     fetchOrderDetails()
 
-  // if (orderList.value) {
-  //   const listItems = orderList.value.querySelectorAll('ul')
-  //   listItems.forEach((ul) => {
-  //     ul.addEventListener('click', function () {
-  //       this.classList.toggle('highlight')
-  //     })
-  //   })
-  // }
 })
 </script>
 
@@ -176,7 +170,8 @@ onMounted(() => {
   flex-direction: row;
   justify-content: space-between;
   border-radius: 20px;
-  background-color: #E6F4F1;
+  color: #FFFFFF;
+  background-color: #1e293b;
   align-items: center;
   font-weight: bold;
 }
@@ -242,6 +237,7 @@ onMounted(() => {
 }
 
 button {
+  margin-left: 5px;
   background-color: #EB4E5A;
   color: white;
   border-radius: 25px;
