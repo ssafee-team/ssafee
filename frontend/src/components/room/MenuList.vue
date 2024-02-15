@@ -363,7 +363,7 @@ export default {
   </div>
   <!-- 모달 창 -->
   <div v-if="showModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" @keyup.enter="confirmOrder">
       <span class="close" @click="closeModal">&times;</span>
 
       <input v-model="participantName" class="modal-input" type="text" placeholder="이름을 입력하세요">
@@ -393,22 +393,31 @@ export default {
 .modal-content {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   // justify-content: center;
   align-items: center;
   background-color: #343844; /* 모달 내용 배경색 */
   margin: 15% auto; /* 중앙 정렬 */
-  padding: 20px;
+  padding: 10px;
 
   border-radius: 15px;
-  width: 30%; /* 모달 내용 너비 */
+  width: 15%; /* 모달 내용 너비 */
   height: 20%;
 }
 
 .modal-content input{
   font-weight: bold;
-  font-size: 16px;
-  height: 30px;
+  font-size: 25px;
+  height: 50px;
   margin-bottom: 10px;
+  margin: 10px;
+}
+
+.modal-content button {
+  margin: 10px;
+  padding: 5px;
+  font-size: 25px;
+  margin-bottom: 25px;
 }
 
 .confirmOrder{

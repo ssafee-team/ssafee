@@ -31,11 +31,11 @@ function login() {
     <div class="login" style="margin-top: 400px;">
       <div class="manager-login">
         <span>ID</span>
-        <input v-model="info.id" type="text" placeholder="아이디를 입력하세요">
+        <input v-model="info.id" type="text" placeholder="아이디를 입력하세요" @keyup.enter="login">
       </div>
       <div class="manager-login">
         <span>PW</span>
-        <input v-model="info.password" type="password" placeholder="비밀번호를 입력하세요">
+        <input v-model="info.password" type="password" placeholder="비밀번호를 입력하세요" @keyup.enter="login">
       </div>
       <div class="event-area" style="display: flex; flex-direction: column; align-items: center;">
         <div class="event-area">
