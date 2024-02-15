@@ -1,10 +1,11 @@
 package coffee.ssafy.ssafee.config;
 
+import coffee.ssafy.ssafee.common.OriginProps;
+import coffee.ssafy.ssafee.domain.user.service.UserService;
 import coffee.ssafy.ssafee.jwt.JwtAuthenticationFilter;
-import coffee.ssafy.ssafee.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
-import coffee.ssafy.ssafee.oauth.OAuth2CustomAuthenticationSuccessHandler;
-import coffee.ssafy.ssafee.oauth.OAuth2CustomAuthorizationRequestResolver;
-import coffee.ssafy.ssafee.oauth.OAuth2CustomUserService;
+import coffee.ssafy.ssafee.oauth.HttpCookieOAuth2RequestRepository;
+import coffee.ssafy.ssafee.oauth.OAuth2RequestResolver;
+import coffee.ssafy.ssafee.oauth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,20 +35,22 @@ import java.util.List;
 public class SecurityConfig {
 
     private final SecurityProblemSupport problemSupport;
-    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-    private final OAuth2CustomUserService oAuth2CustomUserService;
-    private final OAuth2CustomAuthenticationSuccessHandler oAuth2CustomAuthenticationSuccessHandler;
+    private final HttpCookieOAuth2RequestRepository httpCookieOAuth2RequestRepository;
+    private final UserService userService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final OriginProps originProps;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**", "/api/v1/parties", "/api/v1/parties/*/order/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/shops/*/orders/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/parties", "/api/v1/parties/*/order/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**", "/api/v1/managers/me").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/shops/**").hasRole("MANAGER")
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
@@ -62,12 +65,12 @@ public class SecurityConfig {
                 .oauth2Login(oAuth2LoginConfig -> oAuth2LoginConfig
                         .authorizationEndpoint(config -> config
                                 .authorizationRequestResolver(authorizationRequestResolver())
-                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
+                                .authorizationRequestRepository(httpCookieOAuth2RequestRepository))
                         .redirectionEndpoint(config -> config
                                 .baseUri("/api/v1/oauth2/callback/**"))
                         .userInfoEndpoint(config -> config
-                                .userService(oAuth2CustomUserService))
-                        .successHandler(oAuth2CustomAuthenticationSuccessHandler)
+                                .userService(userService))
+                        .successHandler(oAuth2SuccessHandler)
                         .failureHandler(problemSupport));
         return http.build();
     }
@@ -75,8 +78,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://ssafy.coffee", "https://dev.ssafy.coffee"));
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
+        configuration.setAllowedOrigins(List.of(originProps.allowed()));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
@@ -90,10 +92,8 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver() {
         OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
-                clientRegistrationRepository,
-                "/api/v1/oauth2/authorization"
-        );
-        return new OAuth2CustomAuthorizationRequestResolver(defaultAuthorizationRequestResolver);
+                clientRegistrationRepository, "/api/v1/oauth2/authorization");
+        return new OAuth2RequestResolver(defaultAuthorizationRequestResolver);
     }
 
 }

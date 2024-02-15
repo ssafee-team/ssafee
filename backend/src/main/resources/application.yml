@@ -18,9 +18,10 @@ spring:
             redirect-uri: ${GOOGLE_REDIRECT_URI:{baseUrl}/api/v1/login/oauth2/redirect/{registrationId}}
             scope:
               - email
-  h2:
-    console:
-      enabled: false
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
 
 server:
   port: ${SERVER_PORT:80}
@@ -37,6 +38,9 @@ s3:
   bucket: ${S3_BUCKET}
   endpoint: ${S3_ENDPOINT:https://dcfbfd9f489ad8a785c3cdb81469e07d.r2.cloudflarestorage.com}
   public-access-domain: ${S3_PUBLIC_ACCESS_DOMAIN}
+
+origin:
+  allowed: ${ORIGIN:http://localhost:3000}
 
 ---
 
@@ -65,6 +69,9 @@ spring:
     password: ${LOCAL_DB_PASSWORD:ssafy}
   jpa:
     show-sql: true
+  h2:
+    console:
+      enabled: false
 
 ---
 
@@ -76,3 +83,6 @@ spring:
     url: ${PROD_DB_URL}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
+  h2:
+    console:
+      enabled: false

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static coffee.ssafy.ssafee.common.DateUtils.*;
 
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PartyDetailResponse(
         Long id,

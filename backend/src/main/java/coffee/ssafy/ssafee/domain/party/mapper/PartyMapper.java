@@ -3,7 +3,6 @@ package coffee.ssafy.ssafee.domain.party.mapper;
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
-import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,13 +15,12 @@ import java.time.LocalTime;
 public interface PartyMapper {
 
     @Mapping(target = "shopId", source = "shop.id")
-    PartyResponse toDto(Party party);
-
-    PartyStatusResponse toPartyStatus(Party party);
+    @Mapping(target = "userId", source = "user.id")
+    PartyResponse toResponse(Party party);
 
     @Mapping(target = "shopId", source = "shop.id")
     @Mapping(target = "userId", source = "user.id")
-    PartyDetailResponse toDetailDto(Party party);
+    PartyDetailResponse toDetailResponse(Party party);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creator", ignore = true)

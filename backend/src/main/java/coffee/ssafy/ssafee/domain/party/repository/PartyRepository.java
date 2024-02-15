@@ -2,6 +2,7 @@ package coffee.ssafy.ssafee.domain.party.repository;
 
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +19,10 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     List<Party> findAllByCreatedTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
 
-    List<Party> findAllByShopId(Long shopId);
-
     boolean existsByAccessCodeAndUserId(String accessCode, Long userId);
+
+    List<Party> findAllByShopIdAndRealOrderedTimeIsNotNull(@Param("shopId") Long shopId);
+
+    Optional<Party> findByIdAndShopId(Long partyId, Long shopId);
 
 }

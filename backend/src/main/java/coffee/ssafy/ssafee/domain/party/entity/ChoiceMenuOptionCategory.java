@@ -27,7 +27,6 @@ public class ChoiceMenuOptionCategory {
     @JoinColumn(name = "option_category_id", nullable = false, updatable = false)
     private OptionCategory optionCategory;
 
-    @Setter
     @OneToMany(mappedBy = "choiceMenuOptionCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChoiceMenuOption> choiceMenuOptions;
 

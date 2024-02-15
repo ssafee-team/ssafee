@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
 import MainHeader from '@/components/common/MainHeader.vue'
 import Chat from '@/components/room/Chat.vue'
 import AfterCart from '@/components/after/AfterCart.vue'
@@ -8,152 +9,131 @@ import { getOrderList, getParty, giveMeMoney, orderDelivered, sendCarrierResult 
 import CarrierList from '@/components/after/CarrierList.vue'
 import { getParticipants } from '@/api/after'
 
-// const roomCode = ref("");
+interface Shop {
+  id: number
+  name: string
+  address: string
+  phone: string
+  image: string
+  enable_order: boolean
+  minimum_price: number
+  closed: boolean
+  deleted: boolean
+}
+
+interface Party {
+  id: number
+  name: string
+  generation: number
+  classroom: number
+  last_order_time: string
+  created_time: string
+  shop_id: number
+  user_id: number
+  creator: {
+    id: number
+    name: string
+    bank: string
+    account: string
+  }
+}
+
+interface ChoiceMenu {
+  id: number
+  participant_name: string
+  menu: {
+    id: number
+    name: string
+    price: number
+    image: string
+    soldout: boolean
+  }
+  option_categories: {
+    id: number
+    name: string
+    required: boolean
+    max_count: number
+    options: {
+      id: number
+      name: string
+      price: number
+    }[]
+  }[]
+}
+
+interface Participant {
+  id: number
+  name: string
+  is_carrier: boolean
+  paid: boolean
+}
+
+interface OrderStatus {
+  confirmed_time: string | null
+  rejected_time: string | null
+  real_ordered_time: string | null
+  made_time: string | null
+  delivered_time: string | null
+}
 
 const route = useRoute()
 const router = useRouter()
-const code = ref('') // 파티 코드
 
-const partyInfo = ref({
-  id: '',
-  name: '',
-  generation: '',
-  classroom: '',
-  last_order_time: '24:00',
-  created_time: '',
-  shop_id: '',
-  creator: {
-    id: '',
-    name: '',
-    email: '',
-    bank: '',
-    account: '',
-  },
-})
+const token = useLocalStorage('user-token', null)
+const code = ref(route.params.code as string)
+const { data: orderStatusData } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
+if (orderStatusData.value?.real_ordered_time === null)
+  router.push(`/room/${code.value}`)
 
-const orderList = ref([])
+const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
 
+const choiceMenus = ref<ChoiceMenu[]>([])
 const carrierParticipants = ref([])
+// const isOrderListModalOpen = ref(false)
+const orderStatus = ref('주문 요청 완료') // 남은시간
 
-// 파티 객체 정보의 shop_id 추출
-const shopId = partyInfo.value.shop_id
-
-const isOrderListModalOpen = ref(false)
-
-const remainingTime = ref('') // 남은시간
-
-// 헤더 높이를 저장하는 변수
+// 헤더 높이
 const headerHeight = ref('')
-
-// 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
 function updateHeaderHeight() {
-  headerHeight.value = `${document.querySelector('header').offsetHeight}px`
+  headerHeight.value = `${document.querySelector('header')?.offsetHeight}px`
 }
+
+// 웹소켓
+const location = useBrowserLocation()
+const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
+const wsEndpoint = '/ws'
+const wsUrl = ref(`${wsProtocol}//${location.value.host}${wsEndpoint}`)
 
 // 스크립트 섹션 안에서
 const isUserLoggedIn = ref(false)
-
-// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
-onMounted(() => {
-  // 로컬 스토리지에서 "user-token"을 가져와서 확인
-  const userToken = localStorage.getItem('user-token')
-  isUserLoggedIn.value = !!userToken
-
-  updateHeaderHeight()
-  window.addEventListener('resize', updateHeaderHeight)
-  updateRemainingTime() // 페이지 로드시 남은시간 계산
-  // 1초마다 남은시간 갱신
-  setInterval(updateRemainingTime, 1000)
-  code.value = route.params.code
-  // console.log("현재 방 코드: ", code.value);
-  getPartyInfo()
-  getCarrierList()
-  addToOrderList()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateHeaderHeight)
-})
-
-function getPartyInfo() {
-  getParty(
-    code.value,
-
-    ({ data }) => {
-      // console.log(data);
-      partyInfo.value.id = data.id
-      partyInfo.value.name = data.name
-      partyInfo.value.generation = data.generation
-      partyInfo.value.classroom = data.classroom
-      // partyInfo.value.last_order_time = data.last_order_time;
-      partyInfo.value.created_time = data.created_time
-      partyInfo.value.shop_id = data.shop_id
-      partyInfo.value.creator = data.creator
-      // console.log(partyInfo);
-    },
-    (error) => {
-      console.log(error)
-    },
-  )
-}
-
-// 남은시간 갱신하는 함수 호출
-function updateRemainingTime() {
-  const now = new Date() // 현재시간 변수
-  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
-
-  // console.log(deadlineTime);
-
-  const deadlineTime = new Date()
-  const [hours, minutes] = partyInfo.value.last_order_time.split(':').map(Number)
-
-  deadlineTime.setHours(hours, minutes, 0)
-  // deadlineTime.setHours(11, 48, 0);
-
-  // 마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTime - now
-  //   console.log(diff);
-  //   console.log(code.value);
-
-  if (diff > 0) {
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    remainingTime.value = `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes
-      } : ${seconds < 10 ? `0${seconds}` : seconds}`
-  }
-  else if (diff <= 0) {
-    // 마감시간 지난 경우
-    remainingTime.value = '마감'
-  }
-}
 
 function addToOrderList() {
   // 주문 목록 조회
   getParticipants(
     code.value,
-    (response) => {
+    (response: any) => {
       const participants = response.data
       getOrderList(
         code.value,
-        (response) => {
-          orderList.value = response.data.map((order) => {
-            const participant = participants.find(participant => participant.name === order.participant_name)
+        (response: any) => {
+          choiceMenus.value = response.data.map((choiceMenu: ChoiceMenu) => {
+            const participant = participants.find((participant: Participant) => participant.name === choiceMenu.participant_name)
 
             return {
-              ...order,
-              participant_id: participant ? participant.id : null, // Add participant_id or null if participant not found
+              ...choiceMenu,
+              participant_id: participant ? participant.id : null,
+              paid: participant ? participant.paid : null,
             }
           })
+
           // console.log('주문 현황 불러오기: ', orderList.value)
         },
-        (error) => {
+        (error: any) => {
           console.error('주문 현황 조회 실패: ', error)
         },
       )
     },
-    (error) => {
+    (error: any) => {
       console.error(error)
     },
   )
@@ -162,24 +142,11 @@ function addToOrderList() {
 function getCarrierList() {
   getParticipants(
     code.value,
-    (response) => {
-      carrierParticipants.value = response.data.filter(participant => participant.is_carrier)
+    (response: any) => {
+      carrierParticipants.value = response.data.filter((participant: Participant) => participant.is_carrier)
     },
-    (error) => {
+    (error: any) => {
       console.error(error)
-    },
-  )
-}
-
-function goDelivery() {
-  // 총무가 주문완료를 알리는 함수 호출
-  orderDelivered(
-    code.value,
-    () => {
-      console.log('주문완료 알림을 보냈습니다.')
-    },
-    (error) => {
-      console.error('주문완료 알림을 보내는 중 오류가 발생했습니다.', error)
     },
   )
 }
@@ -188,25 +155,44 @@ function goMoney() {
   // 총무가 송금요청을 보내는 함수 호출
   giveMeMoney(
     code.value,
+    token.value,
     () => {
       console.log('송금요청 알림을 보냈습니다.')
     },
-    (error) => {
+    (error: any) => {
       console.error('송금요청 알림을 보내는 중 오류가 발생했습니다.', error)
     },
   )
 }
 function DeliveryAlert() {
-  sendCarrierResult(
+  orderDelivered(
     code.value,
+    token.value,
     () => {
       console.log('배달부 알림을 보냈습니다.')
     },
-    (error) => {
+    (error: any) => {
       console.error('배달부 알림을 보내는 중 오류가 발생했습니다.', error)
     },
   )
 }
+
+// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
+onMounted(() => {
+  // 로컬 스토리지에서 "user-token"을 가져와서 확인
+  const userToken = localStorage.getItem('user-token')
+  isUserLoggedIn.value = !!userToken
+
+  updateHeaderHeight()
+  addEventListener('resize', updateHeaderHeight)
+
+  getCarrierList()
+  addToOrderList()
+})
+
+onUnmounted(() => {
+  removeEventListener('resize', updateHeaderHeight)
+})
 </script>
 
 <template>
@@ -217,16 +203,16 @@ function DeliveryAlert() {
         <head>
           <div class="line">
             <div class="party-name">
-              {{ partyInfo.name }}
+              {{ party?.name }}
             </div>
           </div>
           <div class="center-title">
             <div class="row">
               <div class="account">
-                {{ partyInfo.creator.bank }}
+                {{ party?.creator.bank }}
               </div>
               <div class="account">
-                ({{ partyInfo.creator.name }})
+                ({{ party?.creator.name }})
               </div>
             </div>
             <div class="row">
@@ -234,22 +220,21 @@ function DeliveryAlert() {
                 logo
               </div> -->
               <div class="account-num">
-                {{ partyInfo.creator.account }}
+                {{ party?.creator.account }}
               </div>
             </div>
           </div>
           <img src="@/assets/img/logo_compose.png" alt="">
           <div class="timeline">
-            <div>잔여시간</div>
             <div style="color: red" class="time">
-              {{ remainingTime }}
+              {{ orderStatus }}
             </div>
           </div>
           <div class="timeline">
             <div>마감시간</div>
 
             <div class="time">
-              {{ partyInfo.last_order_time }}
+              {{ party?.last_order_time }}
             </div>
           </div>
         </head>
@@ -258,9 +243,6 @@ function DeliveryAlert() {
           <div v-if="isUserLoggedIn" class="btn-order">
             <button class="delivery-alert" @click="DeliveryAlert()">
               배달알림
-            </button>
-            <button class="delivery-success" @click="goDelivery()">
-              배달완료
             </button>
             <button class="money-request" @click="goMoney()">
               송금요청
@@ -275,11 +257,11 @@ function DeliveryAlert() {
               <!-- 추가적인 내용이 들어갈 수 있습니다. -->
             </div>
             <div class="center-panel">
-              <AfterCart :orders="orderList" :code="code" />
+              <AfterCart :orders="choiceMenus" :code="code" />
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
-              <Chat />
+              <Chat :ws-url="wsUrl" :code="code" />
             </div>
           </div>
         </body>
@@ -299,13 +281,13 @@ main {
   display: flex;
   flex-direction: column;
   height: auto;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 
   /* box-sizing: border-box; */
   justify-content: center;
   align-items: center;
   /* height: 878px; */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .container {
@@ -464,6 +446,7 @@ button {
   margin-left: 20px;
   /* margin-bottom: 20px; */
   /* height: 700px; */
+  max-width: 345px;
   /* height: 645px; */
   border: 3px solid #1e293b;
   border-radius: 5px;
@@ -484,18 +467,53 @@ button {
 /* 화면 폭이 768px 미만일 때 */
 @media screen and (max-width: 768px) {
   head {
-    font-size: 18px;
+    font-size: 12px;
+    box-sizing: inherit;
     /* 화면이 작을 때 텍스트 크기 조절 */
+  }
+
+  .line, .center-title, .timeline{
+    flex-direction: column;
+    justify-content: center;
+
+  }
+
+  .delivery-alert,
+.delivery-success,
+.money-request{
+  font-size: 12px;
+}
+
+  .order-request{
+    font-size: 12px;
+  }
+
+  .party-name{
+    text-align: center;
+  }
+
+  .row{
+    display: block;
+  }
+
+  .time{
+    margin: 0px;
   }
 
   .body-container {
     flex-direction: column;
   }
 
-  /* .right-panel {
-      margin-left: 0;
-      margin-top: 20px;
-    } */
+  .center-panel{
+    margin-left: 0px;
+    margin-top: 20px;
+    max-width: none;
+  }
+
+  .right-panel {
+    margin-left: 0;
+    margin-top: 20px;
+  }
 
   .btn-curorder,
   .btn-roomlist {

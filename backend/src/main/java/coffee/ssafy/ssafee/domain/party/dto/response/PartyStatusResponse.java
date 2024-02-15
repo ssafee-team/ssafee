@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 import static coffee.ssafy.ssafee.common.DateUtils.LOCAL_DATETIME_EXAMPLE;
 import static coffee.ssafy.ssafee.common.DateUtils.LOCAL_DATETIME_PATTERN;
 
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record PartyStatusResponse(
         @JsonFormat(pattern = LOCAL_DATETIME_PATTERN)

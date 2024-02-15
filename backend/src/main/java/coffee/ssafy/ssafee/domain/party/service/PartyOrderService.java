@@ -1,12 +1,14 @@
 package coffee.ssafy.ssafee.domain.party.service;
 
+import coffee.ssafy.ssafee.domain.party.dto.PartyOrderCreateInfo;
+import coffee.ssafy.ssafee.domain.party.dto.PartyStatusInfo;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyStatusResponse;
 import coffee.ssafy.ssafee.domain.party.entity.ChoiceMenu;
 import coffee.ssafy.ssafee.domain.party.entity.Participant;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
-import coffee.ssafy.ssafee.domain.party.mapper.PartyMapper;
+import coffee.ssafy.ssafee.domain.party.mapper.PartyOrderMapper;
 import coffee.ssafy.ssafee.domain.party.repository.ParticipantRepository;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +27,19 @@ public class PartyOrderService {
     private final MatterMostService matterMostService;
     private final PartyRepository partyRepository;
     private final ParticipantRepository participantRepository;
-    private final PartyMapper partyMapper;
+    private final PartyOrderMapper partyOrderMapper;
 
-    public Long createOrder(String accessCode) {
+    public PartyOrderCreateInfo createOrder(String accessCode) {
         // 검증
         // 1. 유효한 엑세스 코드인가?
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
         // 2. 마감시간 전인가 후인가?
-        party.realOrder();
+        party.updateRealOrder();
 
         // 3. 최소주문금액을 넘었는가?
-        Integer minimumPrice = party.getShop().getMinimumPrice();
+        int minimumPrice = party.getShop().getMinimumPrice();
         int total = 0;
         for (ChoiceMenu menu : party.getChoiceMenus()) {
             total += menu.getMenu().getPrice();
@@ -45,12 +47,23 @@ public class PartyOrderService {
         if (total < minimumPrice) {
             throw new PartyException(PartyErrorCode.THE_ORDER_AMOUNT_IS_LESS_THAN_THE_MINIMUM_ORDER);
         }
-        return party.getId();
+        return PartyOrderCreateInfo.builder()
+                .partyId(party.getId())
+                .shopId(party.getShop().getId())
+                .build();
     }
 
-    public PartyStatusResponse getOrders(String accessCode) {
+    @Transactional(readOnly = true)
+    public PartyStatusResponse getOrderStatus(String accessCode) {
         return partyRepository.findByAccessCode(accessCode)
-                .map(partyMapper::toPartyStatus)
+                .map(partyOrderMapper::toResponse)
+                .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+    }
+
+    @Transactional(readOnly = true)
+    public PartyStatusInfo getOrderStatus(Long partyId) {
+        return partyRepository.findById(partyId)
+                .map(partyOrderMapper::toInfo)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
     }
 
@@ -60,12 +73,20 @@ public class PartyOrderService {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
         // TODO: 배달시작 필드가 null인지 검사
-        party.deliver();
+        party.updateDeliver();
         if (party.getCreator().getWebhookUrl() != null) {
-            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), "@here @고영훈 커피 배달 완료");
+            StringBuilder sb = new StringBuilder();
+            sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
+            sb.append("@here \n");
+            sb.append("#### 주문하신 음료가 도착했습니다. \n");
+            sb.append("#### 파티명: " + party.getName() + "\n");
+            sb.append("#### 총  무: " + party.getCreator().getName() + " \n\n");
+            sb.append("#### 본인의 음료를 수령해주세요");
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
     }
 
+    @Transactional(readOnly = true)
     public void giveMeMoney(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
@@ -101,30 +122,37 @@ public class PartyOrderService {
             }
             matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
+
     }
 
+    @Transactional(readOnly = true)
     public void sendAdvertise(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
-        // 파티 access 코드를 webhook url로 발송한다.
-        // [초대 링크]()
-        String inviteUrl = "https://ssafy.coffee/room/" + accessCode;
-        StringBuilder sb;
+
         if (party.getCreator().getWebhookUrl() != null) {
-            sb = new StringBuilder();
-            sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
-            sb.append("@here \n");
-            sb.append("#### 새로운 커피파티가 개설되었습니다. \n");
-            sb.append("#### 카페: " + party.getShop().getName() + "\n");
-            sb.append("#### 마감시간: " + party.getLastOrderTime() + " \n");
-            sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
-            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+            // 파티 access 코드를 webhook url로 발송한다.
+            // [초대 링크]()
+            String inviteUrl = "https://ssafy.coffee/room/" + accessCode;
+            StringBuilder sb;
+            if (party.getCreator().getWebhookUrl() != null) {
+                sb = new StringBuilder();
+                sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
+                sb.append("@here \n");
+                sb.append("#### 새로운 커피파티가 개설되었습니다. \n");
+                sb.append("#### 카페: " + party.getShop().getName() + "\n");
+                sb.append("#### 마감시간: " + party.getLastOrderTime() + " \n");
+                sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
+                matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+            }
         }
     }
 
+    @Transactional(readOnly = true)
     public void sendCarrierResult(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+
         StringBuilder sb;
         if (party.getCreator().getWebhookUrl() != null) {
             List<Participant> participants = party.getParticipants();
@@ -148,11 +176,12 @@ public class PartyOrderService {
 
     public void pickCarrier(Long partyId) {
         List<Participant> participants = participantRepository.findAllByPartyId(partyId);
-        int carrierCount = (participants.size() + 5) / 6;
+        Integer carrierCount = (participants.size() + 5) / 6;
         Collections.shuffle(participants);
         participants.subList(0, carrierCount).forEach(Participant::updateIsCarrier);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsCarrier(Long partyId) {
         return participantRepository.existsByPartyIdAndIsCarrierIsTrue(partyId);
     }

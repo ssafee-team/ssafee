@@ -9,6 +9,10 @@ function getShops(param, success, fail) {
   local.get(`${url}`, { param }).then(success).catch(fail)
 }
 
+function getShop(id, success, fail){
+  local.get(`${url}/${id}`).then(success).catch(fail)
+}
+
 // 메뉴 카테고리 조회
 function getMenuCategories(id, success, fail) {
   local.get(`${url}/${id}/menu-categories`).then(success).catch(fail)
@@ -24,4 +28,9 @@ function getOptionCategory(shop_id, option_category_id, success, fail) {
   local.get(`${url}/${shop_id}/option-categories/${option_category_id}`).then(success).fail(fail)
 }
 
-export { getShops, getMenuCategories, getMenusByCategory, getOptionCategory }
+// 매니저 : 주문기록 조회
+function getOrder(shop_id, success, fail){
+  local.get(`${url}/${shop_id}/orders/`).then(success).catch(fail)
+}
+
+export { getShops, getShop, getMenuCategories, getMenusByCategory, getOptionCategory, getOrder }

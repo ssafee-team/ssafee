@@ -27,17 +27,22 @@ public class OptionCategoryService {
     private final OptionCategoryRepository optionCategoryRepository;
     private final OptionCategoryMapper optionCategoryMapper;
 
+    @Transactional(readOnly = true)
     public List<OptionCategoryDetailResponse> getOptionCategories(Long shopId, Long menuId) {
         return Optional.ofNullable(menuId)
                 .map(id -> optionCategoryRepository.findAllByShopIdAndMenuId(shopId, id))
                 .orElseGet(() -> optionCategoryRepository.findAllByShopId(shopId)).stream()
-                .map(optionCategoryMapper::toDetailDto)
+                .map(optionCategoryMapper::toDetailResponse)
                 .toList();
     }
 
     public Long createOptionCategory(Long shopId, OptionCategoryRequest optionCategoryRequest) {
-        OptionCategory optionCategory = optionCategoryMapper.toEntity(optionCategoryRequest);
-        optionCategory.setShop(entityManager.getReference(Shop.class, shopId));
+        OptionCategory optionCategory = OptionCategory.builder()
+                .name(optionCategoryRequest.name())
+                .required(optionCategoryRequest.required())
+                .maxCount(optionCategoryRequest.maxCount())
+                .shop(entityManager.getReference(Shop.class, shopId))
+                .build();
         optionCategoryRepository.save(optionCategory);
         return optionCategory.getId();
     }

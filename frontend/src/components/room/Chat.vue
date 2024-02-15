@@ -1,25 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { useBrowserLocation, useFetch } from '@vueuse/core'
 import { Client } from '@stomp/stompjs'
 
-const location = useBrowserLocation()
-const accessCode = location.value.pathname.split('/').pop()
-const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
-const wsEndpoint = '/ws'
-const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
+interface Chat {
+  name: string
+  content: string
+  created_time: string
+}
+
+const code = defineModel<string>('code', { required: true })
+const wsUrl = defineModel<string>('wsUrl', { required: true })
 
 const chatListRef = ref()
-const chats = ref(await (await fetch(`/api/v1/parties/${accessCode}/chats`)).json())
-const content = defineModel()
-const error = ref()
+const chats = ref<Chat[]>(await (await fetch(`/api/v1/parties/${code.value}/chats`)).json())
+const content = ref()
+// const error = ref()
 
 const client = new Client({
-  brokerURL: wsUrl,
+  brokerURL: wsUrl.value,
   onConnect: () => {
-    client.subscribe(`/sub/party/${accessCode}/message`, (message) => {
-      chats.value.push(JSON.parse(message.body))
-
+    client.subscribe(`/sub/party/${code.value}/message`, (message) => {
+      chats.value?.push(JSON.parse(message.body))
       nextTick(() => {
         chatListRef.value.scrollTop = chatListRef.value.scrollHeight
       })
@@ -31,7 +32,7 @@ function publish() {
   if (content.value.trim().length === 0)
     return
   client.publish({
-    destination: `/pub/party/${accessCode}/chat`,
+    destination: `/pub/party/${code.value}/chat`,
     body: JSON.stringify({ content: content.value }),
   })
   content.value = ''
@@ -56,7 +57,7 @@ onUnmounted(() => {
 
   <div class="content">
     <div ref="chatListRef" class="chat-list">
-      <div v-for="chat in chats" :key="chat.createdTime" class="chat">
+      <div v-for="chat in chats" :key="chat.created_time" class="chat">
         <div v-show="chat.name" class="chat-name">
           {{ chat.name }}
         </div>
@@ -71,7 +72,7 @@ onUnmounted(() => {
     <div class="footer">
       <input v-model="content" class="chat-input" @keyup.enter="publish">
       <button class="send" @click="publish">
-        전송
+        <img src="@/assets/img/send.png" alt="send" style="width: 29px; height: 29px;;">
       </button>
     </div>
   </div>
@@ -118,12 +119,9 @@ onUnmounted(() => {
 }
 
 .chat {
-  margin-top: 6px;
-  margin-bottom: 6px;
-  margin-left: 6px;
-  margin-right: 6px;
+  margin: 6px;
   padding: 4px;
-  border: 2px solid #343844;
+  border: 2px solid #1e293b;
 
   word-wrap: break-word;
   width: fit-content;
@@ -133,12 +131,17 @@ onUnmounted(() => {
 .chat-name {}
 
 .chat-content {
-  font-size: 16px;
+  margin-left: 5px;
+  margin-right: 5px;
+  font-size: 18px;
   font-weight: bold;
 }
 
 .chat-time {
+  margin: 5px;
+  margin-bottom: 0px;
   font-size: 12px;
+  font-weight: bold;
   color: #999999;
 }
 
@@ -149,7 +152,7 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  background-color: #343844;
+  background-color: #1e293b;
   /* bottom: 0; */
   /* position: sticky; */
   border-radius: 0 0 3px 3px;
@@ -158,29 +161,40 @@ onUnmounted(() => {
 
 .chat-input {
   display: flex;
+  height: 70%;
   width: 100%;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
-  color: #ffffff;
+  color: black;
   border: none;
-  background: transparent;
+  /* background: transparent; */
+  background-color: white;
+  margin-left: 5px;
+  border-radius: 5px;
   outline: none;
   padding-left: 10px;
 }
 
 .send {
   display: flex;
-  width: 60px;
+  width: 70px;
+  height: 70%;
   cursor: pointer;
-  background-color: #00a5e7;
+  background-color: #48A6DA;
   /* background-color: #020817; */
   border: 0px;
   font-weight: bold;
-  color: #ffffff;
+  color: white;
   font-size: 16px;
   margin: 10px;
-  border-radius: 10px;
-  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  border-radius: 5px;
+  /* box-shadow: 2px 2px 2px 2px rgb(227, 226, 226); */
   justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .footer {
+    margin-top: 5px;
+  }
 }
 </style>

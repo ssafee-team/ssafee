@@ -9,6 +9,6 @@ import org.mapstruct.Mapping;
 public interface ManagerMapper {
 
     @Mapping(target = "shopId", source = "shop.id")
-    ManagerResponse toDto(Manager manager);
+    ManagerResponse toResponse(Manager manager);
 
 }

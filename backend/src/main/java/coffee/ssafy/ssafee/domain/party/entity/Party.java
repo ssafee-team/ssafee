@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "parties", indexes = {
-        @Index(name = "idx_access_code", columnList = "access_code", unique = true)
-})
+@Table(name = "parties", indexes = {@Index(name = "idx_access_code", columnList = "access_code", unique = true)})
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -87,27 +85,30 @@ public class Party extends BaseTimeEntity {
                 .email(creatorRequest.email())
                 .bank(creatorRequest.bank())
                 .account(creatorRequest.account())
+                .webhookUrl(creatorRequest.webhookUrl()
+                        .startsWith("https://meeting.ssafy.com/hooks/") ?
+                        creatorRequest.webhookUrl() : null)
                 .party(this)
                 .build();
     }
 
-    public void confirm() {
+    public void updateConfirm() {
         this.confirmedTime = LocalDateTime.now();
     }
 
-    public void reject() {
+    public void updateReject() {
         this.rejectedTime = LocalDateTime.now();
     }
 
-    public void realOrder() {
+    public void updateRealOrder() {
         this.realOrderedTime = LocalDateTime.now();
     }
 
-    public void make() {
+    public void updateMake() {
         this.madeTime = LocalDateTime.now();
     }
 
-    public void deliver() {
+    public void updateDeliver() {
         this.deliveredTime = LocalDateTime.now();
     }
 

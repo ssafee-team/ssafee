@@ -81,7 +81,7 @@ public class MenuController {
                                            @PathVariable("menu_id") Long menuId) {
         managerService.validateShop(principal, shopId);
         menuService.deleteMenu(shopId, menuCategoryId, menuId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

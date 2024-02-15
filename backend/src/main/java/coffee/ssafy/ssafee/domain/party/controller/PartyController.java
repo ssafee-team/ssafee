@@ -3,8 +3,8 @@ package coffee.ssafy.ssafee.domain.party.controller;
 import coffee.ssafy.ssafee.domain.party.dto.request.PartyRequest;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailResponse;
 import coffee.ssafy.ssafee.domain.party.dto.response.PartyResponse;
+import coffee.ssafy.ssafee.domain.party.service.PartyOrderService;
 import coffee.ssafy.ssafee.domain.party.service.PartyService;
-import coffee.ssafy.ssafee.domain.party.service.PartySocketIOService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +23,7 @@ import java.util.List;
 public class PartyController {
 
     private final PartyService partyService;
-    private final PartySocketIOService partySocketIoService;
+    private final PartyOrderService partyOrderService;
 
     @PostMapping
     @Operation(summary = "파티 생성", security = @SecurityRequirement(name = "access-token"))
@@ -32,6 +32,7 @@ public class PartyController {
         Long userId = principal.userId();
         String accessCode = partyService.createParty(userId, partyRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode);
+        partyOrderService.sendAdvertise(accessCode); // TODO: 별도 API 분리 필요
         return ResponseEntity.created(location).build();
     }
 

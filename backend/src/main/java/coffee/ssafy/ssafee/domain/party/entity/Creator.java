@@ -2,7 +2,6 @@ package coffee.ssafy.ssafee.domain.party.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import lombok.*;
 
 @Entity
@@ -34,8 +33,7 @@ public class Creator {
     @Column(nullable = false)
     private String account;
 
-    @Null
-    @Column(nullable = true)
+    @Column
     private String webhookUrl;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

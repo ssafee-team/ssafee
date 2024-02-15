@@ -16,4 +16,4 @@ async function managerDetail(param, success, fail) {
   await local.get(`${url}/me`).then(success).catch(fail)
 }
 
-export { managerLogin, managerModify, managerDetail }
+export { managerLogin, managerModify, managerDetail, getShopId }

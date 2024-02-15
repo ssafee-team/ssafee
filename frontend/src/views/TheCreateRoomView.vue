@@ -22,6 +22,7 @@ const form = ref({
   bankName: '',
   accountNumber: '',
   phoneNumber: '',
+  webhook_url: '',
 })
 
 const formErrors = ref({
@@ -33,12 +34,13 @@ const formErrors = ref({
   bankName: false,
   accountNumber: false,
   phoneNumber: false,
+  // webhook_url: false,
 })
 
 const shops = ref([])
 
 onMounted(() => {
-  console.log('시작')
+  // console.log('시작')
   getShopList()
 })
 
@@ -48,7 +50,7 @@ function getShopList(param) {
     param,
 
     ({ data }) => {
-      console.log('가져온 데이터: ', data)
+      // console.log('가져온 데이터: ', data)
       shops.value.push(data)
     },
     (error) => {
@@ -87,7 +89,8 @@ Object.keys(form.value).forEach((key) => {
 // 기존에 정의된 함수들...
 
 function submitForm() {
-  const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time', 'creator']
+  const requiredFields = ['name', 'generation', 'shop_id', 'classroom', 'last_order_time']
+  const creatorRequiredFields = ['name', 'bank', 'account']
   const isAnyFieldEmpty = requiredFields.some(
     field =>
       (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '')
@@ -95,7 +98,9 @@ function submitForm() {
       && Object.values(partyData.value[field]).some(val => val.trim() === '')),
   )
 
-  if (isAnyFieldEmpty) {
+  const isCreatorEmpty = creatorRequiredFields.some(field => !partyData.value.creator[field].trim())
+
+  if (isAnyFieldEmpty || isCreatorEmpty) {
     // 필드가 비어있으면 경고 메시지 띄우기
     EmptyModal.value = true
   }
@@ -135,27 +140,6 @@ const isBaekSelected = computed(() => PickPlatform.value === '백다방')
 const isBaeminSelected = ref(false)
 const isSsafySelected = ref(false)
 
-// watch(Pickdelivery, (value) => {
-//   if (value === "싸피") {
-//     isBaeminSelected.value = false;
-//     isSsafySelected.value = true;
-//   } else if (value === "배민") {
-//     isBaeminSelected.value = true;
-//     isSsafySelected.value = false;
-//   } else {
-//     // 조건이 맞지 않을 경우의 로직
-//     isBaeminSelected.value = false;
-//     isSsafySelected.value = false;
-//   }
-// });
-
-// console.log(form)
-// console.log(addPlatform)
-// function submitForm() {
-// alert('제출이 완료되었습니다')
-// console.log(form)
-// }
-
 function addPlatform(itemName) {
   if (PickPlatform.value === itemName)
     PickPlatform.value = ''
@@ -185,7 +169,7 @@ const partyData = computed(() => ({
     email: 'skip',
     bank: form.value.bankName,
     account: form.value.accountNumber,
-    webhook_url: 'skip',
+    webhook_url: form.value.webhook_url,
   },
 }))
 
@@ -198,87 +182,7 @@ function checkExistData(value, dataName) {
   return true
 }
 
-// const NameValidation = () => {
-//   // 한글 이름 2-4자를 확인하는 정규 표현식
-//   form.value.name = form.value.name.replace(/^[가-힣]{2,4}$/, '')
-// };
-
-// const name = "예시"; // 사용자가 입력한 이름
-// const isValid = NameValidation(name);
-
-// if (!isValid) {
-//   alert('이름은 한글로 2자에서 4자 사이여야 합니다.');
-// }
-
-function classValidation() {
-  // 숫자만 남기고 모든 문자 제거
-  form.value.class = form.value.class.replace(/[^0-9]/g, '')
-  // 2자리 숫자를 초과하는 입력 제거
-  if (form.value.class.length > 1)
-    form.value.class = form.value.class.slice(0, 1)
-
-  const numericValue = Number.parseInt(form.value.class, 10)
-
-  if (numericValue < 1 || numericValue > 7) {
-    console.log(numericValue)
-    // 범위를 벗어난 경우 경고 표시 및 입력값 초기화
-    window.alert('입력값은 확인')
-    form.value.class = ''
-  }
-}
-
-function batchValidation() {
-  // 숫자만 남기고 모든 문자 제거
-  form.value.batch = form.value.batch.replace(/[^0-9]/g, '')
-  // 2자리 숫자를 초과하는 입력 제거
-  if (form.value.batch.length > 2)
-    form.value.batch = form.value.batch.slice(0, 2)
-
-  const numericValue = Number.parseInt(form.value.class, 10)
-
-  // 숫자가 1부터 30 사이가 아닐 경우
-  if (numericValue < 1 || numericValue > 30) {
-    window.alert('입력값은 1부터 30 사이여야 합니다.')
-    form.value.class = ''
-  }
-}
-
-function timeValidation(event) {
-  // 숫자와 콜론만 허용
-  const validCharacters = /[\d:]/
-  const isCharacterValid = validCharacters.test(event.key) || event.key === 'Backspace'
-
-  if (!isCharacterValid)
-    event.preventDefault() // 유효하지 않은 문자 입력 차단
-
-  // 5자리를 초과하는 입력 차단
-  if (form.value.deadline.length >= 5 && event.key !== 'Backspace' && event.key !== 'Delete')
-    event.preventDefault()
-}
 const TimeModal = ref(false)
-// const formatTime = () => {
-//   // 시간 형식 검증
-//   form.value.deadline = form.value.deadline.replace(/[^\d:]/g, '');
-
-//   if (form.value.deadline.length === 5) {
-//     const [hours, minutes] = form.value.deadline.split(':');
-//     if (parseInt(hours) > 23 || parseInt(minutes) > 59) {
-//       TimeModal.value = true
-//       form.value.deadline = '';
-//     }
-//   }
-// };
-
-function checkName(name) {
-  if (!checkExistData(name, '이름을'))
-    return false
-  const nameRegExp = /^[가-힣]{2,4}$/
-  if (!nameRegExp.test(name)) {
-    alert('이름이 올바르지 않습니다.')
-    return false
-  }
-  return true
-}
 
 // 이하는 모달
 const modalCheck = ref(false)
@@ -290,31 +194,11 @@ function modalClose() {
 function modalOpen() {
   modalCheck.value = !modalCheck.value
 }
-// console.log(modalCheck.value);
-// console.log(form.value);
-
-//   function submitForm() {
-//   // 필요한 필드들이 공백인지 확인
-//   const requiredFields = ['name', 'generation', 'classroom', 'last_order_time', 'creator'];
-//   const isAnyFieldEmpty = requiredFields.some(field =>
-//     (typeof partyData.value[field] === 'string' && partyData.value[field].trim() === '') ||
-//     (typeof partyData.value[field] === 'object' && Object.values(partyData.value[field]).some(val => val.trim() === ''))
-//   );
-
-//   if (isAnyFieldEmpty) {
-//     // 필드가 비어있으면 경고 메시지 띄우기
-//     EmptyModal.value = true
-//   } else {
-//     // 필드가 모두 채워져 있으면 모달 열기 및 데이터 전송
-//     modalOpen();
-//     createParty(partyData.value, onSuccess, onFailure);
-//   }
-// }
 
 // 성공 콜백 함수를 정의합니다.
 function onSuccess(response) {
-  console.log('성공:', response)
-  console.log(response.headers.location)
+  // console.log('성공:', response)
+  // console.log(response.headers.location)
   // const responseObject = response.data.headers.location
   const locationPath = response.headers.location
   const parts = locationPath.split('/') // '/'를 기준으로 문자열을 분할
@@ -403,7 +287,7 @@ function formatTime() {
     <div class="child2">
       <main class="form-container">
         <div class="form-field">
-          <label for="roomTitle">파티명</label>
+          <label for="roomTitle"><span class="required">* </span>파티명</label>
 
           <div class="input-with-error">
             <input id="roomTitle" v-model="form.roomTitle" type="text" maxlength="32" placeholder="방 제목을 입력해주세요">
@@ -412,7 +296,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="cafe">카페</label>
+          <label for="cafe"><span class="required">* </span>카페</label>
           <div class="input-with-error">
             <select id="cafe" v-model="form.shop_id" class="input-style">
               <option disabled value="">
@@ -428,7 +312,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="name">이름</label>
+          <label for="name"><span class="required">* </span>이름</label>
           <div class="input-with-error">
             <input
               id="name" v-model="form.name" type="text" :class="{ 'error-input': formErrors.name }" maxlength="8"
@@ -438,7 +322,7 @@ function formatTime() {
           </div>
         </div>
         <!-- <div class="form-field">
-          <label for="name">이름</label>
+          <label for="name">이름<span class=required> *</span></label>
           <div class="input-with-error">
             <input type="text" id="name" v-model="form.name" maxlength="8" placeholder="김싸피">
             <span v-if="formErrors.name" class="error-message">이름을 입력해주세요.</span>
@@ -446,26 +330,26 @@ function formatTime() {
         </div> -->
 
         <div class="form-field">
-          <label for="class">반</label>
+          <label for="class"><span class="required">* </span>반</label>
           <div class="input-with-error">
-            <input id="class" v-model="form.class" type="text" placeholder="2" @input="classValidation">
+            <input id="class" v-model="form.class" type="number" placeholder="2">
             <span v-if="formErrors.class" class="error-message">반을 입력해주세요.</span>
           </div>
         </div>
 
         <div class="form-field">
-          <label for="batch">기수</label>
+          <label for="batch"><span class="required">* </span>기수</label>
           <div class="input-with-error">
-            <input id="batch" v-model="form.batch" type="text" placeholder="10" @input="batchValidation">
+            <input id="batch" v-model="form.batch" type="number" placeholder="10">
             <span v-if="formErrors.batch" class="error-message">기수를 입력해주세요.</span>
           </div>
         </div>
 
         <div class="form-field">
-          <label for="deadline">마감시간</label>
+          <label for="deadline"><span class="required">* </span>마감시간</label>
           <div class="input-with-error">
             <input
-              id="deadline" v-model="form.deadline" type="text" placeholder="13:00" @keydown="timeValidation"
+              id="deadline" v-model="form.deadline" type="time" placeholder="13:00"
               @input="formatTime"
             >
             <!-- 현재 시간 이후만 입력 가능 에러 메시지 -->
@@ -476,7 +360,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="bankName">은행명</label>
+          <label for="bankName"><span class="required">* </span>은행명</label>
           <div class="input-with-error">
             <input id="bankName" v-model="form.bankName" type="text" maxlength="32" placeholder="은행명을 입력해주세요">
             <span v-if="formErrors.bankName" class="error-message">은행명을 입력해주세요.</span>
@@ -484,7 +368,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="accountNumber">계좌번호</label>
+          <label for="accountNumber"><span class="required">* </span>계좌번호</label>
           <div class="input-with-error">
             <input id="accountNumber" v-model="form.accountNumber" type="text" placeholder="계좌번호를 입력해주세요">
             <span v-if="formErrors.accountNumber" class="error-message">계좌번호를 입력해주세요.</span>
@@ -492,13 +376,13 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="hook">WebHook_URL</label>
+          <label for="hook"> WebHook_URL</label>
           <div class="input-with-error">
-            <input id="hook" v-model="form.hook" type="text">
+            <input id="hook" v-model="form.webhook_url" type="url">
           </div>
         </div>
         <!-- <div class="form-field">
-      <label for="phoneNumber">전화번호</label>
+      <label for="phoneNumber">전화번호<span class=required> *</span></label>
       <input type="text" id="phoneNumber" v-model="form.phoneNumber" maxlength="15"
       placeholder="010-1234-5678">
     </div> -->
@@ -513,8 +397,16 @@ function formatTime() {
 </template>
 
 <style>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 #empty {
   height: 50px;
+}
+
+.required {
+  color: red;
+  font-weight: bold;
 }
 
 .border1 {
@@ -552,6 +444,7 @@ function formatTime() {
 
 .form-field {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
@@ -574,16 +467,18 @@ input {
   box-sizing: border-box;
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
+
 .input-style {
   flex-grow: 1;
   height: 40px;
-  padding: 8px;
+  padding: 3px;
   font-size: 18px;
   border: 3px solid #1E293B;
   border-radius: 15px;
   box-sizing: border-box;
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
+
 /* header {
   font-size: 2rem;
   width: 100%;

@@ -1,25 +1,87 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { useLocalStorage } from '@vueuse/core'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
 
+const route = useRoute()
 // orderList의 참조를 생성합니다.
-const orderList = ref(null)
+const orderList = ref([])
+const shopId = ref(null) 
+// partyId를 반응형 참조로 선언
+const partyId = ref(null)
+const managerToken = useLocalStorage('manager-token', null)
+const totalPrice = ref(0)
 
-// 컴포넌트가 마운트된 후에 이벤트 리스너를 추가합니다.
-onMounted(() => {
-  // orderList의 참조가 있을 때만 작업을 수행합니다.
-  if (orderList.value) {
-    // orderList의 자식인 모든 ul 요소를 선택합니다.
-    const listItems = orderList.value.querySelectorAll('ul')
-    // 각 ul 요소에 클릭 이벤트 리스너를 추가합니다.
-    listItems.forEach((ul) => {
-      ul.addEventListener('click', function () {
-        // 'highlight' 클래스를 토글합니다.
-        this.classList.toggle('highlight')
+async function fetchOrderDetails() {
+  if (!partyId.value)
+    return
+
+  // partyId를 숫자로 변환
+  const numericPartyId = Number(partyId.value)
+  // console.log(partyId, '하')
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  try {
+    const response = await axios.get(`/api/v1/shops/${shopId.value}/orders`, config)
+    // API 응답을 기반으로 orderList 업데이트
+    // console.log(response)
+    orderList.value = response.data.filter(order => order.party_id === numericPartyId)
+    // console.log(orderList.value)
+
+    totalPrice.value = 0
+
+    orderList.value.forEach((order) => {
+      order.choice_menus.forEach((choiceMenu) => {
+        totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
+
+        choiceMenu.option_categories.forEach((optionCategory) => {
+          optionCategory.options.forEach((option) => {
+            totalPrice.value += option.price // 옵션 가격 합산
+          })
+        })
       })
     })
   }
+  catch (error) {
+    console.error('주문 정보 조회 중 오류 발생:', error)
+  }
+}
+
+// 주문 목록에 대한 DOM 조작을 위한 로직을 watchEffect 내부에 구현
+watchEffect(() => {
+  if (orderList.value.length > 0) {
+    // 주문 목록이 업데이트될 때 실행될 로직
+    // 예: orderList.value.forEach(order => { ... })
+  }
 })
+
+function onMade() {
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  axios.post(`/api/v1/shops/${shopId.value}/orders/${partyId.value}/made`, null, config)
+}
+
+function onStartDevlivery() {
+  // console.log(partyId.value)
+  // console.log(shopId)
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  axios.post(`/api/v1/shops/${shopId.value}/orders/${partyId.value}/start-delivery`, null, config)
+}
+
+//
+onMounted(() => {
+  partyId.value = route.query.partyId
+  shopId.value = route.query.shopId
+  // console.log(partyId.value)
+  // console.log(shopId.value)
+  if (partyId.value)
+    fetchOrderDetails()
+
+})
+
+function toggleHighlight(choiceMenu) {
+  choiceMenu.highlighted = !choiceMenu.highlighted;
+}
 </script>
 
 <template>
@@ -38,7 +100,7 @@ onMounted(() => {
         <span>배달주소 | 광주광역시 하남산단 삼성전자 G5주차장 자전거 거치대 앞</span>
       </div>
       <div class="party-info2">
-        <span>총 주문금액 : 134,000원</span>
+        <span>총 주문금액 : {{ totalPrice }}원</span>
       </div>
 
       <div class="status-info">
@@ -52,7 +114,9 @@ onMounted(() => {
         <div class="status-made">
           <span>제조완료 | </span>
           <span>12:19:10</span>
-          <button>제조 완료</button>
+          <button @click="onMade">
+            제조 완료
+          </button>
         </div>
         <div class="direction">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼
@@ -61,7 +125,9 @@ onMounted(() => {
           <span>배달출발 | </span>
           <span style="color: gray;">이전 단계를 완료하세요.</span>
           <span>12:25:54</span>
-          <button>배달 출발</button>
+          <button @click="onStartDevlivery">
+            배달 출발
+          </button>
         </div>
         <div class="direction">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼
@@ -74,48 +140,34 @@ onMounted(() => {
       </div>
     </div>
 
-    <div id="orderList" ref="orderList" class="order-info">
-      <!-- 향후 for-each로 반복문 -->
-      <ul>
-        12 T-아이스아메리카노
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        5 G-핫 카페라떼
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-카페모카
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
+    <div id="orderList" class="order-info">
+    
+        <div v-for="(order, index) in orderList" :key="index" class="order-ul">
+        <div v-for="choiceMenu in order.choice_menus" :key="choiceMenu.id" class="order-li" :class="{ 'highlight': choiceMenu.highlighted }" @click="toggleHighlight(choiceMenu)">
+            
+          <div class="menu-name">{{ choiceMenu.menu.name }}</div>
+            
+              <div v-for="optionCategory in choiceMenu.option_categories" :key="optionCategory.id">
+                <div class="option-name">
+                  <div v-for="option in optionCategory.options" :key="option.id">
+                    ㄴ {{ option.name }}
+                  </div>
+                </div>
+              </div>
+              <hr>
+            
+            </div>
+        </div>
+
+      
     </div>
   </div>
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 .content {
   padding: 15px;
   display: flex;
@@ -130,7 +182,8 @@ onMounted(() => {
   flex-direction: row;
   justify-content: space-between;
   border-radius: 20px;
-  background-color: #E6F4F1;
+  color: #FFFFFF;
+  background-color: #1e293b;
   align-items: center;
   font-weight: bold;
 }
@@ -159,34 +212,49 @@ onMounted(() => {
   justify-content: center;
   font-size: 20px;
   padding: 15px;
+  
 }
 
 .order-info {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: center;
   padding: 10px;
   margin: 10px;
   font-size: 20px;
   width: 300px;
-  height: 800px;
+  height: 700px;
   overflow-y: auto;
-  border: 1px solid black
+  border-radius: 5px;
+  border: 3px solid #1e293b;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
-.order-info ul {
+.menu-name{
+  font-weight: bold;
+}
+
+.order-ul{
+  width: 100%;
+}
+
+.order-li{
+
+}
+
+.order-info::-webkit-scrollbar{
+  display: none;
+}
+
+.option-name{
+  margin-top: 5px;
+  margin-left: 10px;
+  font-size: 16px;
   display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  width: 80%;
-}
-
-.order-info li {
-  font-weight: bold;
-  list-style-type: none;
 }
 
 button {
+  margin-left: 5px;
   background-color: #EB4E5A;
   color: white;
   border-radius: 25px;

@@ -8,4 +8,8 @@ import { RouterView } from 'vue-router'
   </Suspense>
 </template>
 
-<style scoped></style>
+<style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
+</style>

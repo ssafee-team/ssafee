@@ -1,32 +1,57 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
 import { jwtDecode } from 'jwt-decode'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import CreateHeader from '@/components/common/CreateHeader.vue'
+
+dayjs.extend(duration)
+dayjs.extend(customParseFormat)
+
+interface Party {
+  id: number
+  name: string
+  generation: number
+  classroom: number
+  last_order_time: string
+  created_time: string
+  shop_id: number
+  user_id: number
+}
+
+interface Shop {
+  id: number
+  name: string
+  address: string
+  phone: string
+  image: string
+  enabled_order: boolean
+  minimum_price: number
+  closed: boolean
+}
 
 const location = useBrowserLocation()
 const router = useRouter()
 const token = useLocalStorage('user-token', null)
-const { data: parties } = await useFetch('/api/v1/parties').get().json()
-const { data: shops } = await useFetch('/api/v1/shops').get().json()
-const shopRecord = shops.value.reduce((acc, shop) => ({ ...acc, [shop.id]: shop }), {})
+const { data: parties } = await useFetch('/api/v1/parties').get().json<Party[]>()
+const { data: shops } = await useFetch('/api/v1/shops').get().json<Shop[]>()
+const shopRecord = shops.value?.reduce((acc, shop) => ({ ...acc, [shop.id]: shop }), {}) as Record<number, Shop>
 
-function isPartyOpened(party) {
-  const [hours, minutes] = party.last_order_time.split(':')
-  const lastOrderTime = new Date()
-  lastOrderTime.setHours(hours)
-  lastOrderTime.setMinutes(minutes)
-
-  return new Date() < lastOrderTime
+function isPartyOpened(party: Party) {
+  const now = dayjs()
+  const deadline = dayjs(party.last_order_time, 'HH:mm')
+  return now.isBefore(deadline)
 }
 
 function handleAuth() {
-  const navigateToCreate = () => router.push('/CreateRoomView')
+  const pushCreate = () => router.push('/CreateRoomView')
   if (token.value !== null) {
     const decoded = jwtDecode(token.value)
-    if (Date.now() < decoded.exp * 1000)
-      return navigateToCreate()
+    if (Date.now() < decoded.exp! * 1000)
+      return pushCreate()
     token.value = null
   }
 
@@ -39,29 +64,25 @@ function handleAuth() {
   window.open(url, 'OAuth2 Login', `toolbar=no, menubar=no, width=${width}, height=${height}, top=${top}, left=${left}`)
   window.addEventListener('message', (event) => {
     token.value = event.data.token
-    navigateToCreate()
+    pushCreate()
   })
 }
-// 현재 날짜와 시간을 저장하는 변수
+
 const currentDate = ref('')
 const currentDayOfWeek = ref('')
 const currentTime = ref('')
 
+function updateCurrentDateTime() {
+  const now = new Date()
+  currentDate.value = now.toLocaleDateString()
+  currentDayOfWeek.value = '일월화수목금토'[now.getDay()]
+  currentTime.value = now.toLocaleTimeString()
+}
+
 // 컴포넌트가 처음으로 렌더링될 때 현재 시간을 설정하는 함수
 onMounted(() => {
-  // 현재 날짜와 시간을 업데이트하는 함수
-  function updateCurrentDateTime() {
-    const now = new Date()
-    currentDate.value = now.toLocaleDateString()
-    currentDayOfWeek.value = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()]
-    currentTime.value = now.toLocaleTimeString()
-  }
-
-  // 매 초마다 현재 시간을 업데이트하는 작업을 수행
-  setInterval(updateCurrentDateTime, 1000)
-
-  // 컴포넌트가 처음으로 렌더링될 때 현재 시간 설정
   updateCurrentDateTime()
+  setInterval(updateCurrentDateTime, 1000)
 })
 </script>
 
@@ -103,13 +124,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.content{
+.content {
   display: flex;
   flex-direction: row;
 
 }
 
-.time-info{
+.time-info {
   display: flex;
   width: 20%;
   border-radius: 10px;
@@ -127,7 +148,7 @@ onMounted(() => {
 
 }
 
-.link-info{
+.link-info {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -154,11 +175,13 @@ onMounted(() => {
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
   border-radius: 10px;
   height: 400px;
+  width: 900px;
   max-height: 400px;
   overflow-y: auto;
   /* 전체 너비를 차지하도록 설정 */
 }
-.link-container::-webkit-scrollbar{
+
+.link-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -185,16 +208,16 @@ button {
   align-items: center;
   border-radius: 10px;
   margin: 20px;
-  border: 3px solid ;
+  border: 3px solid;
   display: flex;
   flex-direction: column;
 }
 
-.party-button div{
+.party-button div {
   width: 100%;
 }
 
-.create-party{
+.create-party {
   display: flex;
 }
 
@@ -229,6 +252,7 @@ button {
   text-decoration: none;
   /* 밑줄 제거 */
 }
+
 .order-status {
   text-align: right;
   margin-right: 10px;

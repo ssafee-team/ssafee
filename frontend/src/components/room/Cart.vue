@@ -1,102 +1,71 @@
-<script>
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { deleteOrderMenu } from '@/api/party'
 
-export default {
-  props: {
-    orders: {
-      type: Array,
-      required: true,
-    },
-    code: {
-      required: true,
-    },
-  },
+const code = defineModel<string>('code', { required: true })
+const choiceMenus = defineModel<ChoiceMenu[]>('choiceMenus', { required: true })
 
-  data() {
-    return {
-      dropdownOpen: false, // 드롭다운 상태변수
-      sortMethod: 'default', // 현재 선택된 정렬 방식
-      // orders: [], //주문내역 저장할 배열
-    }
-  },
-
-  computed: {
-    // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
-    sortedOrders() {
-      const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-      // console.log("정렬전, ", orders);
-      // 정렬 방식에 따라 주문 목록을 정렬
-      if (this.sortMethod === 'userName') {
-        orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
-      }
-      else if (this.sortMethod === 'menuName') {
-        // console.log("ㅇㅇㅇㅇ");
-        orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
-      }
-
-      // console.log("정렬후,", orders);
-      return orders
-    },
-  },
-
-  mounted() {
-    // 페이지가 로드될 때 getOrderList 함수를 호출하여 주문내역을 가져옴
-    // this.fetchOrderList();
-  },
-
-  methods: {
-    // 드롭다운
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen
-    },
-    // 주문자 이름별 정렬
-    sortByUserName() {
-      this.sortMethod = 'userName'
-      this.toggleDropdown()
-    },
-    // 메뉴별 정렬
-    sortByMenuName() {
-      this.sortMethod = 'menuName'
-      this.toggleDropdown()
-    },
-
-    removeOrder(orderId) {
-      // 선택한 주문을 삭제
-      const index = this.orders.findIndex(order => order.id === orderId)
-      if (index !== -1) {
-        // 서버에 삭제 요청 보내기
-        deleteOrderMenu(
-          this.code,
-          orderId,
-          () => {
-            // 성공 시 주문 리스트에서 해당 주문 삭제
-            this.orders.splice(index, 1)
-          },
-          (error) => {
-            // 실패 시
-            console.error('주문 삭제 실패:', error)
-          },
-        )
-      }
-    },
-    calculateTotalPrice() {
-      let total = 0
-
-      for (const order of this.orders) {
-        let orderTotal = Number.parseFloat(order.menu.price) // 메뉴의 가격을 먼저 더함
-
-        for (const optionCategory of order.option_categories) {
-          for (const option of optionCategory.options)
-            orderTotal += Number.parseFloat(option.price) // 각 옵션의 가격을 더함
-        }
-
-        total += orderTotal // 각 주문 항목의 총 가격을 더함
-      }
-
-      return total.toFixed(0) // 소수점 이하 자리를 버리고 정수로 반환
-    },
-  },
+interface ChoiceMenu {
+  id: number
+  participant_name: string
+  menu: {
+    id: number
+    name: string
+    price: number
+    image: string
+    soldout: boolean
+  }
+  option_categories: {
+    id: number
+    name: string
+    required: boolean
+    max_count: number
+    options: {
+      id: number
+      name: string
+      price: number
+    }[]
+  }[]
 }
+
+// 현재 선택된 정렬 방식
+const sortMethod = ref('default')
+
+// 선택된 정렬 방식에 따라 정렬된 주문 목록
+const sortedOrders = computed(() => {
+  const ordersCopy = [...choiceMenus.value]
+  if (sortMethod.value === 'userName')
+    ordersCopy.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
+
+  else if (sortMethod.value === 'menuName')
+    ordersCopy.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
+  return ordersCopy
+})
+
+// 주문 삭제
+function removeOrder(choiceMenuId: number) {
+  const index = choiceMenus.value.findIndex(choiceMenu => choiceMenu.id === choiceMenuId)
+  if (index !== -1) {
+    deleteOrderMenu(
+      code.value,
+      choiceMenuId,
+      () => { choiceMenus.value.splice(index, 1) },
+      null,
+    )
+  }
+}
+
+const totalPrice = computed(() => {
+  let price = 0
+  for (const choiceMenu of choiceMenus.value) {
+    price += choiceMenu.menu.price
+    for (const optionCategory of choiceMenu.option_categories) {
+      for (const option of optionCategory.options)
+        price += option.price
+    }
+  }
+  return price
+})
 </script>
 
 <template>
@@ -105,7 +74,7 @@ export default {
     <div class="tab">
       주문내역
     </div>
-    <select v-model="sortMethod" @change="sortOrders">
+    <select v-model="sortMethod">
       <option value="default">
         기본
       </option>
@@ -124,11 +93,14 @@ export default {
       <div v-for="(order, index) in sortedOrders" :key="index" class="order">
         <!-- 선택한 메뉴와 가격 -->
         <div class="item">
+          <div class="participant-name">
+            {{ order.participant_name }}
+          </div>
           <div class="menu-name">
             {{ order.menu.name }}
           </div>
           <div class="menu-price">
-            {{ order.menu.price }}원
+            {{ order.menu.price }}
           </div>
           <span class="remove" @click="removeOrder(order.id)">X</span>
         </div>
@@ -155,7 +127,7 @@ export default {
       <div class="total">
         <div>총 주문금액</div>
         <div class="total-price">
-          {{ calculateTotalPrice() }}원
+          {{ totalPrice }}원
         </div>
       </div>
     </div>
@@ -188,28 +160,26 @@ option {
   cursor: pointer;
   padding: 10px;
   /* color: #FFFFFF; */
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   text-align: center;
 }
 
 /* 주문 내역 스타일 */
 .order {
-  /* color: #FFFFFF; */
-  height: 20%;
-  max-height: 20%;
   margin-top: 10px;
-  /* margin-left: 10px; */
-  box-sizing: border-box;
+  box-sizing: inherit;
 }
 
 .item {
   /* color: #FFFFFF; */
   margin-bottom: 5px;
-  padding: 10px;
-  font-size: 18px;
+  padding: 15px;
+  padding-bottom: 0px;
+  font-size: 15px;
   font-weight: bold;
   display: flex;
+  box-sizing: border-box;
   /* justify-content: space-between; */
 }
 
@@ -219,11 +189,17 @@ option {
   color: red;
 }
 
+.participant-name{
+  width: 100px;
+}
+
 .menu-name {
   width: 190px;
 }
 
 .menu-price {
+  font-size: 17px;
+  width: 50px;
   color: #00a5e7;
   margin-left: 10px;
 }
@@ -235,17 +211,20 @@ option {
 
 .menu-option {
   display: flex;
+  justify-content: space-between;
+  margin-right: 50px;
+  box-sizing: inherit;
 }
 
 .option-name {
-  width: 190px;
+  width: 170px;
+  margin-left: 70px;
 }
 
 .option-price {
   color: #00a5e7;
   margin-left: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
@@ -276,10 +255,10 @@ option {
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  background-color: #343844;
+  background-color: #1e293b;
   /* bottom: 0; */
   /* position: sticky; */
-  border-radius: 0 0 3px 3px;
+  border-radius: 1px;
   /* box-sizing: inherit; */
 }
 
@@ -293,5 +272,25 @@ option {
 
 .total-price {
   color: #00a5e7;
+}
+
+@media screen and (max-width: 768px) {
+  .item{
+    font-size: 16px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .menu-option{
+    font-size: 14px;
+  }
+
+  .footer{
+    margin-top: 5px;
+  }
+  .total, .tab{
+    font-size: 16px;
+  }
+
 }
 </style>

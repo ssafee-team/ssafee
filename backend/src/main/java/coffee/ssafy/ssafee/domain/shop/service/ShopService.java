@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.service;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
+import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.ShopMapper;
@@ -23,15 +24,17 @@ public class ShopService {
     private final ShopMapper shopMapper;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
     public ShopDetailResponse findShopById(Long id) {
         return shopRepository.findById(id)
-                .map(shopMapper::toDetailDto)
+                .map(shopMapper::toDetailResponse)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
     }
 
+    @Transactional(readOnly = true)
     public List<ShopResponse> findShops() {
         return shopRepository.findAll().stream()
-                .map(shopMapper::toDto)
+                .map(shopMapper::toResponse)
                 .toList();
     }
 
@@ -42,9 +45,15 @@ public class ShopService {
     }
 
     public void updateShopImage(Long id, MultipartFile file) {
-        shopRepository.findById(id)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
-                .updateImage(s3Service.putImage(id + "/", file));
+        String prefix = String.format("shop/%d/", id);
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
+
+        String image = shop.getImage();
+        shop.updateImage(s3Service.putImage(prefix, file));
+        if (image != null) {
+            s3Service.deleteImage(image);
+        }
     }
 
 }

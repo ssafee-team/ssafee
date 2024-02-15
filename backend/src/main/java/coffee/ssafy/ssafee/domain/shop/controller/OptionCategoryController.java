@@ -59,7 +59,7 @@ public class OptionCategoryController {
                                                      @PathVariable("oc_id") Long optionCategoryId) {
         managerService.validateShop(principal, shopId);
         optionCategoryService.deleteOptionCategory(shopId, optionCategoryId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

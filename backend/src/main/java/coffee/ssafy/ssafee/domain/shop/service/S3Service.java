@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -28,7 +27,7 @@ public class S3Service {
             String fileHash = HexFormat.of().formatHex(digest.digest(file.getBytes()));
             String key = prefix + fileHash + ".jpg";
 
-            s3Client.putObject(PutObjectRequest.builder()
+            s3Client.putObject(builder -> builder
                             .bucket(s3Config.bucket())
                             .key(key)
                             .build(),
@@ -37,6 +36,14 @@ public class S3Service {
         } catch (IOException | NoSuchAlgorithmException e) {
             throw new ShopException(ShopErrorCode.FAILED_UPLOAD_IMAGE);
         }
+    }
+
+    public void deleteImage(String image) {
+        String key = image.replace("https://" + s3Config.publicAccessDomain() + "/", "");
+        s3Client.deleteObject(builder -> builder
+                .bucket(s3Config.bucket())
+                .key(key)
+                .build());
     }
 
 }

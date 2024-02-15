@@ -51,7 +51,6 @@ public class OptionCategory {
     // Shop 엔티티에 대한 참조 추가
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false)
-    @Setter
     private Shop shop;
 
     public void update(OptionCategoryRequest optionCategoryRequest) {
