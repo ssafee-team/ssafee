@@ -47,24 +47,24 @@ async function getOrders(shopId: number) {
     // API에서 받은 데이터를 특정 타입으로 캐스팅
     response.value = result.data as OrderResponse[]
     // 부모 컴포넌트에서 받은 partyId prop와 일치하는 주문만 필터링
-    const filteredOrders = response.value.filter(order => order.party_id === props.partyId)
+    // const filteredOrders = response.value.filter((order: { party_id: any }) => order.party_id === props.partyId)
 
     totalPrice.value = 0
     menuCount.value = 0
 
-    filteredOrders.forEach((order) => {
-      order.choice_menus.forEach((choiceMenu) => {
-        totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
-        menuCount.value++
-        choiceMenu.option_categories.forEach((optionCategory) => {
-          optionCategory.options.forEach((option) => {
-            totalPrice.value += option.price // 옵션 가격 합산
-          })
-        })
-      })
-    })
-    console.log(totalPrice)
-    console.log(menuCount)
+    // filteredOrders.forEach((order) => {
+    //   order.choice_menus.forEach((choiceMenu) => {
+    //     totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
+    //     menuCount.value++
+    //     choiceMenu.option_categories.forEach((optionCategory) => {
+    //       optionCategory.options.forEach((option) => {
+    //         totalPrice.value += option.price // 옵션 가격 합산
+    //       })
+    //     })
+    //   })
+    // })
+    // console.log(totalPrice)
+    // console.log(menuCount)
 
     // await confirmOrder(shopId, partyId.value)
   }
