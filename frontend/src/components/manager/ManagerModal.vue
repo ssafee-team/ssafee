@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import { defineEmits, onMounted, ref } from 'vue'
+import { defineEmits, onMounted, ref, watch } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import axios from 'axios'
 import router from '@/router'
 
 import music from '@/assets/music.mp3'
+import { getShopId } from '@/api/manager'
 
 const props = defineProps({
   partyId: {
     type: [Number, String],
     default: null,
   },
+  shopId: {
+    type: Number,
+    
+  }
 })
 const emit = defineEmits(['close'])
 
-const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+
 const partyId = ref<number>() // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
 const managerToken = useLocalStorage('manager-token', null)
 const audio = new Audio(music)
@@ -25,14 +30,29 @@ const audio = new Audio(music)
 onMounted(() => {
   // audio.muted: true;
   audio.play()
-
-  getOrders(shopId)
+  getOrders()
 })
 
+// watch(() => props.partyId, (newValue, oldValue) => {
+//   if (newValue !== oldValue) {
+//     getOrders()
+//   }
+// })
+
 interface OrderResponse {
-  party_id: number // Type should be lowercase
-  name: string // Type should be lowercase
-  shop_id: number // Type should be lowercase
+  party_id: number; // Type should be lowercase
+  name: string; // Type should be lowercase
+  shop_id: number; // Type should be lowercase
+  choice_menus: {
+    menu: {
+      price: number;
+    };
+    option_categories: {
+      options: {
+        price: number;
+      }[];
+    }[];
+  }[];
 }
 
 const response = ref<OrderResponse[]>([]) // Should be an array of OrderResponse if expecting multiple orders
@@ -40,33 +60,31 @@ const totalPrice = ref(0)
 const menuCount = ref(0)
 
 // API 호출 함수 정의
-async function getOrders(shopId: number) {
+async function getOrders() {
+  console.log(props.shopId)
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
   try {
-    const result = await axios.get(`/api/v1/shops/${shopId}/orders`, config) // URL should be a template literal
+    const result = await axios.get(`/api/v1/shops/${props.shopId}/orders`, config) // URL should be a template literal
     // API에서 받은 데이터를 특정 타입으로 캐스팅
     response.value = result.data as OrderResponse[]
     // 부모 컴포넌트에서 받은 partyId prop와 일치하는 주문만 필터링
-    // const filteredOrders = response.value.filter((order: { party_id: any }) => order.party_id === props.partyId)
+    const filteredOrders = response.value.filter((order: { party_id: any }) => order.party_id === props.partyId)
 
     totalPrice.value = 0
     menuCount.value = 0
 
-    // filteredOrders.forEach((order) => {
-    //   order.choice_menus.forEach((choiceMenu) => {
-    //     totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
-    //     menuCount.value++
-    //     choiceMenu.option_categories.forEach((optionCategory) => {
-    //       optionCategory.options.forEach((option) => {
-    //         totalPrice.value += option.price // 옵션 가격 합산
-    //       })
-    //     })
-    //   })
-    // })
-    // console.log(totalPrice)
-    // console.log(menuCount)
-
-    // await confirmOrder(shopId, partyId.value)
+    filteredOrders.forEach((order) => {
+      order.choice_menus.forEach((choiceMenu) => {
+        totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
+        menuCount.value++
+        choiceMenu.option_categories.forEach((optionCategory) => {
+          optionCategory.options.forEach((option) => {
+            totalPrice.value += option.price // 옵션 가격 합산
+          })
+        })
+      })
+    })
+    
   }
   catch (error) {
     console.error('API 호출 중 오류 발생:', error)
@@ -75,16 +93,15 @@ async function getOrders(shopId: number) {
 
 async function onConfirm() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  await axios.post(`/api/v1/shops/${shopId}/orders/${props.partyId}/confirm`, null, config)
+  await axios.post(`/api/v1/shops/${props.shopId}/orders/${props.partyId}/confirm`, null, config)
   audio.pause()
   // router.push('/m-order-list')
-  console.log(props.partyId.toString())
-  router.push({ path: '/m-order-list', query: { partyId: props.partyId.toString() } })
+  router.push({ path: '/m-order-list', query: { shopId: props.shopId, partyId: props.partyId.toString() } })
 }
 
 async function onReject() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  await axios.post(`/api/v1/shops/${shopId}/orders/${props.partyId}/reject`, null, config)
+  await axios.post(`/api/v1/shops/${props.shopId}/orders/${props.partyId}/reject`, null, config)
   audio.pause()
   emit('close')
 }
