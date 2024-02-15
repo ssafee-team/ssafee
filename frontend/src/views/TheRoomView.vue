@@ -206,13 +206,10 @@ onUnmounted(() => {
         <body>
           <div class="btn-order" style="display: flex; flex-direction: row; justify-content: space-between;">
             <div class="minimum-price">
-              최소주문금액 : <span style="color: rgb(126, 126, 126);">{{ shop?.minimum_price }}</span>원
+              최소주문금액 : <span style="color: rgb(126, 126, 126);">{{ shop?.minimum_price }}</span> 원
             </div>
             <button class="order-request" @click="goOrder()">
               주문요청
-            </button>
-            <button>
-              user-token if로 묶으려고 잠시 추가한 버튼 ^-^
             </button>
           </div>
           <!-- <div class="center-content">
