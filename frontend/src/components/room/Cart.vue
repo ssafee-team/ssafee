@@ -200,7 +200,7 @@ option {
   cursor: pointer;
   padding: 10px;
   /* color: #FFFFFF; */
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   text-align: center;
 }
@@ -216,7 +216,7 @@ option {
   margin-bottom: 5px;
   padding: 15px;
   padding-bottom: 0px;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
   display: flex;
   box-sizing: border-box;
@@ -238,6 +238,7 @@ option {
 }
 
 .menu-price {
+  font-size: 17px;
   width: 50px;
   color: #00a5e7;
   margin-left: 10px;
