@@ -345,6 +345,10 @@ input {
   display: none;
 }
 
+input[type="checkbox"] {
+  accent-color: #00a5e7;
+}
+
 .footer {
   /* width: 100%; */
   height: 50px;

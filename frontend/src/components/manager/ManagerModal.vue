@@ -139,6 +139,9 @@ async function onReject() {
 
 <style scoped>
 /* 여기에 모달 컴포넌트의 스타일을 추가하세요. */
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 .modal {
   display: flex;
   flex-direction: column;
@@ -152,9 +155,10 @@ async function onReject() {
 }
 
 button {
+  width: 100px;
   margin: 10px;
   border-radius: 15px;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   border: none;
   padding: 5px;

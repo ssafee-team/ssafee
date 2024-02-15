@@ -208,7 +208,7 @@ onUnmounted(() => {
             <div class="minimum-price">
               최소주문금액 : <span style="color: rgb(126, 126, 126);">{{ shop?.minimum_price }}</span> 원
             </div>
-            <button class="order-request" @click="goOrder()">
+            <button v-if="token" class="order-request" @click="goOrder()">
               주문요청
             </button>
           </div>

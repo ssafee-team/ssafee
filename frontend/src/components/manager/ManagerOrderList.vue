@@ -78,6 +78,10 @@ onMounted(() => {
     fetchOrderDetails()
 
 })
+
+function toggleHighlight(choiceMenu) {
+  choiceMenu.highlighted = !choiceMenu.highlighted;
+}
 </script>
 
 <template>
@@ -137,25 +141,33 @@ onMounted(() => {
     </div>
 
     <div id="orderList" class="order-info">
-      <ul v-for="(order, index) in orderList" :key="index" class="order-op">
-        <li v-for="choiceMenu in order.choice_menus" :key="choiceMenu.id">
-          {{ choiceMenu.menu.name }}
-          <div>
-            <li v-for="optionCategory in choiceMenu.option_categories" :key="optionCategory.id">
-              <a class="option-name">
-                <li v-for="option in optionCategory.options" :key="option.id">
-                  ㄴ{{ option.name }}
-                </li>
-              </a>
-            </li>
-          </div>
-        </li>
-      </ul>
+    
+        <div v-for="(order, index) in orderList" :key="index" class="order-ul">
+        <div v-for="choiceMenu in order.choice_menus" :key="choiceMenu.id" class="order-li" :class="{ 'highlight': choiceMenu.highlighted }" @click="toggleHighlight(choiceMenu)">
+            
+          <div class="menu-name">{{ choiceMenu.menu.name }}</div>
+            
+              <div v-for="optionCategory in choiceMenu.option_categories" :key="optionCategory.id">
+                <div class="option-name">
+                  <div v-for="option in optionCategory.options" :key="option.id">
+                    ㄴ {{ option.name }}
+                  </div>
+                </div>
+              </div>
+              <hr>
+            
+            </div>
+        </div>
+
+      
     </div>
   </div>
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 .content {
   padding: 15px;
   display: flex;
@@ -200,12 +212,13 @@ onMounted(() => {
   justify-content: center;
   font-size: 20px;
   padding: 15px;
+  
 }
 
 .order-info {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: center;
   padding: 10px;
   margin: 10px;
   font-size: 20px;
@@ -217,22 +230,26 @@ onMounted(() => {
   box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
+.menu-name{
+  font-weight: bold;
+}
+
+.order-ul{
+  width: 100%;
+}
+
+.order-li{
+
+}
+
 .order-info::-webkit-scrollbar{
   display: none;
 }
 
-.order-op{
-
-}
-
-.order-info li {
-  margin-bottom: 10px;
-
-  font-weight: bold;
-  list-style-type: none;
-}
-
 .option-name{
+  margin-top: 5px;
+  margin-left: 10px;
+  font-size: 16px;
   display: flex;
 }
 

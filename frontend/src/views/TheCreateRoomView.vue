@@ -471,7 +471,7 @@ input {
 .input-style {
   flex-grow: 1;
   height: 40px;
-  padding: 8px;
+  padding: 3px;
   font-size: 18px;
   border: 3px solid #1E293B;
   border-radius: 15px;
