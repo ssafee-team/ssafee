@@ -4,6 +4,7 @@ import coffee.ssafy.ssafee.domain.user.entity.User;
 import coffee.ssafy.ssafee.domain.user.repository.UserRepository;
 import coffee.ssafy.ssafee.oauth.OAuth2UserImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     public final String ROLE_USER = "ROLE_USER";
@@ -30,8 +32,10 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
 
+        log.info("email: " + email);
+
         User user = userRepository.findByEmail(email)
-                .orElse(userRepository.save(User.builder()
+                .orElseGet(() -> userRepository.save(User.builder()
                         .email(email)
                         .build()));
 
