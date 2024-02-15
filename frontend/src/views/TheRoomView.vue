@@ -3,7 +3,8 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useFetch, useLocalStorage } from '@vueuse/core'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import axios from 'axios'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
@@ -84,6 +85,7 @@ const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().js
 const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
 const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
 const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
+const deadline = dayjs(party.value?.last_order_time)
 
 async function goOrder() {
   const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
@@ -94,16 +96,11 @@ async function goOrder() {
 }
 
 function updateRemainingTime() {
-  const now = moment()
-  const deadline = moment(party.value?.last_order_time, 'HH:mm')
-
-  if (now.isAfter(deadline)) {
+  const now = dayjs()
+  if (deadline.isBefore(now))
     router.push(`/after/${code.value}`)
-  }
-  else {
-    const duration = moment.duration(deadline.diff(now))
-    remainingTime.value = moment.utc(duration.asMilliseconds()).format('HH:mm:ss')
-  }
+  else
+    remainingTime.value = dayjs.duration(deadline.diff(now)).format('HH:mm:ss')
 }
 
 function updateHeaderHeight() {

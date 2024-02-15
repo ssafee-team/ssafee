@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
 import { jwtDecode } from 'jwt-decode'
 import { onMounted, onUnmounted, ref } from 'vue'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import CreateHeader from '@/components/common/CreateHeader.vue'
 
 interface Party {
@@ -36,8 +36,8 @@ const { data: shops } = await useFetch('/api/v1/shops').get().json<Shop[]>()
 const shopRecord = shops.value?.reduce((acc, shop) => ({ ...acc, [shop.id]: shop }), {}) as Record<number, Shop>
 
 function isPartyOpened(party: Party) {
-  const now = moment()
-  const deadline = moment(party.last_order_time, 'HH:mm')
+  const now = dayjs()
+  const deadline = dayjs(party.last_order_time)
   return now.isBefore(deadline)
 }
 
