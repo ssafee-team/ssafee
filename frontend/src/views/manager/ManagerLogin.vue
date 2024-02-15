@@ -50,8 +50,8 @@ function login() {
     </div>
     <div class="info" style="display: flex; flex-direction: column;">
       <span>제휴문의</span>
-      <span>Email.&nbsp;heeseung0223@naver.com</span>
-      <span>Tel.&nbsp;&nbsp;&nbsp;&nbsp;(+82) 10-9779-4837</span>
+      <span>Email.&nbsp;ssafy@ssafy.com</span>
+      <span>Tel.&nbsp;&nbsp;&nbsp;&nbsp;(+82) 10-1234-5678</span>
     </div>
   </div>
 </template>

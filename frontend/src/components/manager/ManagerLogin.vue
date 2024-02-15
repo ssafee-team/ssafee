@@ -27,7 +27,7 @@ async function login() {
 <template>
   <!-- <ManagerHeader /> -->
   <div id="app">
-    <div class="login" style="margin-top: 400px;" @keyup.enter="login">
+    <div class="login" style="margin-top: 300px;" @keyup.enter="login">
       <div class="manager-login">
         <span>ID</span>
         <input v-model="info.id" type="text" placeholder="아이디를 입력하세요">
@@ -52,8 +52,8 @@ async function login() {
     </div>
     <div class="info" style="display: flex; flex-direction: column;">
       <span>제휴문의</span>
-      <span>Email.&nbsp;heeseung0223@naver.com</span>
-      <span>Tel.&nbsp;&nbsp;&nbsp;&nbsp;(+82) 10-9779-4837</span>
+      <span>Email.&nbsp;ssafy@ssafy.com</span>
+      <span>Tel.&nbsp;&nbsp;&nbsp;&nbsp;(+82) 10-1234-5678</span>
     </div>
   </div>
 </template>
