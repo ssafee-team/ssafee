@@ -1,201 +1,131 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-// import func from '../../vue-temp/vue-editor-bridge'
 import { useFetch, useLocalStorage } from '@vueuse/core'
+import moment from 'moment'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
-import { getOrderList, getOrders, getParty, orderRequest } from '@/api/party'
+import { orderRequest } from '@/api/party'
 
-// const roomCode = ref("");
+interface Party {
+  id: number
+  name: string
+  generation: number
+  classroom: number
+  last_order_time: string
+  created_time: string
+  shop_id: number
+  user_id: number
+  creator: {
+    id: number
+    name: string
+    bank: string
+    account: string
+  }
+}
+
+interface ChoiceMenu {
+  id: number
+  participant_name: string
+  menu: {
+    id: number
+    name: string
+    price: number
+    image: string
+    soldout: boolean
+  }
+  option_categories: {
+    id: number
+    name: string
+    required: boolean
+    max_count: number
+    options: {
+      id: number
+      name: string
+      price: number
+    }[]
+  }[]
+}
+
+interface OrderStatus {
+  confirmed_time: string | null
+  rejected_time: string | null
+  real_ordered_time: string | null
+  made_time: string | null
+  delivered_time: string | null
+}
 
 const route = useRoute()
 const router = useRouter()
-const code = ref(route.params.code)
-const isLoading = ref(true) // 로딩 상태 변수
-const token = useLocalStorage('user-token', null)
+
+const code = ref(route.params.code as string)
 const isOrdering = ref(false)
 
-const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json()
-
-const partyInfo = ref({
-  id: '',
-  name: '',
-  generation: '',
-  classroom: '',
-  last_order_time: '',
-  created_time: '',
-  shop_id: '',
-  creator: {
-    id: '',
-    name: '',
-    email: '',
-    bank: '',
-    account: '',
-  },
-})
-
-const minimum_price = ref('')
-
-const orderList = ref([])
-
-function addToCart(order) {
-  orderList.value.push(order)
-}
-
-// 파티 객체 정보의 shop_id 추출
-const shopId = partyInfo.value.shop_id
-
 const remainingTime = ref('') // 남은시간
-
-// 헤더 높이를 저장하는 변수
 const headerHeight = ref('')
 
-// 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
-function updateHeaderHeight() {
-  headerHeight.value = `${document.querySelector('header').offsetHeight}px`
+const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
+const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
+const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
+const token = useLocalStorage('user-token', null)
+
+function goOrder() {
+  orderRequest(
+    code.value,
+    token.value,
+    async () => {
+      isOrdering.value = true
+      remainingTime.value = '주문중'
+      setTimeout(() => { router.push(`/after/${code.value}`) }, 100)
+    },
+    (error: any) => {
+      console.error('주문 요청에 실패했습니다:', error)
+    },
+  )
 }
 
-// 주문 요청하기 버튼 표시 여부
-const isUserLoggedIn = ref(false)
-// const canPlaceOrder = computed(() => token.value !== null && remainingTime.value !== '주문중')
-const canPlaceOrder = computed(() => token.value !== null)
+function updateRemainingTime() {
+  const now = moment()
+  const deadline = moment(party.value?.last_order_time, 'HH:mm')
 
-// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
-onMounted(() => {
-  if (token.value) {
-    getOrders( // 주문현황조회
-      code.value,
-      token.value,
-      ({ data }) => {
-        console.log(data)
-        if (data.real_ordered_time !== null) {
-          remainingTime.value = '주문중'
-        }
-        else {
-          updateRemainingTime() // 페이지 로드시 남은시간 계산
-          // 1초마다 남은시간 갱신
-          setInterval(updateRemainingTime, 1000)
-        }
-      },
-      (error) => {
-        console.error('주문현황 조회 실패: ', error)
-      },
-    )
+  if (now.isAfter(deadline)) {
+    remainingTime.value = '마감'
   }
+  else {
+    const duration = moment.duration(deadline.diff(now))
+    remainingTime.value = moment.utc(duration.asMilliseconds()).format('HH:mm:ss')
+  }
+}
+
+function updateHeaderHeight() {
+  headerHeight.value = `${document.querySelector('header')?.offsetHeight}px`
+}
+
+onMounted(async () => {
+  if (token.value) {
+    if (orderStatus.value?.real_ordered_time !== null) {
+      isOrdering.value = true
+      remainingTime.value = '주문중'
+      return
+    }
+  }
+  updateRemainingTime()
+  setInterval(updateRemainingTime, 1000)
 
   updateHeaderHeight()
-  window.addEventListener('resize', updateHeaderHeight)
-  // updateRemainingTime() // 페이지 로드시 남은시간 계산
-  // // 1초마다 남은시간 갱신
-  // setInterval(updateRemainingTime, 1000)
-  // console.log("현재 방 코드: ", code.value);
-  getPartyInfo()
-  addToOrderList()
+  addEventListener('resize', updateHeaderHeight)
+
   setTimeout(() => {
     isLoading.value = false
   }, 500)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateHeaderHeight)
+  removeEventListener('resize', updateHeaderHeight)
 })
-
-function getPartyInfo() {
-  getParty(
-    code.value,
-
-    ({ data }) => {
-      // console.log(data);
-      partyInfo.value.id = data.id
-      partyInfo.value.name = data.name
-      partyInfo.value.generation = data.generation
-      partyInfo.value.classroom = data.classroom
-      partyInfo.value.last_order_time = data.last_order_time
-      partyInfo.value.created_time = data.created_time
-      partyInfo.value.shop_id = data.shop_id
-      partyInfo.value.creator = data.creator
-      // console.log(partyInfo);
-    },
-    (error) => {
-      console.log(error)
-    },
-  )
-}
-
-// 남은시간 갱신하는 함수 호출
-function updateRemainingTime() {
-  const now = new Date() // 현재시간 변수
-  // const deadlineTime = new Date(partyInfo.value.last_order_time); // last_order_time을 Date 객체로 파싱
-
-  // console.log(deadlineTime);
-
-  const deadlineTime = new Date()
-  const [hours, minutes] = partyInfo.value.last_order_time.split(':').map(Number)
-
-  deadlineTime.setHours(hours, minutes, 0)
-  // deadlineTime.setHours(11, 48, 0);
-
-  // 마감시간에서 현재시간 차이를 저장
-  const diff = deadlineTime - now
-  // console.log(diff);
-  // console.log(code.value)
-
-  if (diff > 0) {
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    remainingTime.value = `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes
-      } : ${seconds < 10 ? `0${seconds}` : seconds}`
-  }
-  else if (diff <= 0) {
-    // 마감시간 지난 경우
-    // go("/after")화면으로
-    remainingTime.value = '마감'
-    // console.log(window.location.href)
-    // console.log(code.value);
-    // setTimeout(() => {
-    //   window.location.href = `/after/${code.value}`
-    // }, 100)
-  }
-}
-
-function addToOrderList() {
-  // 주문 목록 조회
-  getOrderList(
-    code.value, // partyCode 전달
-    (response) => {
-      orderList.value = response.data
-      // console.log("주문 현황 불러오기: ", orderList.value);
-    },
-    (error) => {
-      console.error('주문 현황 조회 실패: ', error)
-    },
-  )
-}
-
-function goOrder() {
-  orderRequest(
-    code.value,
-    token.value,
-    () => {
-      console.log('주문이 요청되었습니다.')
-      remainingTime.value = '마감'
-
-      setTimeout(() => {
-        window.location.href = `/after/${code.value}`
-      }, 100)
-    },
-    (error) => {
-      console.error('주문 요청에 실패했습니다:', error)
-      // 주문 요청 실패 시 처리할 내용을 추가할 수 있습니다.
-    },
-  )
-}
 </script>
 
 <template>
@@ -209,16 +139,16 @@ function goOrder() {
         <head>
           <div class="line">
             <div class="party-name">
-              {{ partyInfo.name }}
+              {{ party?.name }}
             </div>
           </div>
           <div class="center-title">
             <div class="row">
               <div class="account">
-                {{ partyInfo.creator.bank }}
+                {{ party?.creator.bank }}
               </div>
               <div class="account">
-                ({{ partyInfo.creator.name }})
+                ({{ party?.creator.name }})
               </div>
             </div>
             <div class="row">
@@ -226,7 +156,7 @@ function goOrder() {
                 logo
               </div> -->
               <div class="account-num">
-                {{ partyInfo.creator.account }}
+                {{ party?.creator.account }}
               </div>
             </div>
           </div>
@@ -241,7 +171,7 @@ function goOrder() {
             <div>마감시간</div>
 
             <div class="time">
-              {{ partyInfo.last_order_time }}
+              {{ party?.last_order_time }}
             </div>
           </div>
         </head>
@@ -258,13 +188,12 @@ function goOrder() {
           </div> -->
           <div class="body-container">
             <div class="left-panel">
-              <MenuList :shop-id="1" :code="code" @order-cart="addToCart" :isOrdering="isOrdering"/>
+              <MenuList :shop-id="party?.shop_id" :code="code" :is-ordering="isOrdering" @order-cart="choiceMenus?.push" />
             </div>
             <div class="center-panel">
-              <Cart :orders="orderList" :code="code" :isOrdering="isOrdering"/>
+              <Cart :orders="choiceMenus!" :code="code" :is-ordering="isOrdering" />
             </div>
             <div class="right-panel">
-              <!-- <div>채팅창</div> -->
               <Chat />
             </div>
           </div>
@@ -470,25 +399,27 @@ button {
     /* 화면이 작을 때 텍스트 크기 조절 */
   }
 
-  .line, .center-title, .timeline{
+  .line,
+  .center-title,
+  .timeline {
     flex-direction: column;
     justify-content: center;
 
   }
 
-  .order-request{
+  .order-request {
     font-size: 12px;
   }
 
-  .party-name{
+  .party-name {
     text-align: center;
   }
 
-  .row{
+  .row {
     display: block;
   }
 
-  .time{
+  .time {
     margin: 0px;
   }
 
@@ -496,7 +427,7 @@ button {
     flex-direction: column;
   }
 
-  .center-panel{
+  .center-panel {
     margin-left: 0px;
     margin-top: 20px;
     max-width: none;
