@@ -287,7 +287,7 @@ function formatTime() {
     <div class="child2">
       <main class="form-container">
         <div class="form-field">
-          <label for="roomTitle">파티명</label>
+          <label for="roomTitle"><span class="required">* </span>파티명</label>
 
           <div class="input-with-error">
             <input id="roomTitle" v-model="form.roomTitle" type="text" maxlength="32" placeholder="방 제목을 입력해주세요">
@@ -296,7 +296,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="cafe">카페</label>
+          <label for="cafe"><span class="required">* </span>카페</label>
           <div class="input-with-error">
             <select id="cafe" v-model="form.shop_id" class="input-style">
               <option disabled value="">
@@ -312,7 +312,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="name">이름</label>
+          <label for="name"><span class="required">* </span>이름</label>
           <div class="input-with-error">
             <input
               id="name" v-model="form.name" type="text" :class="{ 'error-input': formErrors.name }" maxlength="8"
@@ -322,7 +322,7 @@ function formatTime() {
           </div>
         </div>
         <!-- <div class="form-field">
-          <label for="name">이름</label>
+          <label for="name">이름<span class=required> *</span></label>
           <div class="input-with-error">
             <input type="text" id="name" v-model="form.name" maxlength="8" placeholder="김싸피">
             <span v-if="formErrors.name" class="error-message">이름을 입력해주세요.</span>
@@ -330,7 +330,7 @@ function formatTime() {
         </div> -->
 
         <div class="form-field">
-          <label for="class">반</label>
+          <label for="class"><span class="required">* </span>반</label>
           <div class="input-with-error">
             <input id="class" v-model="form.class" type="number" placeholder="2">
             <span v-if="formErrors.class" class="error-message">반을 입력해주세요.</span>
@@ -338,7 +338,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="batch">기수</label>
+          <label for="batch"><span class="required">* </span>기수</label>
           <div class="input-with-error">
             <input id="batch" v-model="form.batch" type="number" placeholder="10">
             <span v-if="formErrors.batch" class="error-message">기수를 입력해주세요.</span>
@@ -346,7 +346,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="deadline">마감시간</label>
+          <label for="deadline"><span class="required">* </span>마감시간</label>
           <div class="input-with-error">
             <input
               id="deadline" v-model="form.deadline" type="time" placeholder="13:00"
@@ -360,7 +360,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="bankName">은행명</label>
+          <label for="bankName"><span class="required">* </span>은행명</label>
           <div class="input-with-error">
             <input id="bankName" v-model="form.bankName" type="text" maxlength="32" placeholder="은행명을 입력해주세요">
             <span v-if="formErrors.bankName" class="error-message">은행명을 입력해주세요.</span>
@@ -368,7 +368,7 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="accountNumber">계좌번호</label>
+          <label for="accountNumber"><span class="required">* </span>계좌번호</label>
           <div class="input-with-error">
             <input id="accountNumber" v-model="form.accountNumber" type="text" placeholder="계좌번호를 입력해주세요">
             <span v-if="formErrors.accountNumber" class="error-message">계좌번호를 입력해주세요.</span>
@@ -376,13 +376,13 @@ function formatTime() {
         </div>
 
         <div class="form-field">
-          <label for="hook">WebHook_URL</label>
+          <label for="hook"> WebHook_URL</label>
           <div class="input-with-error">
             <input id="hook" v-model="form.webhook_url" type="url">
           </div>
         </div>
         <!-- <div class="form-field">
-      <label for="phoneNumber">전화번호</label>
+      <label for="phoneNumber">전화번호<span class=required> *</span></label>
       <input type="text" id="phoneNumber" v-model="form.phoneNumber" maxlength="15"
       placeholder="010-1234-5678">
     </div> -->
@@ -399,6 +399,11 @@ function formatTime() {
 <style>
 #empty {
   height: 50px;
+}
+
+.required {
+  color: red;
+  font-weight: bold;
 }
 
 .border1 {
@@ -436,6 +441,7 @@ function formatTime() {
 
 .form-field {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
