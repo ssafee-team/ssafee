@@ -1,7 +1,7 @@
 <script>
+import { tr } from 'vuetify/locale'
 import { getMenuCategories, getMenusByCategory, getOptionCategory, getShop } from '@/api/shop'
 import { createOrder } from '@/api/party'
-import { tr } from 'vuetify/locale'
 
 export default {
 
@@ -16,7 +16,7 @@ export default {
     isOrdering: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   emits: ['orderCart'],
 
@@ -35,7 +35,7 @@ export default {
       showOptions: false, // 옵션화면 상태변수
       showModal: false,
       participantName: '',
-      
+
     }
   },
   computed: {
@@ -59,7 +59,6 @@ export default {
   methods: {
 
     openModal() {
-
       // 필수 옵션 카테고리가 선택되었는지 확인
       const requiredOptionCategories = this.optionCategories.filter(category => category.required)
       const hasMissingRequiredOptions = requiredOptionCategories.some(category => !this.selectedOptions.some(option => category.options.map(option => option.id).includes(option)))
@@ -96,8 +95,8 @@ export default {
 
     toggleOptions(index) {
       console.log(this.isOrdering)
-      //주문중인지 상태 확인
-      if(this.isOrdering){
+      // 주문중인지 상태 확인
+      if (this.isOrdering) {
         alert('이미 주문이 진행중입니다.')
         return
       }
@@ -114,7 +113,6 @@ export default {
       this.showOptions = !this.showOptions
       // console.log(this.showOptions, '닫')
     },
-
 
     handleSuccess(response) {
       // 데이터를 비동기적으로 불러올 경우, response 받아서 response.data로 세팅하기
@@ -445,6 +443,8 @@ export default {
 
 .menu-categories {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
   flex-wrap: wrap;
   text-align: center;
   //color: #ffffff;
@@ -461,22 +461,28 @@ export default {
   cursor: pointer;
   display: flex;
   justify-content: center;
+  text-align: center;
   height: 40px;
   padding: 5px;
   margin: 5px;
   box-sizing: inherit;
   /* box-sizing: border-box; */
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
+.menu-categories>div:hover {
+  background-color: #d6d6d6;
+  border-radius: 10px;
+}
+
 .menu-categories>div.selected {
-  background-color: #343844;
-  color: #ffffff;
+  background-color: #ababab;
+  color: black;
   width: auto;
   // box-sizing: inherit;
   border-radius: 10px;
-  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  /* box-shadow: 2px 2px 2px 2px rgb(227, 226, 226); */
 }
 
 .menu-content {
@@ -625,20 +631,20 @@ input[type="checkbox"] {
   box-sizing: border-box;
   padding: 10px;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .drink-item:hover {
-  background-color: #343844;
-  color: #ffffff;
+  background-color: #b5b5b5;
   /* 호버 시 배경색 변경 */
   border-radius: 5px;
+
 }
 
 .drink-item img {
-  /* border: 1px solid #344a53; */
-  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
+  border: 2px solid #1e293b;
+  /* box-shadow: 2px 2px 2px 2px rgb(227, 226, 226); */
   border-radius: 15px;
-  cursor: pointer;
   width: 100px;
   height: 100px;
   margin-bottom: 10px;
@@ -654,7 +660,7 @@ input[type="checkbox"] {
 
 .price {
   margin-top: 10px;
-  color: #00a7d0;
+  color: #0096bb;
 }
 
 .addOrder {

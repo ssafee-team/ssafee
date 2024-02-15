@@ -28,15 +28,14 @@ export default {
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-      
+
       // 정렬 방식에 따라 주문 목록을 정렬
-      if (this.sortMethod === 'userName') {
+      if (this.sortMethod === 'userName')
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
-      }
-      else if (this.sortMethod === 'menuName') {
-        
+
+      else if (this.sortMethod === 'menuName')
+
         orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name))
-      }
 
       // console.log("정렬후,", orders);
       return orders
@@ -66,7 +65,7 @@ export default {
 
     removeOrder(orderId) {
       // 주문중인 경우 삭제 불가
-      if(this.isOrdering){
+      if (this.isOrdering) {
         alert('이미 주문이 진행중입니다.')
         return
       }
@@ -215,7 +214,8 @@ option {
 .item {
   /* color: #FFFFFF; */
   margin-bottom: 5px;
-  padding: 10px;
+  padding: 15px;
+  padding-bottom: 0px;
   font-size: 18px;
   font-weight: bold;
   display: flex;
@@ -230,7 +230,7 @@ option {
 }
 
 .participant-name{
- width: 100px;
+  width: 100px;
 }
 
 .menu-name {
@@ -250,18 +250,20 @@ option {
 
 .menu-option {
   display: flex;
+  justify-content: space-between;
+  margin-right: 50px;
   box-sizing: inherit;
 }
 
 .option-name {
-  width: 190px;
+  width: 170px;
+  margin-left: 70px;
 }
 
 .option-price {
   color: #00a5e7;
   margin-left: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
@@ -292,10 +294,10 @@ option {
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  background-color: #343844;
+  background-color: #1e293b;
   /* bottom: 0; */
   /* position: sticky; */
-  border-radius: 0 0 3px 3px;
+  border-radius: 1px;
   /* box-sizing: inherit; */
 }
 
