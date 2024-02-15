@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 @Builder
-@Getter
-public class OAuth2UserImpl implements OAuth2User {
-
-    private final Map<String, Object> attributes;
-    private final List<GrantedAuthority> authorities;
-    private final String name;
-    private final Long id;
-    private final String email;
-
+public record OAuth2UserImpl(
+        @Getter Map<String, Object> attributes,
+        @Getter List<GrantedAuthority> authorities,
+        @Getter String name,
+        Long id,
+        String email
+) implements OAuth2User {
 }

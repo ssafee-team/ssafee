@@ -12,18 +12,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OAuth2CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private final HttpCookieOAuth2RequestRepository httpCookieOAuth2RequestRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         OAuth2UserImpl oAuth2User = (OAuth2UserImpl) authentication.getPrincipal();
         String accessToken = jwtTokenProvider.issueUserAccessToken(JwtPrincipalInfo.builder()
-                .id(String.valueOf(oAuth2User.getId()))
-                .info(oAuth2User.getEmail())
-                .role(oAuth2User.getAuthorities().get(0).getAuthority())
+                .id(String.valueOf(oAuth2User.id()))
+                .info(oAuth2User.email())
+                .role(oAuth2User.authorities().get(0).getAuthority())
                 .build());
 
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
@@ -32,7 +32,7 @@ public class OAuth2CustomAuthenticationSuccessHandler extends SimpleUrlAuthentic
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+        httpCookieOAuth2RequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
 }

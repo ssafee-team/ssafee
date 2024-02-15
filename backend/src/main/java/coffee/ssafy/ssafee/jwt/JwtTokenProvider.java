@@ -10,7 +10,6 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -30,7 +29,7 @@ public class JwtTokenProvider {
 
     public String issueManagerAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, principal.id())
+                .add(CLAIMS_ID, principal.managerId())
                 .add(CLAIMS_SHOP_ID, principal.shopId())
                 .add(CLAIMS_ROLE, principal.role())
                 .build();
@@ -39,28 +38,28 @@ public class JwtTokenProvider {
 
     public String issueUserAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, principal.id())
+                .add(CLAIMS_ID, principal.userId())
                 .add(CLAIMS_EMAIL, principal.email())
                 .add(CLAIMS_ROLE, principal.role())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
     }
 
-    public String issueRefreshToken() {
-        return issueToken(null, jwtProps.getRefreshExpiration(), jwtProps.getRefreshSecretKey());
-    }
-
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
         String role = claims.get(CLAIMS_ROLE, String.class);
+        String id = role.equals("ROLE_USER") ? claims.get(CLAIMS_ID, String.class) : String.valueOf(claims.get(CLAIMS_ID, Long.class));
         String info = role.equals("ROLE_USER") ? claims.get(CLAIMS_EMAIL, String.class) : String.valueOf(claims.get(CLAIMS_SHOP_ID, Long.class));
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
-                .id(claims.get(CLAIMS_ID, String.class))
+                .id(id)
                 .info(info)
                 .role(role)
                 .build();
-        List<GrantedAuthority> authorities = List.of(() -> claims.get(CLAIMS_ROLE, String.class));
-        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, List.of(() -> role));
+    }
+
+    public String issueRefreshToken() {
+        return issueToken(null, jwtProps.getRefreshExpiration(), jwtProps.getRefreshSecretKey());
     }
 
     public void parseRefreshToken(String refreshToken) {
