@@ -26,9 +26,9 @@ public class ChoiceMenuController {
     @Operation(summary = "주문 메뉴 생성")
     public ResponseEntity<Void> createChoiceMenu(@PathVariable("access_code") String accessCode,
                                                  @RequestBody ChoiceMenuCreateRequest choiceMenuCreateRequest) {
-        Long id = choiceMenuService.createChoiceMenu(accessCode, choiceMenuCreateRequest);
-        URI location = URI.create("/api/v1/parties/" + accessCode + "/order-menus/" + id);
-        messagingTemplate.convertAndSend("/sub/party/" + accessCode + "/order-menus", location);
+        Long choiceMenuId = choiceMenuService.createChoiceMenu(accessCode, choiceMenuCreateRequest);
+        messagingTemplate.convertAndSend("/sub/party/" + accessCode + "/choice-menu/create", choiceMenuId);
+        URI location = URI.create("/api/v1/parties/" + accessCode + "/order-menus/" + choiceMenuId);
         return ResponseEntity.created(location).build();
     }
 
@@ -53,6 +53,7 @@ public class ChoiceMenuController {
                                                  @PathVariable("id") Long choiceMenuId) {
         Long partyId = partyService.findPartyId(accessCode);
         choiceMenuService.deleteChoiceMenu(partyId, choiceMenuId);
+        messagingTemplate.convertAndSend("/sub/party/" + accessCode + "/choice-menu/delete", choiceMenuId);
         return ResponseEntity.noContent().build();
     }
 

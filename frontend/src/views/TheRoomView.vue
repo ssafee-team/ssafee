@@ -80,18 +80,17 @@ const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
-const isOrdering = ref(false)
 
 // 데이터
-const code = ref(route.params.code as string)
 const token = useLocalStorage('user-token', null)
+const code = ref(route.params.code as string)
 const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
 if (orderStatus.value?.real_ordered_time !== null)
   router.push(`/after/${code.value}`)
 
 const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
 const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
-const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
+const choiceMenus = ref<ChoiceMenu[]>(await (await fetch(`/api/v1/parties/${code.value}/order-menus`)).json())
 const img_link = ref(shop.value?.image)
 
 // 헤더 높이
@@ -117,11 +116,20 @@ const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
 const wsEndpoint = '/ws'
 const wsUrl = ref(`${wsProtocol}//${location.value.host}${wsEndpoint}`)
 
+// 메뉴선택 실시간 연동
 const client = new Client({
   brokerURL: wsUrl.value,
   onConnect: () => {
-    client.subscribe(`/sub/party/${code.value}/order-menus`, (message) => {
-      choiceMenus.value?.push(JSON.parse(message.body))
+    client.subscribe(`/sub/party/${code.value}/choice-menu/create`, async (message) => {
+      const choiceMenuId = Number.parseInt(message.body)
+      const { data: choiceMenu } = await axios.get<ChoiceMenu>(`/api/v1/parties/${code.value}/order-menus/${choiceMenuId}`)
+      choiceMenus.value.push(choiceMenu)
+    })
+
+    client.subscribe(`/sub/party/${code.value}/choice-menu/delete`, (message) => {
+      const choiceMenuId = Number.parseInt(message.body)
+      const index = choiceMenus.value.findIndex(choiceMenu => choiceMenu.id === choiceMenuId)
+      choiceMenus.value.splice(index, 1)
     })
   },
 })
@@ -218,13 +226,10 @@ onUnmounted(() => {
           </div> -->
           <div class="body-container">
             <div class="left-panel">
-              <MenuList
-                :shop-id="party?.shop_id" :code="code" :is-ordering="isOrdering"
-                @order-cart="choiceMenus?.push"
-              />
+              <MenuList :shop-id="party?.shop_id!" :code="code" />
             </div>
             <div class="center-panel">
-              <Cart :orders="choiceMenus!" :code="code" :is-ordering="isOrdering" />
+              <Cart :choice-menus="choiceMenus!" :code="code" />
             </div>
             <div class="right-panel">
               <Chat :ws-url="wsUrl" :code="code" />

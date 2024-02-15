@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { Client } from '@stomp/stompjs'
-import { useFetch } from '@vueuse/core'
 
 interface Chat {
   name: string
