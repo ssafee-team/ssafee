@@ -37,7 +37,7 @@ export default {
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-
+      
       // 정렬 방식에 따라 주문 목록을 정렬
       if (this.sortMethod === 'userName')
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
@@ -45,7 +45,7 @@ export default {
       // else if (this.sortMethod === "menuName") {
       //   orders.sort((a, b) => a.menu.name.localeCompare(b.menu.name));
       // }
-
+      // console.log("정렬",orders)
       return orders
     },
   },
@@ -60,9 +60,6 @@ export default {
     toggleCheck(participantOrders) {
       const participantId = participantOrders[0].participant_id
       const paidValue = participantOrders[0].paid
-
-      // console.log("아이디는", participantId);
-      // console.log("상태는", paidValue);
 
       modifyParticipants(
         this.code,
@@ -158,9 +155,9 @@ export default {
           v-for="(order, index) in participantOrders"
           :key="index"
           class="order"
-          :class="{ checked: order.checked }"
+          :class="{ checked: participantOrders[0].paid }"
         >
-          <div class="item" :class="{ checked: order.checked }">
+          <div class="item" :class="{ checked: participantOrders[0].paid }">
             <div class="menu-name">
               {{ order.menu.name }}
             </div>
@@ -177,7 +174,7 @@ export default {
               v-for="option in optionCategory.options"
               :key="option.id"
               class="menu-option"
-              :class="{ checked: order.checked }"
+              :class="{ checked: participantOrders[0].paid }"
             >
               ㄴ
               <div class="option-name">

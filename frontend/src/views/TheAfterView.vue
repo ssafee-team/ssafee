@@ -110,13 +110,16 @@ function addToOrderList() {
         code.value,
         (response) => {
           orderList.value = response.data.map((order) => {
+            
             const participant = participants.find(participant => participant.name === order.participant_name)
 
             return {
               ...order,
-              participant_id: participant ? participant.id : null, // Add participant_id or null if participant not found
+              participant_id: participant ? participant.id : null,
+              paid: participant ? participant.paid : null,
             }
           })
+          
           // console.log('주문 현황 불러오기: ', orderList.value)
         },
         (error) => {
