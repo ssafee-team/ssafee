@@ -9,16 +9,17 @@ const route = useRoute()
 // orderList의 참조를 생성합니다.
 const orderList = ref([])
 const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
-
+// partyId를 반응형 참조로 선언
+const partyId = ref(null)
 const managerToken = useLocalStorage('manager-token', null)
 const totalPrice = ref(0)
 
-async function fetchOrderDetails(partyId) {
-  if (!partyId)
+async function fetchOrderDetails() {
+  if (!partyId.value)
     return
 
   // partyId를 숫자로 변환
-  const numericPartyId = Number(partyId)
+  const numericPartyId = Number(partyId.value)
   // console.log(partyId, '하')
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
   try {
@@ -26,7 +27,7 @@ async function fetchOrderDetails(partyId) {
     // API 응답을 기반으로 orderList 업데이트
     // console.log(response)
     orderList.value = response.data.filter(order => order.party_id === numericPartyId)
-    console.log(orderList.value)
+    // console.log(orderList.value)
 
     totalPrice.value = 0
 
@@ -57,28 +58,31 @@ watchEffect(() => {
 
 function onMade() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/made`, null, config)
+  axios.post(`/api/v1/shops/${shopId}/orders/${partyId.value}/made`, null, config)
 }
 
 function onStartDevlivery() {
+  // console.log(partyId.value)
+  // console.log(shopId)
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
-  axios.post(`/api/v1/shops/${shopId}/orders/${partyId}/start-delivery`, null, config)
+  axios.post(`/api/v1/shops/${shopId}/orders/${partyId.value}/start-delivery`, null, config)
 }
 
 //
 onMounted(() => {
-  const partyId = route.query.partyId
-  if (partyId)
-    fetchOrderDetails(partyId)
+  partyId.value = route.query.partyId
+  // console.log(partyId.value)
+  if (partyId.value)
+    fetchOrderDetails()
 
-  if (orderList.value) {
-    const listItems = orderList.value.querySelectorAll('ul')
-    listItems.forEach((ul) => {
-      ul.addEventListener('click', function () {
-        this.classList.toggle('highlight')
-      })
-    })
-  }
+  // if (orderList.value) {
+  //   const listItems = orderList.value.querySelectorAll('ul')
+  //   listItems.forEach((ul) => {
+  //     ul.addEventListener('click', function () {
+  //       this.classList.toggle('highlight')
+  //     })
+  //   })
+  // }
 })
 </script>
 
@@ -138,42 +142,20 @@ onMounted(() => {
       </div>
     </div>
 
-    <div id="orderList" ref="orderList" class="order-info">
-      <!-- 향후 for-each로 반복문 -->
-      <ul>
-        12 T-아이스아메리카노
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        5 G-핫 카페라떼
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-카페모카
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
-      </ul>
-      <ul>
-        10 V-아이스티
-        <li>&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1샷 추가</li>
-        <li>&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2샷 추가</li>
+    <div id="orderList" class="order-info">
+      <ul v-for="(order, index) in orderList" :key="index" class="order-op">
+        <li v-for="choiceMenu in order.choice_menus" :key="choiceMenu.id">
+          {{ choiceMenu.menu.name }}
+          <div>
+            <li v-for="optionCategory in choiceMenu.option_categories" :key="optionCategory.id">
+              <a class="option-name">
+                <li v-for="option in optionCategory.options" :key="option.id">
+                  ㄴ{{ option.name }}
+                </li>
+              </a>
+            </li>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -233,21 +215,30 @@ onMounted(() => {
   margin: 10px;
   font-size: 20px;
   width: 300px;
-  height: 800px;
+  height: 700px;
   overflow-y: auto;
-  border: 1px solid black
+  border-radius: 5px;
+  border: 3px solid #1e293b;
+  box-shadow: 2px 2px 2px 2px rgb(227, 226, 226);
 }
 
-.order-info ul {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  width: 80%;
+.order-info::-webkit-scrollbar{
+  display: none;
+}
+
+.order-op{
+
 }
 
 .order-info li {
+  margin-bottom: 10px;
+
   font-weight: bold;
   list-style-type: none;
+}
+
+.option-name{
+  display: flex;
 }
 
 button {
