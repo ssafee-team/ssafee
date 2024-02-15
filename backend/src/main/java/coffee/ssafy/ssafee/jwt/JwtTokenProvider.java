@@ -48,8 +48,12 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
         String role = claims.get(CLAIMS_ROLE, String.class);
-        String id = role.equals("ROLE_USER") ? claims.get(CLAIMS_ID, String.class) : String.valueOf(claims.get(CLAIMS_ID, Long.class));
-        String info = role.equals("ROLE_USER") ? claims.get(CLAIMS_EMAIL, String.class) : String.valueOf(claims.get(CLAIMS_SHOP_ID, Long.class));
+        String id = role.equals("ROLE_USER")
+                ? String.valueOf(claims.get(CLAIMS_ID, Long.class))
+                : claims.get(CLAIMS_ID, String.class);
+        String info = role.equals("ROLE_USER")
+                ? claims.get(CLAIMS_EMAIL, String.class)
+                : String.valueOf(claims.get(CLAIMS_SHOP_ID, Long.class));
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
                 .id(id)
                 .info(info)
