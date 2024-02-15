@@ -74,7 +74,7 @@ const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/orde
 
 async function goOrder() {
   const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token.value}` },
   })
   if (status === 200)
     router.push(`/after/${code.value}`)
