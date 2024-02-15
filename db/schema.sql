@@ -23,12 +23,12 @@ DROP TABLE IF EXISTS `auto_orders`,
 
 CREATE TABLE `shops` (
     `shop_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `name` varchar(32) NOT NULL,
-    `address` varchar(255) NOT NULL,
-    `phone` varchar(32) NOT NULL,
-    `image` varchar(512) NULL,
+    `name` VARCHAR(32) NOT NULL,
+    `address` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(32) NOT NULL,
+    `image` VARCHAR(500) NULL,
     `enabled_order` BOOL NOT NULL DEFAULT FALSE,
-    `minimum_price` BIGINT NOT NULL,    
+    `minimum_price` BIGINT NOT NULL,
     `closed` BOOL NOT NULL DEFAULT FALSE,
     `deleted` BOOL NOT NULL DEFAULT FALSE
 );
@@ -46,14 +46,13 @@ CREATE TABLE `menus` (
     `name` VARCHAR(32) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
     `price` INT NOT NULL,
-    `image` VARCHAR(512) NULL,
+    `image` VARCHAR(500) NULL,
     `soldout` BOOL NOT NULL DEFAULT FALSE,
     `deleted` BOOL NOT NULL DEFAULT FALSE,
     `menu_category_id` BIGINT NOT NULL,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`),
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
-    
 );
 
 CREATE TABLE `option_categories` (
@@ -63,7 +62,7 @@ CREATE TABLE `option_categories` (
     `max_count` INT NULL,
     `deleted` BOOL NOT NULL DEFAULT FALSE,
     `shop_id` BIGINT NOT NULL,
-	FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
 
 CREATE TABLE `menus_option_categories` (
@@ -82,7 +81,7 @@ CREATE TABLE `options` (
     `option_category_id` BIGINT NOT NULL,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`),
-	FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );
 
 CREATE TABLE `users` (
@@ -105,7 +104,7 @@ CREATE TABLE `parties` (
     `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `shop_id` BIGINT NOT NULL,
-    `user_id` BIGINT NOT NULL, 
+    `user_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
 );
@@ -116,7 +115,7 @@ CREATE TABLE `creators` (
     `name` VARCHAR(8) NOT NULL,
     `bank` VARCHAR(32) NOT NULL,
     `account` VARCHAR(32) NOT NULL,
-    `webhook_url` varchar(255) null,
+    `webhook_url` VARCHAR(255) NULL,
     `party_id` BIGINT NOT NULL,
     FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
 );
@@ -167,10 +166,9 @@ CREATE TABLE `choice_menu_options` (
     FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
 );
 
-
 CREATE TABLE `managers` (
     `manager_id` varchar(20) NOT NULL PRIMARY KEY,
-    `manager_pw` varchar(20) not null,
+    `manager_pw` varchar(20) NOT NULL,
     `shop_id` BIGINT NOT NULL,
     FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
 );

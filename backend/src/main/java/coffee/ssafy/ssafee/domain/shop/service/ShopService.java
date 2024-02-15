@@ -3,6 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.service;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.dto.response.ShopResponse;
+import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.ShopMapper;
@@ -44,9 +45,15 @@ public class ShopService {
     }
 
     public void updateShopImage(Long id, MultipartFile file) {
-        shopRepository.findById(id)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP))
-                .updateImage(s3Service.putImage(id + "/", file));
+        String prefix = String.format("shop/%d/", id);
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_SHOP));
+
+        String image = shop.getImage();
+        shop.updateImage(s3Service.putImage(prefix, file));
+        if (image != null) {
+            s3Service.deleteImage(image);
+        }
     }
 
 }

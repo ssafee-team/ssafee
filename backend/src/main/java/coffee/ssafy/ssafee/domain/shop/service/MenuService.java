@@ -56,9 +56,14 @@ public class MenuService {
     }
 
     public void updateMenuImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
-        menuRepository.findByShopIdAndId(shopId, menuId)
-                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
-                .updateImage(s3Service.putImage(shopId + "/", file));
+        String prefix = String.format("shop/%d/menu/%d/", shopId, menuId);
+        Menu menu = menuRepository.findByShopIdAndId(shopId, menuId)
+                .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU));
+        String image = menu.getImage();
+        menu.updateImage(s3Service.putImage(prefix, file));
+        if (image != null) {
+            s3Service.deleteImage(image);
+        }
     }
 
     public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {
