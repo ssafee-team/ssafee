@@ -4,7 +4,12 @@ import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
 import { jwtDecode } from 'jwt-decode'
 import { onMounted, onUnmounted, ref } from 'vue'
 import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import CreateHeader from '@/components/common/CreateHeader.vue'
+
+dayjs.extend(duration)
+dayjs.extend(customParseFormat)
 
 interface Party {
   id: number
@@ -37,7 +42,7 @@ const shopRecord = shops.value?.reduce((acc, shop) => ({ ...acc, [shop.id]: shop
 
 function isPartyOpened(party: Party) {
   const now = dayjs()
-  const deadline = dayjs(party.last_order_time)
+  const deadline = dayjs(party.last_order_time, 'HH:mm')
   return now.isBefore(deadline)
 }
 
