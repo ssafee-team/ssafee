@@ -1,14 +1,59 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useLocalStorage } from '@vueuse/core'
 import ManagerHeader from '@/components/common/ManagerHeader.vue'
 
+const route = useRoute()
 // orderList의 참조를 생성합니다.
-const orderList = ref(null)
+const orderList = ref([])
 const shopId = 1 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
-const partyId = 10 // TODO: 임시 변수므로 반드시 해결해야 함 무조건 해야함
+
 const managerToken = useLocalStorage('manager-token', null)
+const totalPrice = ref(0)
+
+async function fetchOrderDetails(partyId) {
+  if (!partyId)
+    return
+
+  // partyId를 숫자로 변환
+  const numericPartyId = Number(partyId)
+  // console.log(partyId, '하')
+  const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
+  try {
+    const response = await axios.get(`/api/v1/shops/${shopId}/orders`, config)
+    // API 응답을 기반으로 orderList 업데이트
+    // console.log(response)
+    orderList.value = response.data.filter(order => order.party_id === numericPartyId)
+    console.log(orderList.value)
+
+    totalPrice.value = 0
+
+    orderList.value.forEach((order) => {
+      order.choice_menus.forEach((choiceMenu) => {
+        totalPrice.value += choiceMenu.menu.price // 메뉴 가격 합산
+
+        choiceMenu.option_categories.forEach((optionCategory) => {
+          optionCategory.options.forEach((option) => {
+            totalPrice.value += option.price // 옵션 가격 합산
+          })
+        })
+      })
+    })
+  }
+  catch (error) {
+    console.error('주문 정보 조회 중 오류 발생:', error)
+  }
+}
+
+// 주문 목록에 대한 DOM 조작을 위한 로직을 watchEffect 내부에 구현
+watchEffect(() => {
+  if (orderList.value.length > 0) {
+    // 주문 목록이 업데이트될 때 실행될 로직
+    // 예: orderList.value.forEach(order => { ... })
+  }
+})
 
 function onMade() {
   const config = { headers: { Authorization: `Bearer ${managerToken.value}` } }
@@ -22,6 +67,10 @@ function onStartDevlivery() {
 
 //
 onMounted(() => {
+  const partyId = route.query.partyId
+  if (partyId)
+    fetchOrderDetails(partyId)
+
   if (orderList.value) {
     const listItems = orderList.value.querySelectorAll('ul')
     listItems.forEach((ul) => {
@@ -49,7 +98,7 @@ onMounted(() => {
         <span>배달주소 | 광주광역시 하남산단 삼성전자 G5주차장 자전거 거치대 앞</span>
       </div>
       <div class="party-info2">
-        <span>총 주문금액 : 134,000원</span>
+        <span>총 주문금액 : {{ totalPrice }}원</span>
       </div>
 
       <div class="status-info">
