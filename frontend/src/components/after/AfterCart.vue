@@ -146,6 +146,7 @@ export default {
         <div class="participant-name">
           <input
             v-model="participantOrders[0].paid"
+            :checked="participantOrders[0].paid"
             type="checkbox"
             @change="toggleCheck(participantOrders)"
           >
