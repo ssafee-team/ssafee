@@ -10,6 +10,18 @@ import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
 
+interface Shop {
+  id: number
+  name: string
+  address: string
+  phone: string
+  image: string
+  enable_order: boolean
+  minimum_price: number
+  closed: boolean
+  deleted: boolean
+}
+
 interface Party {
   id: number
   name: string
@@ -71,6 +83,7 @@ const token = useLocalStorage('user-token', null)
 const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
 const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
 const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
+const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
 
 async function goOrder() {
   const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
@@ -168,9 +181,15 @@ onUnmounted(() => {
         </head>
 
         <body>
-          <div class="btn-order">
+          <div class="btn-order" style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div class="minimum-price">
+              최소주문금액 : <span style="color: rgb(126, 126, 126);">{{ shop?.minimum_price }}</span>원
+            </div>
             <button class="order-request" @click="goOrder()">
               주문요청
+            </button>
+            <button v-i>
+              user-token if로 묶으려고 잠시 추가한 버튼 ^-^
             </button>
           </div>
           <!-- <div class="center-content">
@@ -297,6 +316,12 @@ head {
   height: 70px;
   border-radius: 5px;
 
+}
+
+.minimum-price {
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .center-content {
