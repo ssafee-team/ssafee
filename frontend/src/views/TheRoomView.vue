@@ -211,6 +211,9 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 body {
 
   font-family: "Arial", sans-serif;
@@ -253,9 +256,11 @@ head {
 .timeline {
   width: 20%;
   display: flex;
+  flex-direction: column;
   border: 3px solid #1e293b;
   justify-content: center;
   align-items: center;
+  text-align: center;
   height: 70px;
   /* font-size: 30px; */
   /* margin: 20px; */
@@ -301,6 +306,7 @@ head {
   justify-content: center;
   align-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .center-title {
@@ -415,6 +421,7 @@ button {
   .line,
   .center-title,
   .timeline {
+    display: flex;
     flex-direction: column;
     justify-content: center;
 

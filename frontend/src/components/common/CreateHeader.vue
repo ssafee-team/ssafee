@@ -1,15 +1,25 @@
-<script>
-export default {
-  data() {
-    return {
-      name: '전상혁',
-    }
-  },
-  methods: {
-    goToMain() {
-      this.$router.push({ name: 'main' })
-    },
-  },
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+onMounted(() => {
+  document.title = 'SSAFEE'
+
+  const faviconURL = new URL('@/assets/img/LOGO.png', import.meta.url).href
+  let link = document.querySelector('link[rel~=\'icon\']')
+  if (!link) {
+    link = document.createElement('link')
+    link.rel = 'icon'
+    link.type = 'image/png'
+    document.head.appendChild(link)
+  }
+  link.href = faviconURL
+})
+
+const router = useRouter()
+
+function goToMain() {
+  router.push({ name: 'main' })
 }
 </script>
 
@@ -25,6 +35,10 @@ export default {
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
+
 .head {
   width: 100%;
   height: 70px;

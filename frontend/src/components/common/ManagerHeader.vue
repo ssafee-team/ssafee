@@ -1,6 +1,20 @@
 <script setup>
+import { onMounted } from 'vue'
 import router from '@/router'
 
+onMounted(() => {
+  document.title = 'SSAFEE'
+
+  const faviconURL = new URL('@/assets/img/LOGO.png', import.meta.url).href
+  let link = document.querySelector('link[rel~=\'icon\']')
+  if (!link) {
+    link = document.createElement('link')
+    link.rel = 'icon'
+    link.type = 'image/png'
+    document.head.appendChild(link)
+  }
+  link.href = faviconURL
+})
 // 메인화면 이동
 function moveManagerMain() {
   router.push('/m-main')
@@ -38,6 +52,9 @@ function moveManagerMain() {
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 /* body {
   margin: 0;
   padding: 0;

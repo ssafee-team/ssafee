@@ -397,6 +397,9 @@ function formatTime() {
 </template>
 
 <style>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
 #empty {
   height: 50px;
 }
