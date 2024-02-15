@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useLocalStorage } from '@vueuse/core'
+import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
 import MainHeader from '@/components/common/MainHeader.vue'
 import Chat from '@/components/room/Chat.vue'
 import AfterCart from '@/components/after/AfterCart.vue'
@@ -9,125 +9,131 @@ import { getOrderList, getParty, giveMeMoney, orderDelivered, sendCarrierResult 
 import CarrierList from '@/components/after/CarrierList.vue'
 import { getParticipants } from '@/api/after'
 
-// const roomCode = ref("");
+interface Shop {
+  id: number
+  name: string
+  address: string
+  phone: string
+  image: string
+  enable_order: boolean
+  minimum_price: number
+  closed: boolean
+  deleted: boolean
+}
+
+interface Party {
+  id: number
+  name: string
+  generation: number
+  classroom: number
+  last_order_time: string
+  created_time: string
+  shop_id: number
+  user_id: number
+  creator: {
+    id: number
+    name: string
+    bank: string
+    account: string
+  }
+}
+
+interface ChoiceMenu {
+  id: number
+  participant_name: string
+  menu: {
+    id: number
+    name: string
+    price: number
+    image: string
+    soldout: boolean
+  }
+  option_categories: {
+    id: number
+    name: string
+    required: boolean
+    max_count: number
+    options: {
+      id: number
+      name: string
+      price: number
+    }[]
+  }[]
+}
+
+interface Participant {
+  id: number
+  name: string
+  is_carrier: boolean
+  paid: boolean
+}
+
+interface OrderStatus {
+  confirmed_time: string | null
+  rejected_time: string | null
+  real_ordered_time: string | null
+  made_time: string | null
+  delivered_time: string | null
+}
 
 const route = useRoute()
 const router = useRouter()
-const code = ref('') // 파티 코드
+
 const token = useLocalStorage('user-token', null)
+const code = ref(route.params.code as string)
+const { data: orderStatusData } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
+if (orderStatusData.value?.real_ordered_time === null)
+  router.push(`/room/${code.value}`)
 
-const partyInfo = ref({
-  id: '',
-  name: '',
-  generation: '',
-  classroom: '',
-  last_order_time: '',
-  created_time: '',
-  shop_id: '',
-  creator: {
-    id: '',
-    name: '',
-    email: '',
-    bank: '',
-    account: '',
-  },
-})
+const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
 
-const orderList = ref([])
-
+const choiceMenus = ref<ChoiceMenu[]>([])
 const carrierParticipants = ref([])
+// const isOrderListModalOpen = ref(false)
+const orderStatus = ref('주문 요청 완료') // 남은시간
 
-// 파티 객체 정보의 shop_id 추출
-const shopId = partyInfo.value.shop_id
-
-const isOrderListModalOpen = ref(false)
-
-const orderStatus = ref("주문 요청 완료") // 남은시간
-
-// 헤더 높이를 저장하는 변수
+// 헤더 높이
 const headerHeight = ref('')
-
-// 화면 크기가 변경될 때마다 헤더 높이를 업데이트하는 함수
 function updateHeaderHeight() {
-  headerHeight.value = `${document.querySelector('header').offsetHeight}px`
+  headerHeight.value = `${document.querySelector('header')?.offsetHeight}px`
 }
+
+// 웹소켓
+const location = useBrowserLocation()
+const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
+const wsEndpoint = '/ws'
+const wsUrl = ref(`${wsProtocol}//${location.value.host}${wsEndpoint}`)
 
 // 스크립트 섹션 안에서
 const isUserLoggedIn = ref(false)
-
-// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
-onMounted(() => {
-  // 로컬 스토리지에서 "user-token"을 가져와서 확인
-  const userToken = localStorage.getItem('user-token')
-  isUserLoggedIn.value = !!userToken
-
-  updateHeaderHeight()
-  window.addEventListener('resize', updateHeaderHeight)
-  
-  
-  code.value = route.params.code
-  // console.log("현재 방 코드: ", code.value);
-  getPartyInfo()
-  getCarrierList()
-  addToOrderList()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateHeaderHeight)
-})
-
-function getPartyInfo() {
-  getParty(
-    code.value,
-
-    ({ data }) => {
-      // console.log(data);
-      partyInfo.value.id = data.id
-      partyInfo.value.name = data.name
-      partyInfo.value.generation = data.generation
-      partyInfo.value.classroom = data.classroom
-      partyInfo.value.last_order_time = data.last_order_time
-      partyInfo.value.created_time = data.created_time
-      partyInfo.value.shop_id = data.shop_id
-      partyInfo.value.creator = data.creator
-      // console.log(partyInfo);
-    },
-    (error) => {
-      console.log(error)
-    },
-  )
-}
-
-
 
 function addToOrderList() {
   // 주문 목록 조회
   getParticipants(
     code.value,
-    (response) => {
+    (response: any) => {
       const participants = response.data
       getOrderList(
         code.value,
-        (response) => {
-          orderList.value = response.data.map((order) => {
-            
-            const participant = participants.find(participant => participant.name === order.participant_name)
+        (response: any) => {
+          choiceMenus.value = response.data.map((choiceMenu: ChoiceMenu) => {
+            const participant = participants.find((participant: Participant) => participant.name === choiceMenu.participant_name)
 
             return {
-              ...order,
+              ...choiceMenu,
               participant_id: participant ? participant.id : null,
               paid: participant ? participant.paid : null,
             }
           })
-          
+
           // console.log('주문 현황 불러오기: ', orderList.value)
         },
-        (error) => {
+        (error: any) => {
           console.error('주문 현황 조회 실패: ', error)
         },
       )
     },
-    (error) => {
+    (error: any) => {
       console.error(error)
     },
   )
@@ -136,10 +142,10 @@ function addToOrderList() {
 function getCarrierList() {
   getParticipants(
     code.value,
-    (response) => {
-      carrierParticipants.value = response.data.filter(participant => participant.is_carrier)
+    (response: any) => {
+      carrierParticipants.value = response.data.filter((participant: Participant) => participant.is_carrier)
     },
-    (error) => {
+    (error: any) => {
       console.error(error)
     },
   )
@@ -153,7 +159,7 @@ function goMoney() {
     () => {
       console.log('송금요청 알림을 보냈습니다.')
     },
-    (error) => {
+    (error: any) => {
       console.error('송금요청 알림을 보내는 중 오류가 발생했습니다.', error)
     },
   )
@@ -165,11 +171,28 @@ function DeliveryAlert() {
     () => {
       console.log('배달부 알림을 보냈습니다.')
     },
-    (error) => {
+    (error: any) => {
       console.error('배달부 알림을 보내는 중 오류가 발생했습니다.', error)
     },
   )
 }
+
+// 컴포넌트가 마운트될 때와 언마운트될 때 이벤트 리스너 추가/제거
+onMounted(() => {
+  // 로컬 스토리지에서 "user-token"을 가져와서 확인
+  const userToken = localStorage.getItem('user-token')
+  isUserLoggedIn.value = !!userToken
+
+  updateHeaderHeight()
+  addEventListener('resize', updateHeaderHeight)
+
+  getCarrierList()
+  addToOrderList()
+})
+
+onUnmounted(() => {
+  removeEventListener('resize', updateHeaderHeight)
+})
 </script>
 
 <template>
@@ -180,16 +203,16 @@ function DeliveryAlert() {
         <head>
           <div class="line">
             <div class="party-name">
-              {{ partyInfo.name }}
+              {{ party?.name }}
             </div>
           </div>
           <div class="center-title">
             <div class="row">
               <div class="account">
-                {{ partyInfo.creator.bank }}
+                {{ party?.creator.bank }}
               </div>
               <div class="account">
-                ({{ partyInfo.creator.name }})
+                ({{ party?.creator.name }})
               </div>
             </div>
             <div class="row">
@@ -197,7 +220,7 @@ function DeliveryAlert() {
                 logo
               </div> -->
               <div class="account-num">
-                {{ partyInfo.creator.account }}
+                {{ party?.creator.account }}
               </div>
             </div>
           </div>
@@ -211,7 +234,7 @@ function DeliveryAlert() {
             <div>마감시간</div>
 
             <div class="time">
-              {{ partyInfo.last_order_time }}
+              {{ party?.last_order_time }}
             </div>
           </div>
         </head>
@@ -234,11 +257,11 @@ function DeliveryAlert() {
               <!-- 추가적인 내용이 들어갈 수 있습니다. -->
             </div>
             <div class="center-panel">
-              <AfterCart :orders="orderList" :code="code" />
+              <AfterCart :orders="choiceMenus" :code="code" />
             </div>
             <div class="right-panel">
               <!-- <div>채팅창</div> -->
-              <Chat />
+              <Chat :ws-url="wsUrl" :code="code" />
             </div>
           </div>
         </body>
