@@ -4,11 +4,11 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { useFetch, useLocalStorage } from '@vueuse/core'
 import moment from 'moment'
+import axios from 'axios'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
-import { orderRequest } from '@/api/party'
 
 interface Party {
   id: number
@@ -61,31 +61,23 @@ interface OrderStatus {
 const route = useRoute()
 const router = useRouter()
 
-const code = ref(route.params.code as string)
 const isLoading = ref(true)
 const isOrdering = ref(false)
-
-const remainingTime = ref('') // 남은시간
+const remainingTime = ref('')
 const headerHeight = ref('')
 
+const code = ref(route.params.code as string)
+const token = useLocalStorage('user-token', null)
 const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
 const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
 const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
-const token = useLocalStorage('user-token', null)
 
-function goOrder() {
-  orderRequest(
-    code.value,
-    token.value,
-    async () => {
-      isOrdering.value = true
-      remainingTime.value = '주문중'
-      setTimeout(() => { router.push(`/after/${code.value}`) }, 100)
-    },
-    (error: any) => {
-      console.error('주문 요청에 실패했습니다:', error)
-    },
-  )
+async function goOrder() {
+  const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (status === 200)
+    router.push(`/after/${code.value}`)
 }
 
 function updateRemainingTime() {
@@ -93,7 +85,6 @@ function updateRemainingTime() {
   const deadline = moment(party.value?.last_order_time, 'HH:mm')
 
   if (now.isAfter(deadline)) {
-    remainingTime.value = '마감'
     router.push(`/after/${code.value}`)
   }
   else {
@@ -115,8 +106,6 @@ onMounted(async () => {
   addEventListener('resize', updateHeaderHeight)
 
   if (token.value && orderStatus.value?.real_ordered_time !== null) {
-    isOrdering.value = true
-    remainingTime.value = '주문중'
     router.push(`/after/${code.value}`)
   }
   else {
