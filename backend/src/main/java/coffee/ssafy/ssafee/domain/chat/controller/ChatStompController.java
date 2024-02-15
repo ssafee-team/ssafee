@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-public class StompChatController {
+public class ChatStompController {
 
     private final ChatService chatService;
     private final PartyService partyService;

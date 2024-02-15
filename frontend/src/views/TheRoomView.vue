@@ -2,14 +2,19 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useFetch, useLocalStorage } from '@vueuse/core'
+import { useBrowserLocation, useFetch, useLocalStorage } from '@vueuse/core'
+import { Client } from '@stomp/stompjs'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import axios from 'axios'
 import MainHeader from '@/components/common/MainHeader.vue'
 import MenuList from '@/components/room/MenuList.vue'
 import Chat from '@/components/room/Chat.vue'
 import Cart from '@/components/room/Cart.vue'
+
+dayjs.extend(duration)
+dayjs.extend(customParseFormat)
 
 interface Shop {
   id: number
@@ -76,27 +81,28 @@ const router = useRouter()
 
 const isLoading = ref(true)
 const isOrdering = ref(false)
-const remainingTime = ref('')
-const headerHeight = ref('')
 
+// 데이터
 const code = ref(route.params.code as string)
 const token = useLocalStorage('user-token', null)
-const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
-const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
 const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/order`).get().json<OrderStatus>()
-const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
-const deadline = dayjs(party.value?.last_order_time)
+if (orderStatus.value?.real_ordered_time !== null)
+  router.push(`/after/${code.value}`)
 
+const { data: party } = await useFetch(`/api/v1/parties/${code.value}`).get().json<Party>()
+const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
+const { data: choiceMenus } = await useFetch(`/api/v1/parties/${code.value}/order-menus`).get().json<ChoiceMenu[]>()
 const img_link = ref(shop.value?.image)
 
-async function goOrder() {
-  const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
-    headers: { Authorization: `Bearer ${token.value}` },
-  })
-  if (status === 200)
-    router.push(`/after/${code.value}`)
+// 헤더 높이
+const headerHeight = ref('')
+function updateHeaderHeight() {
+  headerHeight.value = `${document.querySelector('header')?.offsetHeight}px`
 }
 
+// 시간
+const remainingTime = ref('')
+const deadline = dayjs(party.value?.last_order_time, 'HH:mm')
 function updateRemainingTime() {
   const now = dayjs()
   if (deadline.isBefore(now))
@@ -105,8 +111,28 @@ function updateRemainingTime() {
     remainingTime.value = dayjs.duration(deadline.diff(now)).format('HH:mm:ss')
 }
 
-function updateHeaderHeight() {
-  headerHeight.value = `${document.querySelector('header')?.offsetHeight}px`
+// 웹소켓
+const location = useBrowserLocation()
+const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
+const wsEndpoint = '/ws'
+const wsUrl = ref(`${wsProtocol}//${location.value.host}${wsEndpoint}`)
+
+const client = new Client({
+  brokerURL: wsUrl.value,
+  onConnect: () => {
+    client.subscribe(`/sub/party/${code.value}/order-menus`, (message) => {
+      choiceMenus.value?.push(JSON.parse(message.body))
+    })
+  },
+})
+
+// 주문
+async function goOrder() {
+  const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
+    headers: { Authorization: `Bearer ${token.value}` },
+  })
+  if (status === 200)
+    router.push(`/after/${code.value}`)
 }
 
 onMounted(async () => {
@@ -117,17 +143,15 @@ onMounted(async () => {
   updateHeaderHeight()
   addEventListener('resize', updateHeaderHeight)
 
-  if (token.value && orderStatus.value?.real_ordered_time !== null) {
-    router.push(`/after/${code.value}`)
-  }
-  else {
-    updateRemainingTime()
-    setInterval(updateRemainingTime, 1000)
-  }
+  updateRemainingTime()
+  setInterval(updateRemainingTime, 1000)
+
+  client.activate()
 })
 
 onUnmounted(() => {
   removeEventListener('resize', updateHeaderHeight)
+  client.deactivate()
 })
 </script>
 
@@ -187,7 +211,7 @@ onUnmounted(() => {
             <button class="order-request" @click="goOrder()">
               주문요청
             </button>
-            <button v-i>
+            <button>
               user-token if로 묶으려고 잠시 추가한 버튼 ^-^
             </button>
           </div>
@@ -197,13 +221,16 @@ onUnmounted(() => {
           </div> -->
           <div class="body-container">
             <div class="left-panel">
-              <MenuList :shop-id="party?.shop_id" :code="code" :is-ordering="isOrdering" @order-cart="choiceMenus?.push" />
+              <MenuList
+                :shop-id="party?.shop_id" :code="code" :is-ordering="isOrdering"
+                @order-cart="choiceMenus?.push"
+              />
             </div>
             <div class="center-panel">
               <Cart :orders="choiceMenus!" :code="code" :is-ordering="isOrdering" />
             </div>
             <div class="right-panel">
-              <Chat />
+              <Chat :ws-url="wsUrl" :code="code" />
             </div>
           </div>
         </body>

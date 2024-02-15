@@ -7,6 +7,7 @@ import coffee.ssafy.ssafee.domain.party.service.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -19,6 +20,7 @@ public class ChoiceMenuController {
 
     private final PartyService partyService;
     private final ChoiceMenuService choiceMenuService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping
     @Operation(summary = "주문 메뉴 생성")
@@ -26,6 +28,7 @@ public class ChoiceMenuController {
                                                  @RequestBody ChoiceMenuCreateRequest choiceMenuCreateRequest) {
         Long id = choiceMenuService.createChoiceMenu(accessCode, choiceMenuCreateRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode + "/order-menus/" + id);
+        messagingTemplate.convertAndSend("/sub/party/" + accessCode + "/order-menus", location);
         return ResponseEntity.created(location).build();
     }
 
@@ -36,12 +39,20 @@ public class ChoiceMenuController {
         return ResponseEntity.ok().body(choiceMenuService.findChoiceMenus(partyId));
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "주문 메뉴 조회")
+    public ResponseEntity<ChoiceMenuResponse> getChoiceMenu(@PathVariable("access_code") String accessCode,
+                                                            @PathVariable("id") Long choiceMenuId) {
+        Long partyId = partyService.findPartyId(accessCode);
+        return ResponseEntity.ok().body(choiceMenuService.findChoiceMenu(partyId, choiceMenuId));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "주문 메뉴 삭제")
     public ResponseEntity<Void> deleteChoiceMenu(@PathVariable("access_code") String accessCode,
-                                                 @PathVariable("id") Long orderMenuId) {
+                                                 @PathVariable("id") Long choiceMenuId) {
         Long partyId = partyService.findPartyId(accessCode);
-        choiceMenuService.deleteChoiceMenu(partyId, orderMenuId);
+        choiceMenuService.deleteChoiceMenu(partyId, choiceMenuId);
         return ResponseEntity.noContent().build();
     }
 

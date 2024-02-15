@@ -81,6 +81,13 @@ public class ChoiceMenuService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ChoiceMenuResponse findChoiceMenu(Long partyId, Long choiceMenuId) {
+        return choiceMenuRepository.findAllByIdAndPartyId(choiceMenuId, partyId)
+                .map(choiceMenuMapper::toResponse)
+                .orElseThrow(()-> new PartyException(PartyErrorCode.NOT_EXISTS_CHOICE_MENU));
+    }
+
     public void deleteChoiceMenu(Long partyId, Long choiceMenuId) {
         choiceMenuRepository.deleteByPartyIdAndId(partyId, choiceMenuId);
     }

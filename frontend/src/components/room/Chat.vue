@@ -1,25 +1,27 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { useBrowserLocation } from '@vueuse/core'
 import { Client } from '@stomp/stompjs'
+import { useFetch } from '@vueuse/core'
 
-const location = useBrowserLocation()
-const accessCode = location.value.pathname?.split('/').pop()
-const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
-const wsEndpoint = '/ws'
-const wsUrl = `${wsProtocol}//${location.value.host}${wsEndpoint}`
+interface Chat {
+  name: string
+  content: string
+  created_time: string
+}
+
+const code = defineModel<string>('code', { required: true })
+const wsUrl = defineModel<string>('wsUrl', { required: true })
 
 const chatListRef = ref()
-const chats = ref(await (await fetch(`/api/v1/parties/${accessCode}/chats`)).json())
+const chats = ref<Chat[]>(await (await fetch(`/api/v1/parties/${code.value}/chats`)).json())
 const content = ref()
 // const error = ref()
 
 const client = new Client({
-  brokerURL: wsUrl,
+  brokerURL: wsUrl.value,
   onConnect: () => {
-    client.subscribe(`/sub/party/${accessCode}/message`, (message) => {
-      chats.value.push(JSON.parse(message.body))
-
+    client.subscribe(`/sub/party/${code.value}/message`, (message) => {
+      chats.value?.push(JSON.parse(message.body))
       nextTick(() => {
         chatListRef.value.scrollTop = chatListRef.value.scrollHeight
       })
@@ -31,7 +33,7 @@ function publish() {
   if (content.value.trim().length === 0)
     return
   client.publish({
-    destination: `/pub/party/${accessCode}/chat`,
+    destination: `/pub/party/${code.value}/chat`,
     body: JSON.stringify({ content: content.value }),
   })
   content.value = ''
@@ -56,7 +58,7 @@ onUnmounted(() => {
 
   <div class="content">
     <div ref="chatListRef" class="chat-list">
-      <div v-for="chat in chats" :key="chat.createdTime" class="chat">
+      <div v-for="chat in chats" :key="chat.created_time" class="chat">
         <div v-show="chat.name" class="chat-name">
           {{ chat.name }}
         </div>
@@ -192,7 +194,7 @@ onUnmounted(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .footer{
+  .footer {
     margin-top: 5px;
   }
 }
