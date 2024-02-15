@@ -62,6 +62,7 @@ const route = useRoute()
 const router = useRouter()
 
 const code = ref(route.params.code as string)
+const isLoading = ref(true)
 const isOrdering = ref(false)
 
 const remainingTime = ref('') // 남은시간
