@@ -94,6 +94,7 @@ function updateRemainingTime() {
 
   if (now.isAfter(deadline)) {
     remainingTime.value = '마감'
+    router.push(`/after/${code.value}`)
   }
   else {
     const duration = moment.duration(deadline.diff(now))
@@ -106,22 +107,22 @@ function updateHeaderHeight() {
 }
 
 onMounted(async () => {
-  if (token.value) {
-    if (orderStatus.value?.real_ordered_time !== null) {
-      isOrdering.value = true
-      remainingTime.value = '주문중'
-      return
-    }
-  }
-  updateRemainingTime()
-  setInterval(updateRemainingTime, 1000)
+  setTimeout(() => {
+    isLoading.value = false
+  }, 500)
 
   updateHeaderHeight()
   addEventListener('resize', updateHeaderHeight)
 
-  setTimeout(() => {
-    isLoading.value = false
-  }, 500)
+  if (token.value && orderStatus.value?.real_ordered_time !== null) {
+    isOrdering.value = true
+    remainingTime.value = '주문중'
+    router.push(`/after/${code.value}`)
+  }
+  else {
+    updateRemainingTime()
+    setInterval(updateRemainingTime, 1000)
+  }
 })
 
 onUnmounted(() => {
