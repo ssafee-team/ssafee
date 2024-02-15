@@ -91,6 +91,10 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+*{
+  font-family: "Gowun Dodum", sans-serif;
+}
+
 body,
 html {
   height: 100%;
