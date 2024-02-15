@@ -1,18 +1,15 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
-import coffee.ssafy.ssafee.domain.party.dto.response.PartyDetailForManagerResponse;
 import coffee.ssafy.ssafee.domain.party.entity.Party;
 import coffee.ssafy.ssafee.domain.party.exception.PartyErrorCode;
 import coffee.ssafy.ssafee.domain.party.exception.PartyException;
 import coffee.ssafy.ssafee.domain.party.repository.PartyRepository;
-import coffee.ssafy.ssafee.domain.shop.dto.response.PartyInfoForManagerResponse;
+import coffee.ssafy.ssafee.domain.shop.dto.response.PartyDetailForManagerResponse;
 import coffee.ssafy.ssafee.domain.shop.entity.Shop;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import coffee.ssafy.ssafee.domain.shop.mapper.ShopOrderMapper;
-import coffee.ssafy.ssafee.domain.shop.repository.ShopOrderRepository;
 import coffee.ssafy.ssafee.domain.shop.repository.ShopRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,23 +21,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShopOrderService {
 
-    private final EntityManager entityManager;
-    private final ShopOrderRepository shopOrderRepository;
     private final ShopRepository shopRepository;
     private final PartyRepository partyRepository;
     private final ShopOrderMapper shopOrderMapper;
 
     @Transactional(readOnly = true)
-    public List<PartyInfoForManagerResponse> getShopHistories(Long shopId) {
-        return shopOrderRepository.findAllByShopIdAndDeliveredTimeIsNotNull(shopId).stream()
-                .filter(party -> party.getDeliveredTime() != null)
-                .map(shopOrderMapper::toResponse)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<PartyDetailForManagerResponse> getShopHistoriesDetail(Long shopId, Long partyId) {
-        return shopOrderRepository.findAllById(partyId).stream()
+    public List<PartyDetailForManagerResponse> getPartiesByShop(Long shopId) {
+        return partyRepository.findAllByShopIdAndRealOrderedTimeIsNotNull(shopId).stream()
                 .map(shopOrderMapper::toDetailResponse)
                 .toList();
     }

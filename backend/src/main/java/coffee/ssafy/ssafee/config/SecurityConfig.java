@@ -46,7 +46,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/test").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/shops/*/orders/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/parties", "/api/v1/parties/*/order/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/shops/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/shops/**", "/api/v1/managers/me").hasRole("MANAGER")
