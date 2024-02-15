@@ -37,7 +37,7 @@ export default {
     // 선택된 정렬 방식에 따라 정렬된 주문 목록 반환
     sortedOrders() {
       const orders = [...this.orders] // 주문 목록을 복사하여 정렬
-      
+
       // 정렬 방식에 따라 주문 목록을 정렬
       if (this.sortMethod === 'userName')
         orders.sort((a, b) => a.participant_name.localeCompare(b.participant_name))
@@ -139,7 +139,7 @@ export default {
         :key="participantName"
         class="participant"
       >
-        <hr>
+        <!-- <hr> -->
         <div class="participant-name">
           <input
             v-model="participantOrders[0].paid"
@@ -150,7 +150,7 @@ export default {
           {{ participantName }}
         </div>
 
-        <hr>
+        <!-- <hr> -->
         <div
           v-for="(order, index) in participantOrders"
           :key="index"
@@ -201,6 +201,9 @@ export default {
 </template>
 
 <style scoped>
+.order {
+  border-bottom: 1px solid gray;
+}
 .checkbox {
   margin-left: 10px;
 }
@@ -283,10 +286,6 @@ hr {
   color: red;
 }
 
-.menu-name {
-  width: 260px;
-}
-
 .participant-name {
   margin-left: 10px;
   margin-top: 10px;
@@ -298,32 +297,47 @@ hr {
 input {
   margin-right: 10px;
 }
+.menu-name {
+  width: 260px;
+  margin-left: 30px;
+}
 
 .menu-price {
   color: #00a5e7;
-  margin-left: 10px;
   width: 30%;
+  text-align: right;
 }
 
 .option {
   /* color: #FFFFFF; */
   margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .menu-option {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 25px;
 }
 
 .option-name {
+  margin-left: 5px;
   width: 190px;
 }
 
 .option-price {
   color: #00a5e7;
-  margin-left: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: right;
+  margin-left: 18px;
 }
 
 .content {
