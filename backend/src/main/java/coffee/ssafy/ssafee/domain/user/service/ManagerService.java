@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ManagerService {
 
+    public final String ROLE_MANAGER = "ROLE_MANAGER";
     private final ManagerRepository managerRepository;
     private final ManagerMapper managerMapper;
     private final JwtTokenProvider jwtTokenProvider;
@@ -30,7 +31,7 @@ public class ManagerService {
         return jwtTokenProvider.issueManagerAccessToken(JwtPrincipalInfo.builder()
                 .id(manager.getId())
                 .info(String.valueOf(manager.getShop().getId()))
-                .role("ROLE_MANAGER")
+                .role(ROLE_MANAGER)
                 .build());
     }
 

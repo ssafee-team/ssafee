@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
-public class OAuth2CustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
+public class OAuth2RequestResolver implements OAuth2AuthorizationRequestResolver {
 
     private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
 
