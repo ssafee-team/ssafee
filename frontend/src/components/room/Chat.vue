@@ -3,8 +3,6 @@ import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useBrowserLocation } from '@vueuse/core'
 import { Client } from '@stomp/stompjs'
 
-import sendicon from '@/assets/img/send.png'
-
 const location = useBrowserLocation()
 const accessCode = location.value.pathname?.split('/').pop()
 const wsProtocol = location.value.protocol === 'https:' ? 'wss:' : 'ws:'
