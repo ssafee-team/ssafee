@@ -31,7 +31,7 @@ public class ShopOrderController {
     private final SimpMessagingTemplate messagingTemplate;
 
     // 사장이 내 가게의 과거 주문내역을 다 뽑는거.
-    @GetMapping("/")
+    @GetMapping
     @Operation(summary = "매니저: 주문기록조회")
     public ResponseEntity<List<PartyInfoForManagerResponse>> getShopHistory(
             @PathVariable("shop_id") Long shopId) {
