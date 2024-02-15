@@ -91,57 +91,60 @@ public class PartyOrderService {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
 
-        if (party.getCreator().getWebhookUrl() == null) {
-            return;
-        }
-        List<Participant> participants = party.getParticipants();
+        if (party.getCreator().getWebhookUrl() != null) {
+            List<Participant> participants = party.getParticipants();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("### :loopy: SSAFEE NOTICE :loopy: \n\n");
-        sb.append("#### 파티명: " + party.getName() + "\n\n");
-        sb.append("@here \n");
-        sb.append("#### 송금 바랍니다 \n");
-        sb.append("#### " + party.getCreator().getBank() + "(" + party.getCreator().getName() + "): " + party.getCreator().getAccount() + "\n\n");
-        sb.append("| 이름 | 주문메뉴 | 금액 |\n");
-        sb.append("|:-----------:|:-----------:|:-----------:|\n");
+            StringBuilder sb = new StringBuilder();
+            sb.append("### :loopy: SSAFEE NOTICE :loopy: \n\n");
+            sb.append("#### 파티명: " + party.getName() + "\n\n");
+            sb.append("@here \n");
+            sb.append("#### 송금 바랍니다 \n");
+            sb.append("#### " + party.getCreator().getBank() + "(" + party.getCreator().getName() + "): " + party.getCreator().getAccount() + "\n\n");
+            sb.append("| 이름 | 주문메뉴 | 금액 |\n");
+            sb.append("|:-----------:|:-----------:|:-----------:|\n");
 
-        for (Participant p : participants) {
-            Integer price = p.getChoiceMenus().stream()
-                    .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
-                            .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
-                            .mapToInt(choiceOption -> choiceOption.getOption().getPrice())
-                            .sum())
-                    .sum();
-            if (!p.getPaid()) {
-                sb.append("| ");
-                sb.append(p.getName());
-                sb.append(" | ");
-                sb.append(p.getChoiceMenus().stream().map(choiceMenu -> choiceMenu.getMenu().getName()).collect(Collectors.joining(", ")));
-                sb.append(" | ");
-                sb.append(price);
-                sb.append(" |\n");
+            for (Participant p : participants) {
+                Integer price = p.getChoiceMenus().stream()
+                        .mapToInt(choiceMenu -> choiceMenu.getMenu().getPrice() + choiceMenu.getChoiceMenuOptionCategories().stream()
+                                .flatMap(choiceOptionCategory -> choiceOptionCategory.getChoiceMenuOptions().stream())
+                                .mapToInt(choiceOption -> choiceOption.getOption().getPrice())
+                                .sum())
+                        .sum();
+                if (!p.getPaid()) {
+                    sb.append("| ");
+                    sb.append(p.getName());
+                    sb.append(" | ");
+                    sb.append(p.getChoiceMenus().stream().map(choiceMenu -> choiceMenu.getMenu().getName()).collect(Collectors.joining(", ")));
+                    sb.append(" | ");
+                    sb.append(price);
+                    sb.append(" |\n");
+                }
             }
+            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
         }
-        matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+
     }
 
     @Transactional(readOnly = true)
     public void sendAdvertise(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
-        // 파티 access 코드를 webhook url로 발송한다.
-        // [초대 링크]()
-        String inviteUrl = "https://ssafy.coffee/room/" + accessCode;
-        StringBuilder sb;
+
         if (party.getCreator().getWebhookUrl() != null) {
-            sb = new StringBuilder();
-            sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
-            sb.append("@here \n");
-            sb.append("#### 새로운 커피파티가 개설되었습니다. \n");
-            sb.append("#### 카페: " + party.getShop().getName() + "\n");
-            sb.append("#### 마감시간: " + party.getLastOrderTime() + " \n");
-            sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
-            matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+            // 파티 access 코드를 webhook url로 발송한다.
+            // [초대 링크]()
+            String inviteUrl = "https://ssafy.coffee/room/" + accessCode;
+            StringBuilder sb;
+            if (party.getCreator().getWebhookUrl() != null) {
+                sb = new StringBuilder();
+                sb.append("## :alert_siren: SSAFEE NOTICE :alert_siren: \n");
+                sb.append("@here \n");
+                sb.append("#### 새로운 커피파티가 개설되었습니다. \n");
+                sb.append("#### 카페: " + party.getShop().getName() + "\n");
+                sb.append("#### 마감시간: " + party.getLastOrderTime() + " \n");
+                sb.append("#### :link: [" + party.getName() + "](" + inviteUrl + ") \n");
+                matterMostService.sendMMNotification(party.getCreator().getWebhookUrl(), sb.toString());
+            }
         }
     }
 
@@ -149,6 +152,7 @@ public class PartyOrderService {
     public void sendCarrierResult(String accessCode) {
         Party party = partyRepository.findByAccessCode(accessCode)
                 .orElseThrow(() -> new PartyException(PartyErrorCode.NOT_EXISTS_PARTY));
+
         StringBuilder sb;
         if (party.getCreator().getWebhookUrl() != null) {
             List<Participant> participants = party.getParticipants();

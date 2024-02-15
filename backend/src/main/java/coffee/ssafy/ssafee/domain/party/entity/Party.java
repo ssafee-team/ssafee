@@ -85,7 +85,9 @@ public class Party extends BaseTimeEntity {
                 .email(creatorRequest.email())
                 .bank(creatorRequest.bank())
                 .account(creatorRequest.account())
-                .webhookUrl(creatorRequest.webhookUrl())
+                .webhookUrl(creatorRequest.webhookUrl()
+                        .startsWith("https://meeting.ssafy.com/hooks/") ?
+                        creatorRequest.webhookUrl() : null)
                 .party(this)
                 .build();
     }

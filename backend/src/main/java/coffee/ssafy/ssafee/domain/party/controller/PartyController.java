@@ -32,7 +32,7 @@ public class PartyController {
         Long userId = principal.userId();
         String accessCode = partyService.createParty(userId, partyRequest);
         URI location = URI.create("/api/v1/parties/" + accessCode);
-//        partyOrderService.sendAdvertise(accessCode); // TODO: 별도 API 분리 필요
+        partyOrderService.sendAdvertise(accessCode); // TODO: 별도 API 분리 필요
         return ResponseEntity.created(location).build();
     }
 
