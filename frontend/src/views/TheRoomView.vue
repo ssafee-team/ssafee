@@ -87,6 +87,8 @@ const { data: orderStatus } = await useFetch(`/api/v1/parties/${code.value}/orde
 const { data: shop } = await useFetch(`/api/v1/shops/${party.value?.shop_id}`).get().json<Shop>()
 const deadline = dayjs(party.value?.last_order_time)
 
+const img_link = ref(shop.value?.image)
+
 async function goOrder() {
   const { status } = await axios.post(`/api/v1/parties/${code.value}/order`, null, {
     headers: { Authorization: `Bearer ${token.value}` },
@@ -161,7 +163,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <img src="@/assets/img/logo_compose.png" alt="">
+          <img :src="img_link" style="width: 85px; height: 85px; border-radius: 15px;">
           <div class="timeline">
             <div>잔여시간</div>
             <div style="color: red" class="time">
