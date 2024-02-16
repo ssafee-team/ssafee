@@ -4,6 +4,8 @@
 
 ## Deploy
 
+배포
+
 ### Requirements
 - docker
 
@@ -116,12 +118,28 @@ docker compose -f docker-compose.yml -p ssafee up -d
 
 ## Development
 
-개발 환경 구성을 위한 설정은 다음과 같다.
+개발 환경 구성
 
 ### Dependencies
 - backend
   - jdk 17 (lts)
   - gradle 8.5
+  - mysql 8.0
 - frontend
   - node 20 (lts)
   - npm 10
+
+### Backend
+
+```sh
+cd backend
+./gradlew bootJar
+```
+
+### Frontend
+
+```sh
+cd frontend
+npm i
+npm run dev
+```
