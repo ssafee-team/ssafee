@@ -122,6 +122,7 @@ async function confirmOrder() {
 
   await axios.post(`/api/v1/parties/${code.value}/order-menus`, data)
   closeNameModal()
+  closeOptions()
 }
 </script>
 
