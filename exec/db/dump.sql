@@ -1,3 +1,225 @@
+DROP TABLE IF EXISTS `auto_orders`,
+`auto_payers`,
+`chats`,
+`creators`,
+`managers`,
+`menu_categories`,
+`menus`,
+`menus_option_categories`,
+`option_categories`,
+`options`,
+`orders`,
+`order_deliveries`,
+`order_menus`,
+`order_menu_option_categories`,
+`order_menu_options`,
+`participants`,
+`parties`,
+`shops`,
+`users`,
+`choice_menus`,
+`choice_menu_option_categories`,
+`choice_menu_options`;
+
+
+-- 스키마
+CREATE TABLE `shops` (
+    `shop_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
+    `address` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(32) NOT NULL,
+    `image` VARCHAR(500) NULL,
+    `enabled_order` BOOL NOT NULL DEFAULT FALSE,
+    `minimum_price` BIGINT NOT NULL,
+    `closed` BOOL NOT NULL DEFAULT FALSE,
+    `deleted` BOOL NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE `menu_categories` (
+    `menu_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+);
+
+CREATE TABLE `menus` (
+    `menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
+    `description` VARCHAR(255) NOT NULL,
+    `price` INT NOT NULL,
+    `image` VARCHAR(500) NULL,
+    `soldout` BOOL NOT NULL DEFAULT FALSE,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
+    `menu_category_id` BIGINT NOT NULL,
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`menu_category_id`) REFERENCES `menu_categories`(`menu_category_id`),
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+);
+
+CREATE TABLE `option_categories` (
+    `option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
+    `required` BOOL NOT NULL,
+    `max_count` INT NULL,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+);
+
+CREATE TABLE `menus_option_categories` (
+    `menu_id` BIGINT NOT NULL,
+    `option_category_id` BIGINT NOT NULL,
+    PRIMARY KEY (`menu_id`, `option_category_id`),
+    FOREIGN KEY (`menu_id`) REFERENCES `menus`(`menu_id`),
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
+);
+
+CREATE TABLE `options` (
+    `option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(32) NOT NULL,
+    `price` INT NOT NULL,
+    `deleted` BOOL NOT NULL DEFAULT FALSE,
+    `option_category_id` BIGINT NOT NULL,
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`),
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+);
+
+CREATE TABLE `users` (
+    `user_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `email` VARCHAR(32) NOT NULL UNIQUE
+);
+
+CREATE TABLE `parties` (
+    `party_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `access_code` CHAR(10) NOT NULL UNIQUE,
+    `name` varchar(32) NOT NULL,
+    `generation` INT NOT NULL,
+    `classroom` INT NOT NULL,
+    `last_order_time` DATETIME NOT NULL,
+    `confirmed_time` DATETIME NULL,
+    `rejected_time` DATETIME NULL,
+    `real_ordered_time` DATETIME NULL,
+    `made_time` DATETIME NULL,
+    `delivered_time` DATETIME NULL,
+    `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `shop_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
+);
+
+CREATE TABLE `creators` (
+    `creator_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(8) NOT NULL,
+    `bank` VARCHAR(32) NOT NULL,
+    `account` VARCHAR(32) NOT NULL,
+    `webhook_url` VARCHAR(255) NULL,
+    `party_id` BIGINT NOT NULL,
+    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
+);
+
+CREATE TABLE `chats` (
+    `chat_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(8) NOT NULL,
+    `content` VARCHAR(255) NOT NULL,
+    `created_time` DATETIME NOT NULL,
+    `party_id` BIGINT NOT NULL,
+    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
+);
+
+CREATE TABLE `participants` (
+    `participant_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(8) NULL,
+    `is_carrier` BOOL NOT NULL DEFAULT FALSE,
+    `paid` BOOL NOT NULL DEFAULT FALSE,
+    `party_id` BIGINT NOT NULL,
+    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
+);
+
+CREATE TABLE `choice_menus` (
+    `choice_menu_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `created_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `menu_id` BIGINT NOT NULL,
+    `participant_id` BIGINT NOT NULL,
+    `party_id` BIGINT NOT NULL,
+    FOREIGN KEY (`menu_id`) REFERENCES `menus`(`menu_id`),
+    FOREIGN KEY (`participant_id`) REFERENCES `participants`(`participant_id`),
+    FOREIGN KEY (`party_id`) REFERENCES `parties`(`party_id`)
+);
+
+CREATE TABLE `choice_menu_option_categories` (
+    `choice_menu_option_category_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `choice_menu_id` BIGINT NOT NULL,
+    `option_category_id` BIGINT NOT NULL,
+    FOREIGN KEY (`choice_menu_id`) REFERENCES `choice_menus`(`choice_menu_id`),
+    FOREIGN KEY (`option_category_id`) REFERENCES `option_categories`(`option_category_id`)
+);
+
+CREATE TABLE `choice_menu_options` (
+    `choice_menu_option_id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `choice_menu_option_category_id` BIGINT NOT NULL,
+    `option_id` BIGINT NOT NULL,
+    FOREIGN KEY (`choice_menu_option_category_id`) REFERENCES `choice_menu_option_categories`(`choice_menu_option_category_id`),
+    FOREIGN KEY (`option_id`) REFERENCES `options`(`option_id`)
+);
+
+CREATE TABLE `managers` (
+    `manager_id` varchar(20) NOT NULL PRIMARY KEY,
+    `manager_pw` varchar(20) NOT NULL,
+    `shop_id` BIGINT NOT NULL,
+    FOREIGN KEY (`shop_id`) REFERENCES `shops`(`shop_id`)
+);
+
+
+
+-- 가게
+INSERT INTO
+  shops (
+    name,
+    address,
+    phone,
+    image,
+    enabled_order,
+    minimum_price
+  )
+VALUES
+  (
+    '컴포즈커피 수완장덕점',
+    '광주광역시 광산구 장덕동 1043 수완지구 호반베르디움 2차아파트 213(상가)동 105호',
+    '062-710-4090',
+    'https://img.ssafy.coffee/shop/1/02c725dc7afdf889440688026b9f78b6253678ff41842dafe976c7beb37d0057.jpg',
+    TRUE,
+    12000
+  ),
+  (
+    '공차 광주수완점',
+    '광주광역시 광산구 장덕동 1657 1657 1층 105,106호',
+    '062-962-6607',
+    'https://img.ssafy.coffee/shop/2/b2befa3b43d6f6b7c4d10b767dba705a501aae3e5418ca829aa337b992dfa9a8.jpg',
+    FALSE,
+    12000
+  );
+
+-- 유저
+INSERT INTO
+  users (email)
+VALUES
+  ('koyo.ssafy@gmail.com');
+
+-- 매니저
+INSERT INTO
+  managers (manager_id, manager_pw, shop_id)
+VALUES
+  ('manager1', 'manager1', 1);
+
+
+
+-- 메뉴
 insert into menu_categories (menu_category_id, name, deleted, shop_id)
 values  (1, '시즌 메뉴', 0, 1),
         (2, '세트 메뉴', 0, 1),
