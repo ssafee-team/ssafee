@@ -14,9 +14,9 @@
 ```sh
 # 1. 인증서 발급
 docker run -it --rm --name certbot \
-  -v /etc/letsencrypt:/etc/letsencrypt \
-  -v /var/lib/letsencrypt:/var/lib/letsencrypt \
-  -v .secrets/certbot/cloudflare.ini:/etc/cloudflare.ini:ro \
+  -v ./volumes/etc/letsencrypt:/etc/letsencrypt \
+  -v ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+  -v ./.secrets/cloudflare.ini:/etc/cloudflare.ini:ro \
   certbot/dns-cloudflare \
     certonly \
     --dns-cloudflare \
@@ -26,9 +26,9 @@ docker run -it --rm --name certbot \
 # (optonal)
 # 2.1. 인증서 갱신 명령어 등록
 docker create --rm --name certbot-renew \
-  -v /etc/letsencrypt:/etc/letsencrypt \
-  -v /var/lib/letsencrypt:/var/lib/letsencrypt \
-  -v .secrets/certbot/cloudflare.ini:/etc/cloudflare.ini:ro \
+  -v ./volumes/etc/letsencrypt:/etc/letsencrypt \
+  -v ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+  -v ./.secrets/cloudflare.ini:/etc/cloudflare.ini:ro \
   certbot/dns-cloudflare \
     renew \
     --dns-cloudflare \
@@ -38,7 +38,7 @@ docker create --rm --name certbot-renew \
 docker start certbot-renew
 ```
 위 인증서 발급 명령어는 cloudflare에서 관리하는 도메인을 가정합니다. 수정 가능한 문자열은 위와 같습니다.
-- `.secrets/certbot/cloudflare.ini`
+- `.secrets/cloudflare.ini`
   - 도메인 소유권 확인을 위해 필요합니다. 아래 링크한 문서의 지시에 작성합니다.
   - <https://certbot-dns-cloudflare.readthedocs.io/en/stable/#examples>
 - `ssafy.coffee`, `*.ssafy.coffee`
@@ -54,19 +54,26 @@ touch .env
 
 ```properties
 # Origin
-PROD_ORIGIN=https://ssafy.coffee
-DEV_ORIGIN=https://dev.ssafy.coffee
+ALLOWED_ORIGIN=http://localhost:3000
+PROD_ALLOWED_ORIGIN=https://ssafy.coffee
+TEST_ALLOWED_ORIGIN=https://test.ssafy.coffee
 # DB
-PROD_DB_DATABASE=
 PROD_DB_USERNAME=
 PROD_DB_PASSWORD=
-DEV_DB_DATABASE=
-DEV_DB_USERNAME=
-DEV_DB_PASSWORD=
+PROD_DB_NAME=
+TEST_DB_USERNAME=
+TEST_DB_PASSWORD=
+TEST_DB_NAME=
+LOCAL_DB_HOST=
+LOCAL_DB_USERNAME=
+LOCAL_DB_PASSWORD=
+LOCAL_DB_NAME=
 # OAuth2
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_REDIRECT_URI={baseUrl}/login/oauth2/redirect/{registrationId}
+PROD_GOOGLE_REDIRECT_URI=
+TEST_GOOGLE_REDIRECT_URI=
 # JWT
 JWT_ACCESS_SECRET_KEY_BASE64=
 JWT_ACCESS_EXPIRATION_SECONDS=
@@ -75,9 +82,10 @@ JWT_REFRESH_EXPIRATION_SECONDS=
 # S3
 S3_ACCESS_KEY_ID=
 S3_SECRET_ACCESS_KEY=
+S3_REGION=
+S3_ENDPOINT=https://dcfbfd9f489ad8a785c3cdb81469e07d.r2.cloudflarestorage.com
 S3_BUCKET=
-S3_ENDPOINT=
-S3_PUBLIC_ACCESS_DOMAIN=
+S3_PUBLIC_BASE_URL=
 # docker gid for Jenkins
 DOCKER_GROUP_ID=
 ```
@@ -106,7 +114,7 @@ docker compose -p ssafee up -d
 
 - `https://ssafy.coffee`
   - branch: `master`
-- `https://dev.ssafy.coffeee` (optional)
+- `https://test.ssafy.coffeee` (optional)
   - branch: `develop`
 - `https://jenkins.ssafy.coffee`
 
@@ -114,7 +122,7 @@ docker compose -p ssafee up -d
 docker compose -f docker-compose.yml -p ssafee up -d
 ```
 
-`dev.ssafy.coffee`는 `docker-compose.override.yml` 설정에 정의된 서비스입니다. 위 명령어를 통해 명시적으로 설정에서 제외하여 서비스를 배포할 수도 있습니다.
+`test.ssafy.coffee`는 `docker-compose.override.yml` 설정에 정의된 서비스입니다. 위 명령어를 통해 명시적으로 설정에서 제외하여 서비스를 배포할 수도 있습니다.
 
 ## Development
 

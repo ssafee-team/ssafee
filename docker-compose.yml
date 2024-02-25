@@ -82,6 +82,7 @@ services:
     expose:
       - 3306
     environment:
+      - LC_ALL=C.UTF-8
       - TZ=UTC
       - MYSQL_TCP_PORT=3306
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
