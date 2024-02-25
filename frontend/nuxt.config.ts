@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     '@formkit/auto-animate/nuxt',
   ],
 
+  ssr: false,
+
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:8080',
