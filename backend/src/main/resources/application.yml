@@ -1,3 +1,6 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 spring:
   profiles:
     active: ${SPRING_PROFILE:dev}
@@ -15,32 +18,33 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${GOOGLE_REDIRECT_URI:{baseUrl}/api/v1/login/oauth2/redirect/{registrationId}}
+            redirect-uri: ${GOOGLE_REDIRECT_URI:{baseUrl}/v1/oauth2/callback/{registrationId}}
             scope:
               - email
   jpa:
     properties:
       hibernate:
         default_batch_fetch_size: 1000
-
-server:
-  port: ${SERVER_PORT:80}
+  h2:
+    console:
+      enabled: false
 
 jwt:
   access-secret-key-base64: ${JWT_ACCESS_SECRET_KEY_BASE64:iAbBnFDrPJgglJr+yO0dC1qITxoCJcm1HB8ZiFWhtN19lWOdCaiPmvqXRTLmqe4cIdaT5X62swd/8lfp8rdw0Q==}
-  access-expiration-seconds: ${JWT_ACCESS_EXPIRATION_SECONDS:86400}
+  access-expiration-seconds: ${JWT_ACCESS_EXPIRATION_SECONDS:43200}
   refresh-secret-key-base64: ${JWT_REFRESH_SECRET_KEY_BASE64:zxY3hKXBd6MPmmxha1rwte7GayIdjuzOTeD6nyuO7MockdamStat6G0nDF2T8EJP041sdz4eZxEPNJEGIXGmiQ==}
   refresh-expiration-seconds: ${JWT_REFRESH_EXPIRATION_SECONDS:8640000}
 
 s3:
   access-key-id: ${S3_ACCESS_KEY_ID}
   secret-access-key: ${S3_SECRET_ACCESS_KEY}
+  region: ${S3_REGION}
   bucket: ${S3_BUCKET}
   endpoint: ${S3_ENDPOINT:https://dcfbfd9f489ad8a785c3cdb81469e07d.r2.cloudflarestorage.com}
-  public-access-domain: ${S3_PUBLIC_ACCESS_DOMAIN}
+  public-base-url: ${S3_PUBLIC_BASE_URL}
 
 origin:
-  allowed: ${ORIGIN:http://localhost:3000}
+  allowed: ${ALLOWED_ORIGIN:http://localhost:3000}
 
 ---
 
@@ -49,13 +53,17 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: ${DEV_DB_URL:jdbc:h2:mem:S10P12C209}
+    url: jdbc:h2:mem:${DEV_DB_NAME:S10P12C209}
     username: ${DEV_DB_USERNAME:sa}
-    password: ${DEV_DB_PASSWORD:sa}
+    password: ${DEV_DB_PASSWORD}
+  sql:
+    init:
+      mode: always
   jpa:
     show-sql: true
-    hibernate:
-      ddl-auto: create
+  h2:
+    console:
+      enabled: true
 
 ---
 
@@ -64,14 +72,14 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: ${LOCAL_DB_URL:jdbc:mysql://localhost:3306/S10P12C209}
-    username: ${LOCAL_DB_USERNAME:ssafy}
-    password: ${LOCAL_DB_PASSWORD:ssafy}
+    url: jdbc:mysql://${LOCAL_DB_HOST}/${LOCAL_DB_NAME}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
   jpa:
     show-sql: true
-  h2:
-    console:
-      enabled: false
+
+origin:
+  allowed: ${ALLOWED_ORIGIN:http://localhost:3000}
 
 ---
 
@@ -80,9 +88,6 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: ${PROD_DB_URL}
+    url: jdbc:mysql://${PROD_DB_HOST}/${PROD_DB_NAME}
     username: ${PROD_DB_USERNAME}
     password: ${PROD_DB_PASSWORD}
-  h2:
-    console:
-      enabled: false

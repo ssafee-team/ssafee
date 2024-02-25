@@ -1,7 +1,5 @@
 package coffee.ssafy.ssafee.jwt.dto;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,32 +8,15 @@ import java.util.Collection;
 import java.util.List;
 
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record JwtPrincipalInfo(
-        String id,
-        String info,
-        String role
+        Long id,
+        Long shopId,
+        String authority
 ) implements UserDetails {
-
-    public Long userId() {
-        return Long.valueOf(id);
-    }
-
-    public String managerId() {
-        return id;
-    }
-
-    public Long shopId() {
-        return Long.valueOf(info);
-    }
-
-    public String email() {
-        return info;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> role);
+        return List.of(this::authority);
     }
 
     @Override
@@ -45,7 +26,7 @@ public record JwtPrincipalInfo(
 
     @Override
     public String getUsername() {
-        return id;
+        return String.valueOf(id);
     }
 
     @Override

@@ -29,19 +29,12 @@ public class MenuService {
     private final MenuMapper menuMapper;
     private final S3Service s3Service;
 
-    @Transactional(readOnly = true)
-    public List<MenuDetailResponse> getMenusByCategory(Long shopId, Long menuCategoryId) {
-        return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
-                .map(menuMapper::toDetailResponse)
-                .toList();
-    }
-
-    public Long createMenu(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
+    public Long create(Long shopId, Long menuCategoryId, MenuRequest menuRequest) {
         Menu menu = Menu.builder()
                 .name(menuRequest.name())
                 .description(menuRequest.description())
                 .price(menuRequest.price())
-                .soldout(menuRequest.soldout())
+                .soldOut(menuRequest.soldOut())
                 .menuCategory(entityManager.getReference(MenuCategory.class, menuCategoryId))
                 .shop(entityManager.getReference(Shop.class, shopId))
                 .build();
@@ -49,24 +42,31 @@ public class MenuService {
         return menu.getId();
     }
 
-    public void updateMenu(Long shopId, Long menuCategoryId, Long menuId, MenuRequest menuRequest) {
+    @Transactional(readOnly = true)
+    public List<MenuDetailResponse> findAll(Long shopId, Long menuCategoryId) {
+        return menuRepository.findAllByShopIdAndMenuCategoryId(shopId, menuCategoryId).stream()
+                .map(menuMapper::toDetailResponse)
+                .toList();
+    }
+
+    public void update(Long shopId, Long menuCategoryId, Long menuId, MenuRequest menuRequest) {
         menuRepository.findByShopIdAndId(shopId, menuId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU))
                 .update(menuRequest);
     }
 
-    public void updateMenuImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
+    public void updateImage(Long shopId, Long menuCategoryId, Long menuId, MultipartFile file) {
         String prefix = String.format("shop/%d/menu/%d/", shopId, menuId);
         Menu menu = menuRepository.findByShopIdAndId(shopId, menuId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU));
-        String image = menu.getImage();
-        menu.updateImage(s3Service.putImage(prefix, file));
-        if (image != null) {
-            s3Service.deleteImage(image);
+        String imageUrl = menu.getImageUrl();
+        menu.updateImageUrl(s3Service.putImage(prefix, file));
+        if (imageUrl != null) {
+            s3Service.deleteImage(imageUrl);
         }
     }
 
-    public void deleteMenu(Long shopId, Long menuCategoryId, Long menuId) {
+    public void delete(Long shopId, Long menuCategoryId, Long menuId) {
         menuRepository.deleteByShopIdAndId(shopId, menuId);
     }
 

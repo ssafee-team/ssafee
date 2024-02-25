@@ -1,3 +1,2 @@
 .env
-db/mysql
-db/mysql-dev
+volumes

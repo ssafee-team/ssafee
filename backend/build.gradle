@@ -8,7 +8,7 @@ group = 'coffee.ssafy'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 configurations {
@@ -32,7 +32,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -45,17 +45,16 @@ dependencies {
     implementation 'org.zalando:problem-spring-web-starter:0.29.1'
 
     // https://github.com/jwtk/jjwt
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
     // https://github.com/mapstruct/mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     // https://developers.cloudflare.com/r2/api/s3/
-    implementation platform('software.amazon.awssdk:bom:2.23.+')
-    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:s3:2.23.+'
 
 }
 

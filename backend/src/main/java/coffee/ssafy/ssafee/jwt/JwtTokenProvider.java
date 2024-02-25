@@ -22,44 +22,35 @@ import java.util.List;
 public class JwtTokenProvider {
 
     private static final String CLAIMS_ID = "id";
-    private static final String CLAIMS_SHOP_ID = "shop_id";
-    private static final String CLAIMS_EMAIL = "email";
-    private static final String CLAIMS_ROLE = "role";
+    private static final String CLAIMS_SHOP_ID = "shopId";
+    private static final String CLAIMS_AUTHORITY = "authority";
     private final JwtProps jwtProps;
 
     public String issueManagerAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, principal.managerId())
+                .add(CLAIMS_ID, principal.id())
                 .add(CLAIMS_SHOP_ID, principal.shopId())
-                .add(CLAIMS_ROLE, principal.role())
+                .add(CLAIMS_AUTHORITY, principal.authority())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
     }
 
     public String issueUserAccessToken(JwtPrincipalInfo principal) {
         Claims claims = Jwts.claims()
-                .add(CLAIMS_ID, principal.userId())
-                .add(CLAIMS_EMAIL, principal.email())
-                .add(CLAIMS_ROLE, principal.role())
+                .add(CLAIMS_ID, principal.id())
+                .add(CLAIMS_AUTHORITY, principal.authority())
                 .build();
         return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
     }
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
-        String role = claims.get(CLAIMS_ROLE, String.class);
-        String id = role.equals("ROLE_USER")
-                ? String.valueOf(claims.get(CLAIMS_ID, Long.class))
-                : claims.get(CLAIMS_ID, String.class);
-        String info = role.equals("ROLE_USER")
-                ? claims.get(CLAIMS_EMAIL, String.class)
-                : String.valueOf(claims.get(CLAIMS_SHOP_ID, Long.class));
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
-                .id(id)
-                .info(info)
-                .role(role)
+                .id(claims.get(CLAIMS_ID, Long.class))
+                .shopId(claims.get(CLAIMS_SHOP_ID, Long.class))
+                .authority(claims.get(CLAIMS_AUTHORITY, String.class))
                 .build();
-        return new UsernamePasswordAuthenticationToken(principal, null, List.of(() -> role));
+        return new UsernamePasswordAuthenticationToken(principal, null, List.of(principal::authority));
     }
 
     public String issueRefreshToken() {

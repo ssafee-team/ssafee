@@ -3,7 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.MenuCategoryDetailResponse;
 import coffee.ssafy.ssafee.domain.shop.service.MenuCategoryService;
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
+import coffee.ssafy.ssafee.domain.shop.service.ShopService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,48 +16,48 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/shops/{shop_id}/menu-categories")
+@RequestMapping("/v1/shops/{shopId}/menu-categories")
 @RequiredArgsConstructor
 public class MenuCategoryController {
 
     private final MenuCategoryService menuCategoryService;
-    private final ManagerService managerService;
-
-    @GetMapping
-    @Operation(summary = "메뉴 카테고리 목록 조회")
-    public ResponseEntity<List<MenuCategoryDetailResponse>> getMenuCategories(@PathVariable("shop_id") Long shopId) {
-        return ResponseEntity.ok().body(menuCategoryService.findMenuCategories(shopId));
-    }
+    private final ShopService shopService;
 
     @PostMapping
     @Operation(summary = "메뉴 카테고리 생성", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> createMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                                   @PathVariable("shop_id") Long shopId,
-                                                   @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        managerService.validateShop(principal, shopId);
-        Long menuCategoryId = menuCategoryService.createMenuCategory(shopId, menuCategoryRequest);
-        URI location = URI.create("/api/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId);
+    public ResponseEntity<Void> create(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @RequestBody MenuCategoryRequest menuCategoryRequest) {
+        shopService.validatePrincipal(principal, shopId);
+        Long menuCategoryId = menuCategoryService.create(shopId, menuCategoryRequest);
+        URI location = URI.create("/v1/shops/" + shopId + "/menu-categories/" + menuCategoryId);
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{mc_id}")
+    @GetMapping
+    @Operation(summary = "메뉴 카테고리 목록 조회")
+    public ResponseEntity<List<MenuCategoryDetailResponse>> readAll(@PathVariable Long shopId) {
+        return ResponseEntity.ok().body(menuCategoryService.findAll(shopId));
+    }
+
+    @PutMapping("/{id}")
     @Operation(summary = "메뉴 카테고리 수정", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> updateMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                                   @PathVariable("shop_id") Long shopId,
-                                                   @PathVariable("mc_id") Long menuCategoryId,
-                                                   @RequestBody MenuCategoryRequest menuCategoryRequest) {
-        managerService.validateShop(principal, shopId);
-        menuCategoryService.updateMenuCategory(shopId, menuCategoryId, menuCategoryRequest);
+    public ResponseEntity<Void> update(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long id,
+                                       @RequestBody MenuCategoryRequest menuCategoryRequest) {
+        shopService.validatePrincipal(principal, shopId);
+        menuCategoryService.update(shopId, id, menuCategoryRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{mc_id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "메뉴 카테고리 삭제", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> deleteMenuCategory(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                                   @PathVariable("shop_id") Long shopId,
-                                                   @PathVariable("mc_id") Long menuCategoryId) {
-        managerService.validateShop(principal, shopId);
-        menuCategoryService.deleteMenuCategory(shopId, menuCategoryId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long id) {
+        shopService.validatePrincipal(principal, shopId);
+        menuCategoryService.delete(shopId, id);
         return ResponseEntity.noContent().build();
     }
 

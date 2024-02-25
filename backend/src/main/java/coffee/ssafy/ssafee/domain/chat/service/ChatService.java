@@ -1,11 +1,12 @@
 package coffee.ssafy.ssafee.domain.chat.service;
 
+import coffee.ssafy.ssafee.domain.chat.dto.ChatInfo;
 import coffee.ssafy.ssafee.domain.chat.dto.request.ChatRequest;
 import coffee.ssafy.ssafee.domain.chat.dto.response.ChatResponse;
 import coffee.ssafy.ssafee.domain.chat.entity.Chat;
 import coffee.ssafy.ssafee.domain.chat.mapper.ChatMapper;
 import coffee.ssafy.ssafee.domain.chat.repository.ChatRepository;
-import coffee.ssafy.ssafee.domain.party.entity.Party;
+import coffee.ssafy.ssafee.domain.room.entity.Room;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -24,22 +25,35 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
 
+    public ChatResponse create(String roomId, ChatRequest chatRequest) {
+        var chat = Chat.builder()
+                .name("")
+                .content(chatRequest.content())
+                .room(entityManager.getReference(Room.class, roomId))
+                .build();
+        chatRepository.save(chat);
+        return chatMapper.toResponse(chat);
+    }
+
+    public ChatResponse create(String roomId, ChatInfo chatInfo) {
+        var chat = Chat.builder()
+                .name(chatInfo.name())
+                .content(chatInfo.content())
+                .room(entityManager.getReference(Room.class, roomId))
+                .build();
+        chatRepository.save(chat);
+        return chatMapper.toResponse(chat);
+    }
+
     @Transactional(readOnly = true)
-    public List<ChatResponse> findChats(Long partyId) {
-        return chatRepository.findAllByPartyId(partyId).stream()
+    public List<ChatResponse> findAll(String roomId) {
+        return chatRepository.findAllByRoomId(roomId).stream()
                 .map(chatMapper::toResponse)
                 .toList();
     }
 
-    public ChatResponse createChat(Long partyId, ChatRequest chatRequest) {
-        Party partyReference = entityManager.getReference(Party.class, partyId);
-        Chat chat = Chat.builder()
-                .name("")
-                .content(chatRequest.content())
-                .party(partyReference)
-                .build();
-        chatRepository.save(chat);
-        return chatMapper.toResponse(chat);
+    public void delete(String roomId, Long id) {
+        chatRepository.deleteByIdAndRoomId(id, roomId);
     }
 
 }

@@ -27,14 +27,7 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final OptionMapper optionMapper;
 
-    @Transactional(readOnly = true)
-    public List<OptionResponse> getOptionsByCategory(long shopId, long optionCategoryId) {
-        return optionRepository.findAllByShopIdAndOptionCategoryId(shopId, optionCategoryId).stream()
-                .map(optionMapper::optionToOptionResponse)
-                .toList();
-    }
-
-    public long createOption(long shopId, long optionCategoryId, OptionRequest optionRequest) {
+    public Long create(Long shopId, Long optionCategoryId, OptionRequest optionRequest) {
         Option option = Option.builder()
                 .name(optionRequest.name())
                 .price(optionRequest.price())
@@ -45,13 +38,20 @@ public class OptionService {
         return option.getId();
     }
 
-    public void updateOption(long id, long shopId, long optionCategoryId, OptionRequest optionRequest) {
+    @Transactional(readOnly = true)
+    public List<OptionResponse> findAll(Long shopId, Long optionCategoryId) {
+        return optionRepository.findAllByShopIdAndOptionCategoryId(shopId, optionCategoryId).stream()
+                .map(optionMapper::optionToOptionResponse)
+                .toList();
+    }
+
+    public void update(Long id, Long shopId, Long optionCategoryId, OptionRequest optionRequest) {
         optionRepository.findByIdAndShopIdAndOptionCategoryId(id, shopId, optionCategoryId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_OPTION_CATEGORY))
                 .update(optionRequest);
     }
 
-    public void deleteOption(long shopId, long optionCategoryId, long id) {
+    public void delete(Long shopId, Long optionCategoryId, Long id) {
         optionRepository.deleteByIdAndShopIdAndOptionCategoryId(id, shopId, optionCategoryId);
     }
 

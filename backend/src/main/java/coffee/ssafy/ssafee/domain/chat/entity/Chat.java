@@ -1,26 +1,24 @@
 package coffee.ssafy.ssafee.domain.chat.entity;
 
-import coffee.ssafy.ssafee.domain.party.entity.Party;
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
+import coffee.ssafy.ssafee.domain.room.entity.Room;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "chats")
+@Table(name = "`chat`")
 @EntityListeners(AuditingEntityListener.class)
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
-public class Chat {
+public class Chat extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @NotNull
@@ -31,12 +29,8 @@ public class Chat {
     @Column(nullable = false, updatable = false)
     private String content;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdTime;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "party_id", nullable = false, updatable = false)
-    private Party party;
+    @JoinColumn(name = "room_id", nullable = false, updatable = false)
+    private Room room;
 
 }
