@@ -101,7 +101,7 @@ onMounted(() => {
           m-y-2 m-r-2 h-8 w-12 flex items-center justify-center rounded-1 bg="#48a6da"
           @click="createChat"
         >
-          <NuxtImg src="/img/send.png" h-7 w-7 />
+          <img src="/img/send.png" h-7 w-7 />
         </button>
       </div>
     </div>

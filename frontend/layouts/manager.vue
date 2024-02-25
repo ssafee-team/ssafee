@@ -3,7 +3,7 @@
     <nav class="manager-header" style="background-color: white;">
       <div>
         <a class="ssafee-icon" @click="navigateTo('/manager')">
-          <NuxtImg src="img/logo.png" />
+          <img src="img/logo.png" />
           <span style="margin-left: 15px;">SSAFEE</span>
         </a>
       </div>

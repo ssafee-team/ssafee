@@ -8,7 +8,7 @@ const { creatorLogined } = storeToRefs(store)
   <div text-center>
     <header m-b-1 h-18 w-full flex items-center justify-between bg-white p-2 text-black shadow-md>
       <NuxtLink to="/" flex cursor-pointer items-center>
-        <NuxtImg src="/img/logo.png" h-15 w-15 />
+        <img src="/img/logo.png" h-15 w-15 />
         <div m-l-2 text-2xl font-bold>
           SSAFEE®
         </div>
