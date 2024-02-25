@@ -7,11 +7,33 @@ pipeline {
                 NO_COLOR = 'true'
             }
             steps {
-                dir('frontend') {
-                    nodejs(nodeJSInstallationName: 'node-20.11.0') {
-                        sh 'corepack enable pnpm'
-                        sh 'pnpm install'
-                        sh 'pnpm run generate'
+                script {
+                    if (env.BRANCH_NAME == 'develop') {
+                        dotenvCredentialsId = 'dotenv-frontend-test'
+                    } else if (env.BRANCH_NAME == 'master') {
+                        dotenvCredentialsId = 'dotenv-frontend'
+                    } else {
+                        dotenvCredentialsId = ''
+                    }
+
+                    if (dotenvCredentialsId) {
+                        dir('frontend') {
+                            nodejs(nodeJSInstallationName: 'node-20.11.0') {
+                                sh 'corepack enable pnpm'
+                                sh 'pnpm install'
+                                withCredentials([file(credentialsId: dotenvCredentialsId, variable: 'dotenv')]) {
+                                    sh 'pnpm run generate --dotenv $dotenv'
+                                }
+                            }
+                        }
+                    } else {
+                        dir('frontend') {
+                            nodejs(nodeJSInstallationName: 'node-20.11.0') {
+                                sh 'corepack enable pnpm'
+                                sh 'pnpm install'
+                                sh 'pnpm run generate'
+                            }
+                        }
                     }
                 }
             }
