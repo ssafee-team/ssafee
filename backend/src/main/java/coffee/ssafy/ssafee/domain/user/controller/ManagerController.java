@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/managers")
+@RequestMapping("/v1/managers")
 @RequiredArgsConstructor
 public class ManagerController {
 
@@ -27,18 +27,18 @@ public class ManagerController {
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).build();
     }
 
-    @PutMapping("/me")
-    @Operation(summary = "매니저 수정", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> updateManager(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                              @RequestBody ManagerUpdateRequest managerUpdateRequest) {
-        managerService.updateManager(principal.id(), managerUpdateRequest);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/me")
     @Operation(summary = "매니저 조회", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<ManagerResponse> getManager(@AuthenticationPrincipal JwtPrincipalInfo principal) {
-        return ResponseEntity.ok().body(managerService.findManager(principal.id()));
+    public ResponseEntity<ManagerResponse> read(@AuthenticationPrincipal JwtPrincipalInfo principal) {
+        return ResponseEntity.ok().body(managerService.find(principal.id()));
+    }
+
+    @PutMapping("/me")
+    @Operation(summary = "매니저 수정", security = @SecurityRequirement(name = "access-token"))
+    public ResponseEntity<Void> update(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @RequestBody ManagerUpdateRequest managerUpdateRequest) {
+        managerService.update(principal.id(), managerUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
 
 }

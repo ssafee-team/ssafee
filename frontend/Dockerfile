@@ -1,2 +1,2 @@
 FROM joseluisq/static-web-server:2
-COPY dist /public
+COPY .output/public /public

@@ -3,7 +3,7 @@ package coffee.ssafy.ssafee.domain.shop.controller;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import coffee.ssafy.ssafee.domain.shop.dto.response.OptionResponse;
 import coffee.ssafy.ssafee.domain.shop.service.OptionService;
-import coffee.ssafy.ssafee.domain.user.service.ManagerService;
+import coffee.ssafy.ssafee.domain.shop.service.ShopService;
 import coffee.ssafy.ssafee.jwt.dto.JwtPrincipalInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,52 +16,52 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/shops/{shop_id}/option-categories/{option_category_id}/options")
+@RequestMapping("/v1/shops/{shopId}/option-categories/{optionCategoryId}/options")
 @RequiredArgsConstructor
 public class OptionController {
 
     private final OptionService optionService;
-    private final ManagerService managerService;
-
-    @GetMapping
-    @Operation(summary = "옵션 목록 조회")
-    public ResponseEntity<List<OptionResponse>> getOptionsByCategory(@PathVariable("shop_id") Long shopId,
-                                                                     @PathVariable("option_category_id") Long optionCategoryId) {
-        return ResponseEntity.ok().body(optionService.getOptionsByCategory(shopId, optionCategoryId));
-    }
+    private final ShopService shopService;
 
     @PostMapping
     @Operation(summary = "옵션 생성", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> createOption(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                             @PathVariable("shop_id") Long shopId,
-                                             @PathVariable("option_category_id") Long optionCategoryId,
-                                             @RequestBody OptionRequest optionRequest) {
-        managerService.validateShop(principal, shopId);
-        Long optionId = optionService.createOption(shopId, optionCategoryId, optionRequest);
-        URI location = URI.create("/api/v1/shops/" + shopId + "/option-categories/" + optionCategoryId + "/options/" + optionId);
+    public ResponseEntity<Void> create(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long optionCategoryId,
+                                       @RequestBody OptionRequest optionRequest) {
+        shopService.validatePrincipal(principal, shopId);
+        Long optionId = optionService.create(shopId, optionCategoryId, optionRequest);
+        URI location = URI.create("/v1/shops/" + shopId + "/option-categories/" + optionCategoryId + "/options/" + optionId);
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{option_id}")
+    @GetMapping
+    @Operation(summary = "옵션 목록 조회")
+    public ResponseEntity<List<OptionResponse>> readAll(@PathVariable Long shopId,
+                                                        @PathVariable Long optionCategoryId) {
+        return ResponseEntity.ok().body(optionService.findAll(shopId, optionCategoryId));
+    }
+
+    @PutMapping("/{id}")
     @Operation(summary = "옵션 수정", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> updateOption(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                             @PathVariable("shop_id") Long shopId,
-                                             @PathVariable("option_category_id") Long optionCategoryId,
-                                             @PathVariable("option_id") Long id,
-                                             @RequestBody OptionRequest optionRequest) {
-        managerService.validateShop(principal, shopId);
-        optionService.updateOption(id, shopId, optionCategoryId, optionRequest);
+    public ResponseEntity<Void> update(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long optionCategoryId,
+                                       @PathVariable Long id,
+                                       @RequestBody OptionRequest optionRequest) {
+        shopService.validatePrincipal(principal, shopId);
+        optionService.update(id, shopId, optionCategoryId, optionRequest);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{option_id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "옵션 삭제", security = @SecurityRequirement(name = "access-token"))
-    public ResponseEntity<Void> deleteOption(@AuthenticationPrincipal JwtPrincipalInfo principal,
-                                             @PathVariable("shop_id") Long shopId,
-                                             @PathVariable("option_category_id") Long optionCategoryId,
-                                             @PathVariable("option_id") Long id) {
-        managerService.validateShop(principal, shopId);
-        optionService.deleteOption(id, shopId, optionCategoryId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal JwtPrincipalInfo principal,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long optionCategoryId,
+                                       @PathVariable Long id) {
+        shopService.validatePrincipal(principal, shopId);
+        optionService.delete(id, shopId, optionCategoryId);
         return ResponseEntity.noContent().build();
     }
 

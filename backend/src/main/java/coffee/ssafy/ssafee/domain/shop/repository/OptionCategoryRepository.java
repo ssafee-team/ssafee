@@ -11,10 +11,11 @@ public interface OptionCategoryRepository extends JpaRepository<OptionCategory, 
 
     List<OptionCategory> findAllByShopId(Long shopId);
 
-    @Query("select oc from OptionCategory oc join oc.menus m where oc.shop.id = :shopId and m.id = :menuId")
+    @Query("SELECT oc FROM Menu m JOIN m.optionCategories oc WHERE m.shop.id = :shopId AND m.id = :menuId")
     List<OptionCategory> findAllByShopIdAndMenuId(Long shopId, Long menuId);
 
     Optional<OptionCategory> findByShopIdAndId(Long shopId, Long id);
 
     void deleteByShopIdAndId(Long shopId, Long id);
+
 }

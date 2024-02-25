@@ -9,8 +9,9 @@ pipeline {
             steps {
                 dir('frontend') {
                     nodejs(nodeJSInstallationName: 'node-20.11.0') {
-                        sh 'npm install'
-                        sh 'npm run build'
+                        sh 'corepack enable pnpm'
+                        sh 'pnpm install'
+                        sh 'pnpm run generate'
                     }
                 }
             }
@@ -20,17 +21,7 @@ pipeline {
             steps {
                 dir('backend') {
                     withGradle {
-                        sh './gradlew bootJar'
-                    }
-                }
-            }
-        }
-
-        stage('Test Backend') {
-            steps {
-                dir('backend') {
-                    withGradle {
-                        sh './gradlew test'
+                        sh './gradlew test bootJar'
                     }
                 }
             }
@@ -41,9 +32,8 @@ pipeline {
                 branch 'develop'
             }
             steps {
-                sh 'docker compose -p ssafee build frontend-dev backend-dev'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
-                    sh 'docker compose -p ssafee --env-file $dotenv up -d frontend-dev backend-dev'
+                    sh 'docker compose -p ssafee --env-file $dotenv up -d --build frontend-test backend-test'
                     sh 'docker compose -p ssafee exec nginx nginx -s reload'
                 }
             }
@@ -54,9 +44,8 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh 'docker compose -p ssafee build frontend backend'
                 withCredentials([file(credentialsId: 'dotenv', variable: 'dotenv')]) {
-                    sh 'docker compose -p ssafee --env-file $dotenv up -d frontend backend'
+                    sh 'docker compose -p ssafee --env-file $dotenv up -d --build frontend backend'
                     sh 'docker compose -p ssafee exec nginx nginx -s reload'
                 }
             }

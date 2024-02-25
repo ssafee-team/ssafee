@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.shop.dto.request.OptionRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -9,18 +10,18 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name = "options")
-@SQLDelete(sql = "UPDATE options SET deleted = true WHERE option_id = ?")
+@Table(name = "`option`")
+@SQLDelete(sql = "UPDATE `option` SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
-public class Option {
+public class Option extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @NotNull
@@ -31,18 +32,17 @@ public class Option {
     @Column(nullable = false)
     private Integer price;
 
-    @Column(insertable = false, nullable = false)
-    @ColumnDefault("false")
-    private Boolean deleted;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "shop_id", nullable = false)
+    private Shop shop;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "option_category_id", nullable = false)
     private OptionCategory optionCategory;
 
-    // Shop 엔티티에 대한 참조 추가
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "shop_id", nullable = false)
-    private Shop shop;
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
+    private Boolean deleted;
 
     public void update(OptionRequest optionRequest) {
         this.name = optionRequest.name();

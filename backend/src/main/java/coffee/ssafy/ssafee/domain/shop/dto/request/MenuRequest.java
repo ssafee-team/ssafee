@@ -4,6 +4,6 @@ public record MenuRequest(
         String name,
         String description,
         Integer price,
-        Boolean soldout
+        Boolean soldOut
 ) {
 }

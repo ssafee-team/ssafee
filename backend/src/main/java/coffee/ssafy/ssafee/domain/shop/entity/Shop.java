@@ -1,25 +1,28 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.shop.dto.request.ShopRequest;
-import coffee.ssafy.ssafee.domain.user.entity.Manager;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
 @Entity
-@Table(name = "shops")
-@Builder
+@Table(name = "`shop`")
+@SQLDelete(sql = "UPDATE `shop` SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
-public class Shop {
+public class Shop extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "shop_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @NotNull
@@ -28,14 +31,14 @@ public class Shop {
 
     @NotNull
     @Column(nullable = false)
-    private String address;
+    private String phone;
 
     @NotNull
     @Column(nullable = false)
-    private String phone;
+    private String address;
 
     @Column
-    private String image;
+    private String imageUrl;
 
     @Column(nullable = false)
     private Boolean enabledOrder;
@@ -48,15 +51,8 @@ public class Shop {
     @Column(nullable = false)
     private Boolean closed;
 
-    @Column(insertable = false, nullable = false)
-    @ColumnDefault("false")
-    private Boolean deleted;
-
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<MenuCategory> menuCategories;
-
-    @OneToOne(mappedBy = "shop", fetch = FetchType.LAZY)
-    private Manager manager;
 
     public void update(ShopRequest shopRequest) {
         this.name = shopRequest.name();
@@ -67,8 +63,8 @@ public class Shop {
         this.closed = shopRequest.closed();
     }
 
-    public void updateImage(String image) {
-        this.image = image;
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
 }

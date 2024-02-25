@@ -1,6 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.service;
 
-import coffee.ssafy.ssafee.config.S3Config;
+import coffee.ssafy.ssafee.common.S3Props;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopErrorCode;
 import coffee.ssafy.ssafee.domain.shop.exception.ShopException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.HexFormat;
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final S3Config s3Config;
+    private final S3Props s3Props;
     private final S3Client s3Client;
 
     public String putImage(String prefix, MultipartFile file) {
@@ -28,20 +28,20 @@ public class S3Service {
             String key = prefix + fileHash + ".jpg";
 
             s3Client.putObject(builder -> builder
-                            .bucket(s3Config.bucket())
+                            .bucket(s3Props.bucket())
                             .key(key)
                             .build(),
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            return "https://" + s3Config.publicAccessDomain() + "/" + key;
+            return "https://" + s3Props.publicBaseUrl() + "/" + key;
         } catch (IOException | NoSuchAlgorithmException e) {
             throw new ShopException(ShopErrorCode.FAILED_UPLOAD_IMAGE);
         }
     }
 
     public void deleteImage(String image) {
-        String key = image.replace("https://" + s3Config.publicAccessDomain() + "/", "");
+        String key = image.replace("https://" + s3Props.publicBaseUrl() + "/", "");
         s3Client.deleteObject(builder -> builder
-                .bucket(s3Config.bucket())
+                .bucket(s3Props.bucket())
                 .key(key)
                 .build());
     }
