@@ -14,8 +14,8 @@
 ```sh
 # 1. 인증서 발급
 docker run -it --rm --name certbot \
-  -v ./volumes/etc/letsencrypt:/etc/letsencrypt \
-  -v ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+  -v /etc/letsencrypt:/etc/letsencrypt \
+  -v /var/lib/letsencrypt:/var/lib/letsencrypt \
   -v ./.secrets/cloudflare.ini:/etc/cloudflare.ini:ro \
   certbot/dns-cloudflare \
     certonly \
@@ -26,8 +26,8 @@ docker run -it --rm --name certbot \
 # (optonal)
 # 2.1. 인증서 갱신 명령어 등록
 docker create --rm --name certbot-renew \
-  -v ./volumes/etc/letsencrypt:/etc/letsencrypt \
-  -v ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+  -v /etc/letsencrypt:/etc/letsencrypt \
+  -v /var/lib/letsencrypt:/var/lib/letsencrypt \
   -v ./.secrets/cloudflare.ini:/etc/cloudflare.ini:ro \
   certbot/dns-cloudflare \
     renew \
