@@ -27,16 +27,7 @@ public class OptionCategoryService {
     private final OptionCategoryRepository optionCategoryRepository;
     private final OptionCategoryMapper optionCategoryMapper;
 
-    @Transactional(readOnly = true)
-    public List<OptionCategoryDetailResponse> getOptionCategories(Long shopId, Long menuId) {
-        return Optional.ofNullable(menuId)
-                .map(id -> optionCategoryRepository.findAllByShopIdAndMenuId(shopId, id))
-                .orElseGet(() -> optionCategoryRepository.findAllByShopId(shopId)).stream()
-                .map(optionCategoryMapper::toDetailResponse)
-                .toList();
-    }
-
-    public Long createOptionCategory(Long shopId, OptionCategoryRequest optionCategoryRequest) {
+    public Long create(Long shopId, OptionCategoryRequest optionCategoryRequest) {
         OptionCategory optionCategory = OptionCategory.builder()
                 .name(optionCategoryRequest.name())
                 .required(optionCategoryRequest.required())
@@ -47,13 +38,22 @@ public class OptionCategoryService {
         return optionCategory.getId();
     }
 
-    public void updateOptionCategory(Long shopId, Long optionCategoryId, OptionCategoryRequest optionCategoryRequest) {
+    @Transactional(readOnly = true)
+    public List<OptionCategoryDetailResponse> findAll(Long shopId, Long menuId) {
+        return Optional.ofNullable(menuId)
+                .map(id -> optionCategoryRepository.findAllByShopIdAndMenuId(shopId, id))
+                .orElseGet(() -> optionCategoryRepository.findAllByShopId(shopId)).stream()
+                .map(optionCategoryMapper::toDetailResponse)
+                .toList();
+    }
+
+    public void update(Long shopId, Long optionCategoryId, OptionCategoryRequest optionCategoryRequest) {
         optionCategoryRepository.findByShopIdAndId(shopId, optionCategoryId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_OPTION_CATEGORY))
                 .update(optionCategoryRequest);
     }
 
-    public void deleteOptionCategory(Long shopId, Long optionCategoryId) {
+    public void delete(Long shopId, Long optionCategoryId) {
         optionCategoryRepository.deleteByShopIdAndId(shopId, optionCategoryId);
     }
 

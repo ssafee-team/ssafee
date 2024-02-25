@@ -26,14 +26,7 @@ public class MenuCategoryService {
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuCategoryMapper menuCategoryMapper;
 
-    @Transactional(readOnly = true)
-    public List<MenuCategoryDetailResponse> findMenuCategories(Long shopId) {
-        return menuCategoryRepository.findAllByShopId(shopId).stream()
-                .map(menuCategoryMapper::toDetailResponse)
-                .toList();
-    }
-
-    public Long createMenuCategory(Long shopId, MenuCategoryRequest menuCategoryRequest) {
+    public Long create(Long shopId, MenuCategoryRequest menuCategoryRequest) {
         MenuCategory menuCategory = MenuCategory.builder()
                 .name(menuCategoryRequest.name())
                 .shop(entityManager.getReference(Shop.class, shopId))
@@ -42,13 +35,20 @@ public class MenuCategoryService {
         return menuCategory.getId();
     }
 
-    public void updateMenuCategory(Long shopId, Long menuCategoryId, MenuCategoryRequest menuCategoryRequest) {
+    @Transactional(readOnly = true)
+    public List<MenuCategoryDetailResponse> findAll(Long shopId) {
+        return menuCategoryRepository.findAllByShopId(shopId).stream()
+                .map(menuCategoryMapper::toDetailResponse)
+                .toList();
+    }
+
+    public void update(Long shopId, Long menuCategoryId, MenuCategoryRequest menuCategoryRequest) {
         menuCategoryRepository.findByShopIdAndId(shopId, menuCategoryId)
                 .orElseThrow(() -> new ShopException(ShopErrorCode.NOT_EXISTS_MENU_CATEGORY))
                 .update(menuCategoryRequest);
     }
 
-    public void deleteMenuCategory(Long shopId, Long menuCategoryId) {
+    public void delete(Long shopId, Long menuCategoryId) {
         menuCategoryRepository.deleteByShopIdAndId(shopId, menuCategoryId);
     }
 

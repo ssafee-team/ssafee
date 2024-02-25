@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    List<Chat> findAllByPartyId(Long partyId);
+    List<Chat> findAllByRoomId(String roomId);
+
+    void deleteByIdAndRoomId(Long id, String roomId);
 
 }

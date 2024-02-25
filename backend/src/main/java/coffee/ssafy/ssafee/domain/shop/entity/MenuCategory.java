@@ -1,5 +1,6 @@
 package coffee.ssafy.ssafee.domain.shop.entity;
 
+import coffee.ssafy.ssafee.common.BaseTimeEntity;
 import coffee.ssafy.ssafee.domain.shop.dto.request.MenuCategoryRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,34 +12,34 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.List;
 
 @Entity
-@Table(name = "menu_categories")
-@SQLDelete(sql = "UPDATE menu_categories SET deleted = true WHERE menu_category_id = ?")
+@Table(name = "`menu_category`")
+@SQLDelete(sql = "UPDATE `menu_category` SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 @Getter
-public class MenuCategory {
+public class MenuCategory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "menu_category_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @NotNull
     @Column(nullable = false)
     private String name;
 
-    @Column(insertable = false, nullable = false)
-    @ColumnDefault("false")
-    private Boolean deleted;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "shop_id", nullable = false, updatable = false)
     private Shop shop;
 
-    @OneToMany(mappedBy = "menuCategory")
-    private List<Menu> Menus;
+    @OneToMany(mappedBy = "menuCategory", fetch = FetchType.LAZY)
+    private List<Menu> menus;
+
+    @Column(insertable = false, nullable = false)
+    @ColumnDefault("false")
+    private Boolean deleted;
 
     public void update(MenuCategoryRequest menuCategoryRequest) {
         this.name = menuCategoryRequest.name();
