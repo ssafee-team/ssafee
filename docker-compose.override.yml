@@ -64,7 +64,7 @@ services:
       - ALLOWED_ORIGIN=${TEST_ALLOWED_ORIGIN}
       - PROD_DB_HOST=mysql-test:3307
       - PROD_DB_USERNAME=${TEST_DB_USERNAME}
-      - PROD_DB_PASSWORD=${TEST_DB_USERNAME}
+      - PROD_DB_PASSWORD=${TEST_DB_PASSWORD}
       - PROD_DB_NAME=${TEST_DB_NAME}
       - PROD_DB_OPTIONS=?useSSL=false&allowPublicKeyRetrieval=true
       - GOOGLE_CLIENT_ID
