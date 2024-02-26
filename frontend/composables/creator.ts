@@ -27,6 +27,9 @@ export const useCreatorStore = defineStore('creator', () => {
     })
 
     const f = (event: MessageEvent) => {
+      if (event.data.creatorToken === undefined)
+        return
+
       creatorToken.value = event.data.creatorToken
       if (!!creatorToken.value && typeof successAfter === 'function')
         successAfter()
