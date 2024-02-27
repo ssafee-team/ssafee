@@ -1,8 +1,8 @@
-# <img src="/uploads/549082de9a9e0f99b73ef428258a176a/SSAFEE_LOGO.png" width="50" height="50"/> SSAFEE - 쉽고 편리한 커피 주문
+# <img src="https://github.com/ssafee-team/ssafee/assets/20319256/75482caa-83fa-4e95-a19d-b66d8510ffa3" width="50" height="50"> SSAFEE - 쉽고 편리한 커피 주문
 
 ![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=180&section=header&text=%E2%98%95%EF%B8%8F%20Tactical%20Team%20Project&fontSize=32&animation=fadeIn&fontAlignY=36&fontColor=ffffff)
 
-<hr>
+---
 
 # 프로젝트 개요
 ### 개발 기간
@@ -385,24 +385,23 @@ backend
 ```
 
 # 시스템 아키텍처
-![시스템아키텍처](/uploads/dbcbe6a517df3ae78ca9952fe63bc827/시스템아키텍처.jpg)
-
+![시스템아키텍처](https://github.com/ssafee-team/ssafee/assets/20319256/ab1df058-b1ad-4bcf-973f-9ffeb18c5796)
 
 # 화면 정의서
 ### 1. WireFrame
-![화면정의서_와이어프레임](/uploads/91fdb986847a3b52d8aaafd6462d24c5/화면정의서_와이어프레임.png)
+![화면정의서_와이어프레임](https://github.com/ssafee-team/ssafee/assets/20319256/29bc3141-8a3d-492d-a2c7-a44ea619ba03)
 
 ### 2. Prototype
-![화면정의서_프로토타입](/uploads/e285fcb2e9244d8ade0e86ca73df88cd/화면정의서_프로토타입.png)
+![화면정의서_프로토타입](https://github.com/ssafee-team/ssafee/assets/20319256/5be57724-3d6b-4e18-82bc-8008a2379e16)
 
 ### 3-1. Deploy_User
-![화면정의서_정식_사용자](/uploads/c7be749c577859b773a11e9cdd9a5af3/화면정의서_정식_사용자.png)
+![화면정의서_정식_사용자](https://github.com/ssafee-team/ssafee/assets/20319256/c3c3a5ec-5fd4-4f7f-a111-8b5e984deff2)
 
 ### 3-2. Deploy_Cafe
-![화면정의서_정식_카페](/uploads/0398d2ce07788e2da30cd7b56c33c640/화면정의서_정식_카페.png)
+![화면정의서_정식_카페](https://github.com/ssafee-team/ssafee/assets/20319256/c3461f56-7580-40bf-ae60-a4abd513f4bb)
 
 ## ERD
-![SSAFEE_ERD](/uploads/be198056b73b9e52212661a1950d0819/SSAFEE_ERD.png)
+![SSAFEE_ERD](https://github.com/ssafee-team/ssafee/assets/20319256/5eea8027-9609-435c-aa46-fc5f1e18e850)
 
 # 서비스 소개
 ## 1. 사용자
@@ -438,52 +437,49 @@ backend
 
 ### 메인 화면
   - 현재 모집 중인 파티를 확인.
-![메인화면](/uploads/10a6202b31c7aba340d33e4cd12f00b1/메인화면.png)
+![메인화면](https://github.com/ssafee-team/ssafee/assets/20319256/c24aa7c9-2be3-480e-b4b7-0457f5f83747)
 
-### 파티 생성
-![방생성_2](/uploads/71dfeadfd3301e81d31e323af9ca4860/방생성_2.png)
+### 방 생성
+![방 생성](https://github.com/ssafee-team/ssafee/assets/20319256/1b25d063-28a7-4d4b-9f83-27a26e479156)
 
 ### 파티
-![방입장_1_기본](/uploads/6f4110f0e37a752cb96110808b7d97da/방입장_1_기본.png)
+![방입장_1_기본](https://github.com/ssafee-team/ssafee/assets/20319256/a6b992a3-50ae-432f-8086-9d66a3b793c5)
 
-![방입장_2_메뉴_옵션_선택_1](/uploads/26c7dc75afe64894940368f8a74619a1/방입장_2_메뉴_옵션_선택_1.png)
+![방입장_2_메뉴_옵션_선택_1](https://github.com/ssafee-team/ssafee/assets/20319256/99442286-cc03-4ccb-a003-4997e942a1a2)
 
-![방입장_2_메뉴_옵션_선택_2](/uploads/39dcf229dbf734ae6bc9b87f5d0280ff/방입장_2_메뉴_옵션_선택_2.png)
+![방입장_2_메뉴_옵션_선택_2](https://github.com/ssafee-team/ssafee/assets/20319256/e6fb699a-f481-4226-a621-a45ed70d32da)
 
-![방입장_3_메뉴카테고리_채팅](/uploads/8592b7378307ed7deccdd105af7acc89/방입장_3_메뉴카테고리_채팅.png)
+![방입장_3_메뉴카테고리_채팅](https://github.com/ssafee-team/ssafee/assets/20319256/83ac8ea6-3327-4e21-94b8-a01fda773496)
 
-![방입장_4_주문자입력](/uploads/aeda7f9fad569a3ae46b17470279c3b6/방입장_4_주문자입력.png)
+![방입장_4_주문자입력](https://github.com/ssafee-team/ssafee/assets/20319256/6461a067-7039-4e4a-a894-19647c8890b7)
 
-![방입장_4_주문자입력_2](/uploads/dec49b8c837a7af1a395791a54ef8cc9/방입장_4_주문자입력_2.png)
+![방입장_4_주문자입력_2](https://github.com/ssafee-team/ssafee/assets/20319256/836dc229-07ef-4014-8fac-87599135618d)
 
-![방입장_5_주문신청_AFTER](/uploads/db99a45acf29e3a97680ca380d578ae0/방입장_5_주문신청_AFTER.png)
+![방입장_5_주문신청_AFTER](https://github.com/ssafee-team/ssafee/assets/20319256/58203574-1c8c-4ff5-b163-77ca6fc3445e)
 
-![방입장_6_입금_체크](/uploads/bb9bfd70836fcee45d008b6fd33a1ece/방입장_6_입금_체크.png)
+![방입장_6_입금_체크](https://github.com/ssafee-team/ssafee/assets/20319256/3d8b0fb8-7a42-4f05-b3eb-ccdc77622b3d)
 
 ## 2. 카페
-![매니저_메인](/uploads/7742d123f580cbe30c2832979f69aec2/매니저_메인.png)
+![매니저_메인](https://github.com/ssafee-team/ssafee/assets/20319256/cc02d05a-a967-4dca-b838-0246523aa138)
 
-![매니저_2_주문대기](/uploads/9fb70d8f6ec2b2265dddcac9d1d56899/매니저_2_주문대기.png)
+![매니저_2_주문대기](https://github.com/ssafee-team/ssafee/assets/20319256/d5ad5855-85bb-4084-91f9-7208a67d7b07)
 
-![매니저_3_주문_받음](/uploads/e61f879cd4f8e7e567b2e2bbaf6c19e0/매니저_3_주문_받음.png)
+![매니저_3_주문_받음](https://github.com/ssafee-team/ssafee/assets/20319256/bc33ae6b-cf3a-424c-9bf1-29d1f9d4b087)
 
-![매니저_4_1_주문_접수](/uploads/e4ac220be5591387f2be9b688d90fd30/매니저_4_1_주문_접수.png)
-
-![매니저_4_2_주문_접수](/uploads/24efc9c4c2f46992a627251847cc34e1/매니저_4_2_주문_접수.png)
-
+![매니저_4_1_주문_접수](https://github.com/ssafee-team/ssafee/assets/20319256/9665dfb2-9ab5-4ed7-92e5-98150e5e9d3b)
 
 ## 3. MatterMost Alarm
 ### 3-1. 파티 생성 시
-![MM_1_방생성](/uploads/b144bcdd7605cb8df1a03b8e829bed5f/MM_1_방생성.png)
+![MM_1_방생성](https://github.com/ssafee-team/ssafee/assets/20319256/5b0ceeac-2a8c-4fb3-a452-bcf96f27e95f)
 
 ### 3-2. 주문 마감 시
-![MM_2_배달원](/uploads/0faa81a6fe2160a9f6fa09b0ccbcb68e/MM_2_배달원.png)
+![MM_2_배달원](https://github.com/ssafee-team/ssafee/assets/20319256/860413c9-aecd-40f7-b3f2-25b685514450)
 
 ### 3-3. 미정산 송금 요청 시
-![MM_3_송금요청](/uploads/74e1574c42cf7c21f22d80af8705e66b/MM_3_송금요청.png)
+![MM_3_송금요청](https://github.com/ssafee-team/ssafee/assets/20319256/2b2cc09e-4379-44ac-942c-c155613b2423)
 
 ### 3-4. 배달 도착 시
-![MM_4_배달_도착_알림](/uploads/05e648d6f061f4a4e6d344ff25fa8c99/MM_4_배달_도착_알림.png)
+![MM_4_배달_도착_알림](https://github.com/ssafee-team/ssafee/assets/20319256/6b60a6de-8d8f-437e-8a3a-22cf8175ac9f)
 
 # 컨벤션
 ### Branch
