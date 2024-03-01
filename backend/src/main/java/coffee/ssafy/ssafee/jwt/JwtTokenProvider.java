@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -25,40 +27,39 @@ public class JwtTokenProvider {
     private static final String CLAIMS_SHOP_ID = "shopId";
     private static final String CLAIMS_AUTHORITY = "authority";
     private final JwtProps jwtProps;
+    private final Base64.Decoder decoder = Base64.getDecoder();
 
     public String issueManagerAccessToken(JwtPrincipalInfo principal) {
-        Claims claims = Jwts.claims()
+        return issueAccessToken(Jwts.claims()
                 .add(CLAIMS_ID, principal.id())
                 .add(CLAIMS_SHOP_ID, principal.shopId())
                 .add(CLAIMS_AUTHORITY, principal.authority())
-                .build();
-        return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
+                .build());
     }
 
     public String issueUserAccessToken(JwtPrincipalInfo principal) {
-        Claims claims = Jwts.claims()
+        return issueAccessToken(Jwts.claims()
                 .add(CLAIMS_ID, principal.id())
                 .add(CLAIMS_AUTHORITY, principal.authority())
-                .build();
-        return issueToken(claims, jwtProps.getAccessExpiration(), jwtProps.getAccessSecretKey());
+                .build());
+    }
+
+    public String issueAccessToken(Claims claims) {
+        return issueToken(
+                claims,
+                jwtProps.accessExpirationSeconds(),
+                Keys.hmacShaKeyFor(decoder.decode(jwtProps.accessSecretKeyBase64()))
+        );
     }
 
     public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseToken(accessToken, jwtProps.getAccessSecretKey());
+        Claims claims = parseToken(accessToken, Keys.hmacShaKeyFor(decoder.decode(jwtProps.accessSecretKeyBase64())));
         JwtPrincipalInfo principal = JwtPrincipalInfo.builder()
                 .id(claims.get(CLAIMS_ID, Long.class))
                 .shopId(claims.get(CLAIMS_SHOP_ID, Long.class))
                 .authority(claims.get(CLAIMS_AUTHORITY, String.class))
                 .build();
         return new UsernamePasswordAuthenticationToken(principal, null, List.of(principal::authority));
-    }
-
-    public String issueRefreshToken() {
-        return issueToken(null, jwtProps.getRefreshExpiration(), jwtProps.getRefreshSecretKey());
-    }
-
-    public void parseRefreshToken(String refreshToken) {
-        parseToken(refreshToken, jwtProps.getRefreshSecretKey());
     }
 
     private String issueToken(Claims claims, Duration expiration, SecretKey secretKey) {

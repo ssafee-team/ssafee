@@ -1,9 +1,12 @@
 server:
   port: ${SERVER_PORT:8080}
 
+origin:
+  allowed: ${ALLOWED_ORIGIN:http://localhost:3000}
+
 spring:
   profiles:
-    active: ${SPRING_PROFILE:dev}
+    active: ${SPRING_PROFILE:local}
   web:
     resources:
       add-mappings: false
@@ -11,6 +14,14 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 2MB
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+  datasource:
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   security:
     oauth2:
       client:
@@ -21,13 +32,6 @@ spring:
             redirect-uri: ${GOOGLE_REDIRECT_URI:{baseUrl}/v1/oauth2/callback/{registrationId}}
             scope:
               - email
-  jpa:
-    properties:
-      hibernate:
-        default_batch_fetch_size: 1000
-  h2:
-    console:
-      enabled: false
 
 jwt:
   access-secret-key-base64: ${JWT_ACCESS_SECRET_KEY_BASE64:iAbBnFDrPJgglJr+yO0dC1qITxoCJcm1HB8ZiFWhtN19lWOdCaiPmvqXRTLmqe4cIdaT5X62swd/8lfp8rdw0Q==}
@@ -43,51 +47,16 @@ s3:
   endpoint: ${S3_ENDPOINT:https://dcfbfd9f489ad8a785c3cdb81469e07d.r2.cloudflarestorage.com}
   public-base-url: ${S3_PUBLIC_BASE_URL}
 
-origin:
-  allowed: ${ALLOWED_ORIGIN:http://localhost:3000}
-
 ---
 
 spring:
   config:
     activate:
-      on-profile: dev
-  datasource:
-    url: jdbc:h2:mem:${DEV_DB_NAME:S10P12C209}
-    username: ${DEV_DB_USERNAME:sa}
-    password: ${DEV_DB_PASSWORD}
-  sql:
-    init:
-      mode: always
-  jpa:
-    show-sql: true
-  h2:
-    console:
-      enabled: true
+      on-profile: ssl
 
----
-
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:mysql://${LOCAL_DB_HOST}/${LOCAL_DB_NAME}
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
-  jpa:
-    show-sql: true
-
-origin:
-  allowed: ${ALLOWED_ORIGIN:http://localhost:3000}
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: jdbc:mysql://${PROD_DB_HOST}/${PROD_DB_NAME}${PROD_DB_OPTIONS}
-    username: ${PROD_DB_USERNAME}
-    password: ${PROD_DB_PASSWORD}
+server:
+  port: 443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ${KEY_STORE_PASSWORD}
